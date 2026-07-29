@@ -1,0 +1,54 @@
+/* Claude Themes — "golden-hour" 🌅 warm sunset light, floating dust. Shared rules: _base.css */
+
+html[data-cct-theme="golden-hour"],
+html[data-cct-theme="golden-hour"] * {
+  --bg-000: 35 90% 98% !important;
+  --bg-100: 33 80% 95.5% !important;
+  --bg-200: 31 72% 92.5% !important;
+  --bg-300: 29 65% 89.5% !important;
+  --bg-400: 27 58% 85.5% !important;
+  --bg-500: 27 58% 85.5% !important;
+  --accent-brand: 18 90% 58% !important;
+  --accent-000: 200 70% 40% !important;
+  --accent-100: 200 70% 48% !important;
+  --accent-200: 200 70% 48% !important;
+  --accent-900: 200 65% 90% !important;
+  --brand-000: 18 82% 54% !important;
+  --brand-100: 18 82% 54% !important;
+  --brand-200: 18 90% 58% !important;
+  --brand-900: 20 40% 13% !important;
+  --border-100: 25 40% 26% !important;
+  --border-200: 25 40% 26% !important;
+  --border-300: 25 40% 26% !important;
+  --border-400: 25 40% 26% !important;
+  --text-000: 25 45% 16% !important;
+  --text-100: 25 45% 16% !important;
+  --text-200: 25 22% 34% !important;
+  --text-300: 25 22% 34% !important;
+  --text-400: 28 14% 48% !important;
+  --text-500: 28 14% 48% !important;
+  --pictogram-100: 27 58% 85.5% !important;
+  --pictogram-200: 26 52% 80% !important;
+  --pictogram-300: 35 90% 98% !important;
+  --pictogram-400: 33 80% 95.5% !important;
+}
+
+html[data-cct-theme="golden-hour"]::before {
+  background:
+    radial-gradient(640px 480px at 102% 6%, hsl(35 100% 70% / 0.5), transparent 70%),
+    radial-gradient(560px 420px at -4% 40%, hsl(350 85% 80% / 0.35), transparent 70%),
+    radial-gradient(900px 400px at 50% 114%, hsl(20 90% 72% / 0.35), transparent 72%);
+}
+
+html[data-cct-theme="golden-hour"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: -460px;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.5;
+  background-repeat: repeat;
+  animation: cct-rise 55s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><g fill='%23f0b45e' fill-opacity='0.5'><circle cx='40' cy='58' r='2.4'/><circle cx='196' cy='120' r='1.5'/><circle cx='122' cy='244' r='2.8'/><circle cx='248' cy='332' r='1.3'/><circle cx='66' cy='400' r='2'/><circle cx='152' cy='62' r='1.2'/><circle cx='90' cy='156' r='1.6'/><circle cx='230' cy='214' r='2.2'/><circle cx='34' cy='288' r='1.4'/><circle cx='184' cy='388' r='1.8'/></g></svg>");
+}

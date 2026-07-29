@@ -1,0 +1,41 @@
+/* Claude Themes — "midnight-code" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="midnight-code"],
+html[data-cct-theme="midnight-code"] * {
+  --bg-000: 211 13% 16% !important;
+  --bg-100: 212 15% 12.5% !important;
+  --bg-200: 213 17% 10.5% !important;
+  --bg-300: 214 19% 8.5% !important;
+  --bg-400: 215 22% 6% !important;
+  --bg-500: 215 22% 6% !important;
+  --accent-brand: 207 82% 60% !important;
+  --accent-000: 207 86% 68% !important;
+  --accent-100: 207 82% 56% !important;
+  --accent-200: 207 82% 56% !important;
+  --accent-900: 210 52% 22% !important;
+  --brand-000: 207 72% 54% !important;
+  --brand-100: 207 82% 60% !important;
+  --brand-200: 207 82% 60% !important;
+  --brand-900: 210 35% 12% !important;
+  --border-100: 210 18% 82% !important;
+  --border-200: 210 18% 82% !important;
+  --border-300: 210 18% 82% !important;
+  --border-400: 210 18% 82% !important;
+  --text-000: 210 16% 94% !important;
+  --text-100: 210 16% 94% !important;
+  --text-200: 210 10% 75% !important;
+  --text-300: 210 10% 75% !important;
+  --text-400: 210 8% 57% !important;
+  --text-500: 210 8% 57% !important;
+  --pictogram-100: 212 12% 29% !important;
+  --pictogram-200: 212 13% 22% !important;
+  --pictogram-300: 211 13% 16% !important;
+  --pictogram-400: 212 15% 12.5% !important;
+}
+
+html[data-cct-theme="midnight-code"]::before {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 39px, hsl(207 80% 60% / 0.035) 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, hsl(207 80% 60% / 0.035) 39px 40px),
+    radial-gradient(850px 420px at 50% 114%, hsl(207 85% 55% / 0.16), transparent 70%);
+}

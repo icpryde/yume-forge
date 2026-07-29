@@ -1,0 +1,1608 @@
+/* ============================================================================
+   Yume Forge — "final-fantasy"
+
+   A love letter to the 8/16-bit JRPG menu: royal-blue gradient windows, hard
+   white frames, a gold selection cursor, a crystal beside every reply and a
+   four-person party idling on top of the composer.
+
+   Shared rules come from _base.css. Generated assets, one file per generator:
+
+     sprites/party.css     --yume-party-sprite     sprites.mjs | rip-assets.py
+     sprites/crystal.css   --yume-ff-crystal       crystal.mjs | rip-assets.py
+     sprites/cursor.css    --yume-ff-cursor        cursor.mjs  | rip-assets.py
+     sprites/moogle.css    --yume-ff-moogle        rip-assets.py
+     sprites/items.css     --yume-ff-items         items.mjs
+     sprites/ambience.css  motes / stars / moon    ambience.mjs
+
+   Sizes here are derived from the *-w/-h custom properties those generators
+   emit, so switching an asset's source never needs an edit in this file.
+
+   Layer budget: _base.css owns html::before (scenery + moon) and html::after
+   (crystal motes). The two starfields take body::before and body::after —
+   they need to be separate elements because opacity animates per element, not
+   per background layer, so one tile can't have some stars twinkle and others
+   hold steady. Everything else hangs off real elements.
+   ========================================================================== */
+
+html[data-cct-theme="final-fantasy"] {
+  /* --- window frame ------------------------------------------------------ */
+  --ff-win-top: #2f47a8;
+  --ff-win-mid: #16225e;
+  --ff-win-bot: #0b1240;
+  --ff-frame: #ffffff;
+  --ff-bevel: rgba(148, 176, 244, 0.55);
+  --ff-drop: rgba(3, 6, 22, 0.72);
+
+  --ff-gold: #ffd75e;
+  --ff-crystal-cyan: #8beaff;
+
+  --ff-window: linear-gradient(180deg, var(--ff-win-top) 0%, var(--ff-win-mid) 58%, var(--ff-win-bot) 100%);
+
+  /* Two fills, not one. Your messages are short and sit right — they take the
+     brighter blue. Claude's replies are long-form, so they take a deeper one:
+     less contrast fighting the white text, and the pair is unmistakable at a
+     glance. Swap the two values to invert which speaker is lighter. */
+  --ff-window-user: linear-gradient(180deg, #3a55c4 0%, #1e2e78 58%, #12194f 100%);
+  --ff-window-reply: linear-gradient(180deg, #1a2568 0%, #0e1442 60%, #070b2a 100%);
+  --ff-frame-shadow:
+    inset 0 0 0 1px var(--ff-bevel),
+    0 3px 0 var(--ff-drop),
+    0 8px 22px rgba(0, 0, 0, 0.45);
+
+  /* --- type -------------------------------------------------------------- */
+  --ff-pixel: "Yume Press Start", ui-monospace, monospace;
+  --ff-pixel-ui: "Yume Silkscreen", "Yume Press Start", ui-monospace, monospace;
+
+  /* Full pixel, chrome and prose alike. Silkscreen is the readable pixel face
+     of the two, but paragraph-length text in it is still work to read — set
+     this back to var(--font-anthropic-sans) for pixel chrome with readable
+     prose, which is the gentler default. */
+  --ff-body: var(--ff-pixel-ui);
+}
+
+/* ---------------------------------------------------------------- tokens */
+
+html[data-cct-theme="final-fantasy"],
+html[data-cct-theme="final-fantasy"] * {
+  --bg-000: 228 55% 26% !important;
+  --bg-100: 230 60% 20% !important;
+  --bg-200: 231 64% 15% !important;
+  --bg-300: 232 68% 11% !important;
+  --bg-400: 234 64% 13% !important;
+  --bg-500: 234 66% 11% !important;
+
+  /* Gold reads as "selected" in a JRPG menu, and it's the only hue that
+     survives on top of this much blue. */
+  --accent-brand: 44 100% 68% !important;
+  --accent-000: 46 100% 80% !important;
+  --accent-100: 43 95% 62% !important;
+  --accent-200: 43 95% 62% !important;
+  --accent-900: 40 55% 20% !important;
+
+  --brand-000: 42 92% 62% !important;
+  --brand-100: 44 100% 68% !important;
+  --brand-200: 44 100% 68% !important;
+  --brand-900: 40 50% 12% !important;
+
+  --border-100: 0 0% 100% !important;
+  --border-200: 0 0% 100% !important;
+  --border-300: 0 0% 100% !important;
+  --border-400: 0 0% 100% !important;
+
+  --text-000: 0 0% 100% !important;
+  --text-100: 0 0% 100% !important;
+  --text-200: 222 45% 86% !important;
+  --text-300: 222 45% 86% !important;
+  --text-400: 222 32% 70% !important;
+  --text-500: 222 32% 70% !important;
+
+  --pictogram-100: 226 45% 40% !important;
+  --pictogram-200: 228 50% 32% !important;
+  --pictogram-300: 228 55% 26% !important;
+  --pictogram-400: 230 60% 20% !important;
+}
+
+/* ------------------------------------------------------------------ type */
+
+/* Setting this on <body> alone does nothing on the real app: Claude assigns
+   font-family per element via utility classes (.font-ui, .font-base, …), and a
+   declaration on an element always beats one inherited from an ancestor — no
+   amount of specificity on the body rule changes that. Each class has to be
+   named. The mock has none of them, which is why the pixel font appeared to
+   work there and not in the browser. */
+html[data-cct-theme="final-fantasy"] body,
+html[data-cct-theme="final-fantasy"] .font-ui,
+html[data-cct-theme="final-fantasy"] .font-base,
+html[data-cct-theme="final-fantasy"] .font-small,
+html[data-cct-theme="final-fantasy"] .font-sans,
+html[data-cct-theme="final-fantasy"] .font-base-bold,
+html[data-cct-theme="final-fantasy"] .font-large-bold,
+html[data-cct-theme="final-fantasy"] button,
+html[data-cct-theme="final-fantasy"] a[data-row-main-button],
+html[data-cct-theme="final-fantasy"] button[data-row-main-button],
+html[data-cct-theme="final-fantasy"] input,
+html[data-cct-theme="final-fantasy"] select {
+  font-family: var(--ff-pixel-ui) !important;
+  letter-spacing: 0.01em;
+}
+
+/* Long-form text opts back out of the pixel face. */
+html[data-cct-theme="final-fantasy"] .font-claude-response,
+html[data-cct-theme="final-fantasy"] .font-claude-response *,
+html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"],
+html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"] *,
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] * {
+  font-family: var(--ff-body) !important;
+  letter-spacing: normal;
+}
+
+/* Code stays monospace regardless. */
+html[data-cct-theme="final-fantasy"] code,
+html[data-cct-theme="final-fantasy"] pre,
+html[data-cct-theme="final-fantasy"] pre * {
+  font-family: var(--font-anthropic-mono) !important;
+}
+
+/* Headings get the full NES treatment, with the classic hard shadow. */
+html[data-cct-theme="final-fantasy"] h1,
+html[data-cct-theme="final-fantasy"] h2.font-title,
+html[data-cct-theme="final-fantasy"] .font-title {
+  font-family: var(--ff-pixel) !important;
+  font-size: 0.78em !important;
+  line-height: 1.7 !important;
+  text-shadow: 2px 2px 0 rgba(3, 6, 22, 0.85);
+  letter-spacing: 0.02em;
+}
+
+/* The "Hey there, <name>" greeting on a new chat.
+
+   claude.ai renamed this class from .font-title to .font-display, so the rule
+   above quietly stopped matching and the greeting reverted to Anthropic Serif
+   at 40px — an elegant serif sitting in the middle of a pixel-art theme.
+
+   Sized separately rather than folded into the rule above, because 0.78em is
+   wrong here: `em` resolves against the PARENT (14px), while this element gets
+   its 40px from its own utility class. Reusing 0.78em rendered the greeting at
+   10.92px — legible, and obviously broken.
+
+   clamp() rather than a fixed size: Press Start 2P is a fixed-width face, so
+   the line grows with the name and the greeting wording. Measured against the
+   672px column — "Happy Wednesday, Christopher" is 462px at the 24px ceiling,
+   which also leaves the party sprites room to sit beside it. */
+html[data-cct-theme="final-fantasy"] .font-display,
+html[data-cct-theme="final-fantasy"] .font-display * {
+  font-family: var(--ff-pixel) !important;
+  font-size: clamp(0.95rem, 2.6vw, 1.5rem) !important;
+  line-height: 1.7 !important;
+  text-shadow: 2px 2px 0 rgba(3, 6, 22, 0.85);
+  letter-spacing: 0.02em;
+}
+
+/* ---------------------------------------------------------- menu windows */
+
+/* The signature: gradient fill, hard white frame, inner bevel, hard drop. */
+html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"] {
+  background: var(--ff-window-user) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+  color: #fff !important;
+}
+
+html[data-cct-theme="final-fantasy"] [role="menu"],
+html[data-cct-theme="final-fantasy"] [role="dialog"],
+html[data-cct-theme="final-fantasy"] [role="listbox"] {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+}
+
+/* Menu rows highlight gold, the way a JRPG cursor row does. */
+html[data-cct-theme="final-fantasy"] [role="menuitem"]:hover,
+html[data-cct-theme="final-fantasy"] [role="option"]:hover {
+  background: rgba(255, 215, 94, 0.16) !important;
+  color: var(--ff-gold) !important;
+}
+
+/* ------------------------------------------------------- reply windows */
+
+/* Claude's replies get the same dialogue-box treatment as everything else.
+   The crystal already lives in the 34px gutter created earlier, so the frame
+   just needs to wrap around it rather than shift anything. */
+/* [data-yume-reply] is load-bearing. claude.ai keeps an EMPTY
+   div[data-is-streaming] mounted as a placeholder for the next turn; framing
+   that produced a stray empty window floating above the composer. */
+html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-reply] {
+  background: var(--ff-window-reply) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ff-frame-shadow);
+  /* Kept tight on purpose: every pixel here is added the moment a reply's first
+     token lands, and the page shifts by exactly that much. */
+  padding: 10px 14px 10px 40px !important;
+}
+
+/* Code blocks sit inside the window, so lift them off its fill rather than
+   letting two dark panels blur together. */
+html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-reply] pre {
+  background: rgba(4, 8, 30, 0.55) !important;
+  border: 1px solid rgba(150, 180, 255, 0.22) !important;
+  border-radius: 5px !important;
+}
+
+/* The newest reply breathes, the same way the composer does — content.js
+   stamps data-yume-latest, since "the last one" is not something CSS can
+   express reliably across this message tree. */
+@keyframes ff-reply-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px var(--ff-bevel),
+      0 0 12px 1px rgba(92, 152, 255, 0.28),
+      0 3px 0 var(--ff-drop);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgba(196, 220, 255, 0.7),
+      0 0 26px 5px rgba(134, 202, 255, 0.5),
+      0 3px 0 var(--ff-drop);
+  }
+}
+
+html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-latest][data-yume-reply] {
+  animation: ff-reply-breathe 4.2s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------ composer + glow */
+
+@keyframes ff-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px var(--ff-bevel),
+      0 0 13px 1px rgba(92, 152, 255, 0.34),
+      0 3px 0 var(--ff-drop);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgba(196, 220, 255, 0.8),
+      0 0 30px 6px rgba(134, 202, 255, 0.6),
+      0 3px 0 var(--ff-drop);
+  }
+}
+
+html[data-cct-theme="final-fantasy"] div[class*="cursor-text"]:has([data-testid="chat-input"]) {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 8px !important;
+  animation: ff-breathe 4.2s ease-in-out infinite;
+  /* The party stands on the top edge — see below. */
+  overflow: visible !important;
+}
+
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] * {
+  color: #fff !important;
+}
+
+/* ------------------------------------------------------------ the party */
+
+@keyframes ff-party-idle {
+  0%, 49.99% { background-position-x: 0%; }
+  50%, 100%  { background-position-x: 100%; }
+}
+
+html[data-cct-theme="final-fantasy"]:not([data-yume-party="dom"])
+  div[class*="cursor-text"]:has([data-testid="chat-input"])::before {
+  content: "";
+  position: absolute;
+  right: 16px;
+  /* Derived from the metrics the generator emits, so swapping between the
+     drawn and ripped sheets never needs a CSS edit. Scale is a whole number —
+     fractional scaling makes pixelated rendering distribute source pixels
+     unevenly. */
+  top: calc(var(--yume-party-frame-h) * -2px);   /* stands on the top frame */
+  width: calc(var(--yume-party-frame-w) * 2px);
+  height: calc(var(--yume-party-frame-h) * 2px);
+  background-image: var(--yume-party-sprite);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+  /* Claude drops transient banners into this strip; keep the party on top. */
+  z-index: 40;
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5));
+
+  /* The party only moves while Claude is working — see below. Declared here
+     but parked, so the animation is ready to resume the instant it starts. */
+  animation: ff-party-idle 0.92s steps(1) infinite;
+  animation-play-state: paused;
+}
+
+/* claude.ai flips data-is-streaming on the message wrapper while a reply is
+   generating, which is the cleanest "is Claude thinking" signal in the DOM —
+   no JS, no polling. The party animates while any message is streaming and
+   settles the moment it stops. */
+html[data-cct-theme="final-fantasy"]:not([data-yume-party="dom"]):has(div[data-is-streaming="true"])
+  div[class*="cursor-text"]:has([data-testid="chat-input"])::before {
+  animation-play-state: running;
+}
+
+/* ------------------------------------------------- interactive party (DOM) */
+
+/* content.js injects one element per member so each can be clicked and can
+   hold its own frame. Everything below drives them off --pose, which the click
+   handler sets to a random action frame and clears again. */
+html[data-cct-theme="final-fantasy"] .yume-party {
+  position: absolute;
+  right: 16px;
+  top: calc(var(--yume-party-cell-h) * -2px);
+  display: flex;
+  gap: 6px;
+  z-index: 40;
+  pointer-events: none;   /* the row is inert; only members take clicks */
+}
+
+html[data-cct-theme="final-fantasy"] .yume-party-member {
+  width: calc(var(--yume-party-cell-w) * 2px);
+  height: calc(var(--yume-party-cell-h) * 2px);
+  background-repeat: no-repeat;
+  background-size: calc(var(--yume-party-poses) * 100%) 100%;
+  image-rendering: pixelated;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5));
+  /* Frame select. --pose is unset while idle, so the idle animation owns
+     background-position-x; once set it pins a single action frame. */
+  background-position-x: calc(var(--pose, 0) / (var(--yume-party-poses) - 1) * 100%);
+}
+
+html[data-cct-theme="final-fantasy"] .yume-party-member[data-member="0"] { background-image: var(--yume-party-0); }
+html[data-cct-theme="final-fantasy"] .yume-party-member[data-member="1"] { background-image: var(--yume-party-1); }
+html[data-cct-theme="final-fantasy"] .yume-party-member[data-member="2"] { background-image: var(--yume-party-2); }
+html[data-cct-theme="final-fantasy"] .yume-party-member[data-member="3"] { background-image: var(--yume-party-3); }
+
+@keyframes ff-member-idle {
+  /* Frame 1 of the strip. DERIVED, not hardcoded: this sat at a literal 25%
+     (correct for the old 5-pose strips) after the strips grew a 6th frame,
+     which shifted the idle's second half a quarter-frame off-grid — the
+     "random pixels between the characters": the neighbouring pose's edge
+     bleeding into each member's box, flickering at the bob rate. Percentage
+     frame maths here is exact only when tied to the live pose count. */
+  0%, 49.99% { background-position-x: 0%; }
+  50%, 100%  { background-position-x: calc(1 / (var(--yume-party-poses) - 1) * 100%); }
+}
+
+/* Idle only while Claude is working, and only when no pose is playing. */
+/* Longhands, not the `animation` shorthand: the shorthand resets every
+   animation-* property, which silently zeroed the per-member delays below and
+   made all four idle in lockstep. The phase travels in a custom property so it
+   survives regardless of rule order. */
+html[data-cct-theme="final-fantasy"]:has(div[data-is-streaming="true"]) .yume-party-member[data-pose="idle"] {
+  animation-name: ff-member-idle;
+  animation-duration: 0.92s;
+  animation-timing-function: steps(1);
+  animation-iteration-count: infinite;
+  animation-delay: var(--party-phase, 0s);
+}
+
+/* Out of phase, so they read as four people rather than one puppet. */
+html[data-cct-theme="final-fantasy"] .yume-party-member[data-member="1"] { --party-phase: 0.23s; }
+html[data-cct-theme="final-fantasy"] .yume-party-member[data-member="2"] { --party-phase: 0.46s; }
+html[data-cct-theme="final-fantasy"] .yume-party-member[data-member="3"] { --party-phase: 0.69s; }
+
+html[data-cct-theme="final-fantasy"] .yume-party-member:hover {
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5)) brightness(1.18);
+}
+
+@media (max-width: 720px) {
+  html[data-cct-theme="final-fantasy"] .yume-party { display: none; }
+}
+
+/* No room for a marching party on a phone. */
+@media (max-width: 720px) {
+  html[data-cct-theme="final-fantasy"]
+    div[class*="cursor-text"]:has([data-testid="chat-input"])::before {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------- crystal on replies */
+
+@keyframes ff-crystal-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(120, 220, 255, 0.55)) brightness(1);
+    transform: translateY(0);
+  }
+  50% {
+    filter: drop-shadow(0 0 11px rgba(150, 235, 255, 0.95)) brightness(1.15);
+    transform: translateY(-2px);
+  }
+}
+
+/* claude.ai renders no avatar next to a reply, so the crystal *is* the
+   speaker mark. The message column only leaves ~16px of natural gutter, which
+   isn't enough and would put the crystal over the sidebar — so indent the
+   reply and hang the crystal in the space that creates. */
+html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-reply] {
+  /* Claude already ships `relative` on this node, but the crystal's placement
+     is not worth betting on a utility class staying put. */
+  position: relative;
+  padding-left: 34px;
+}
+
+html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-reply]::before {
+  content: "";
+  position: absolute;
+  /* Inside the window's left gutter, clear of the 2px frame — at left:5/top:0
+     it straddled the border and read as escaping the box. */
+  left: 10px;
+  top: 12px;
+  /* Fixed height, width from the asset's own aspect — the drawn crystal is
+     24x32 and the ripped one 8x16, and hardcoding either would squash the other. */
+  height: 32px;
+  width: calc(32px * var(--yume-ff-crystal-w) / var(--yume-ff-crystal-h));
+  background: var(--yume-ff-crystal) center / contain no-repeat;
+  image-rendering: pixelated;
+  animation: ff-crystal-pulse 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Reclaim the width on narrow screens. */
+@media (max-width: 900px) {
+  html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-reply] { padding-left: 10px !important; }
+  html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-reply]::before { display: none; }
+}
+
+/* ------------------------------------------------ sidebar edge + cursor */
+
+/* claude.ai draws a 1px rgba(225,224,217,.15) hairline here. Rebuild it as a
+   menu-window edge: white keyline, blue bevel, then the hard dark drop. */
+html[data-cct-theme="final-fantasy"] aside.dframe-sidebar,
+html[data-cct-theme="final-fantasy"] aside[aria-label="Sidebar"] {
+  border-right: 2px solid var(--ff-frame) !important;
+  box-shadow:
+    2px 0 0 var(--ff-bevel),
+    4px 0 0 var(--ff-drop),
+    6px 0 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+@keyframes ff-cursor-blink {
+  0%, 60%   { opacity: 1; }
+  61%, 100% { opacity: 0.35; }
+}
+
+html[data-cct-theme="final-fantasy"] a[data-row-main-button] {
+  position: relative;
+  /* The hand hangs 6px outside the row box; without this the fingertip is clipped. */
+  overflow: visible !important;
+}
+
+/* The select hand that tracks the highlighted menu row. Points right, at the
+   row it's selecting — the same way it works in the games. */
+html[data-cct-theme="final-fantasy"] a[data-row-main-button]::before {
+  content: "";
+  position: absolute;
+  /* Clear of the label: the hand is ~19px wide and the row's text starts at
+     14px, so anything less than about -6 overlaps the first character. */
+  left: -6px;
+  top: 50%;
+  /* Derived, not hardcoded: the generated hand is 18px tall, so a fixed
+     -7px (right for 14px) left it 2px high. */
+  margin-top: calc(var(--yume-ff-cursor-h) * -0.5px);
+  height: calc(var(--yume-ff-cursor-h) * 1px);
+  width: calc(var(--yume-ff-cursor-w) * 1px);
+  background: var(--yume-ff-cursor) center / contain no-repeat;
+  image-rendering: pixelated;
+  opacity: 0;
+  transition: opacity 90ms linear;
+  pointer-events: none;
+  /* The row's ::before would otherwise paint under the leading slot's ::after,
+     leaving the hand hidden behind the item icon it points at. */
+  z-index: 2;
+}
+
+/* Hover only. [data-selected] also matches the currently-open chat, which
+   left a second hand parked on that row permanently — it read as stuck
+   rather than as a selection marker. */
+html[data-cct-theme="final-fantasy"] a[data-row-main-button]:hover::before {
+  opacity: 1;
+  animation: ff-cursor-blink 0.9s steps(1) infinite;
+}
+
+html[data-cct-theme="final-fantasy"] a[data-row-main-button]:hover {
+  color: var(--ff-gold) !important;
+}
+
+/* ---------------------------------------------------------- send button */
+
+/* Swap the round accent button for the select hand, mirrored to point left.
+   aria-label match rather than a class, since the button is only mounted once
+   the composer has text in it. */
+html[data-cct-theme="final-fantasy"] button[aria-label*="Send" i] {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  position: relative;
+  overflow: visible !important;   /* the hand is a little wider than the slot */
+}
+
+html[data-cct-theme="final-fantasy"] button[aria-label*="Send" i] > * {
+  opacity: 0 !important;      /* hide the stock arrow glyph */
+}
+
+html[data-cct-theme="final-fantasy"] button[aria-label*="Send" i]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  height: calc(var(--yume-ff-cursor-h) * 2px);
+  width: calc(var(--yume-ff-cursor-w) * 2px);
+  background: var(--yume-ff-cursor) center / contain no-repeat;
+  image-rendering: pixelated;
+  transform: scaleX(-1);      /* point left */
+  filter: drop-shadow(0 0 5px rgba(150, 200, 255, 0.55));
+}
+
+html[data-cct-theme="final-fantasy"] button[aria-label*="Send" i]:hover::after {
+  filter: drop-shadow(0 0 9px rgba(255, 215, 94, 0.9));
+}
+
+/* -------------------------------------------------- moogle working glyph */
+
+/* claude.ai renders a small spark glyph in a wrapper that fades in while a
+   reply is being produced and fades back out when it finishes. Hijacking that
+   wrapper rather than inventing a new element means the moogle inherits that
+   exact show/hide behaviour for free — no extra state to track. */
+@keyframes ff-moogle-frames {
+  0%, 49.99% { background-position-x: 0%; }
+  50%, 100%  { background-position-x: 100%; }
+}
+
+/* The centring offset lives inside the keyframes: the hop animates `transform`
+   too, and an animated transform overwrites a static one outright rather than
+   composing with it. */
+@keyframes ff-moogle-hop {
+  0%, 100% { transform: translate(-50%, -50%); }
+  42%      { transform: translate(-50%, calc(-50% - 3px)); }
+}
+
+/* Its wrapper is width:0 / overflow:hidden until it animates open. */
+/* The loading glyph's wrapper is width:0 / overflow:hidden until it animates
+   open, which would clip the moogle drawn on its child. */
+/* One moogle definition covering both glyph sites: the status row while Claude
+   works, and the sunburst once it has finished. */
+/* Hops while Claude works; parked otherwise. */
+/* ---------------------------------------------------------- moogle glyphs */
+
+/* All of this is CSS with no JavaScript involved, and that is the point.
+   Claude shows two different working glyphs — svg[data-cds="Spark"] in the
+   status row, and a sprite-strip logo under the reply — and both appear the
+   instant you hit send. The runtime tagger runs on a 120-400ms debounce, so it
+   always lost that race and the orange circle flashed before the moogle took
+   over. A stylesheet has no such gap.
+
+   Doubling is handled for free rather than by picking a winner: several of
+   these can be mounted at once, but the hidden ones sit in wrappers that are
+   opacity:0 or width:0, and a ::after inherits that — so only the visible one
+   ever draws a moogle.
+
+   The :not(...) on the Spark keeps it to the thinking phase: once the reply has
+   content that same status row becomes its summary line, where the crystal is
+   the marker. */
+
+html[data-cct-theme="final-fantasy"] svg[data-cds="Spark"] {
+  opacity: 0 !important;
+}
+
+/* Replace the CONTENTS of the status button's leading slot, whatever they are.
+   Every previous attempt named the element — Spark, then the brand-class logo,
+   then by geometry — and each time the live page turned out to use a different
+   one in some state, so the original glyph showed through. The slot itself is
+   the stable thing: it is always the status button's first child, and it always
+   holds exactly the glyph we want gone. Not knowing what is inside it is the
+   entire point. */
+html[data-cct-theme="final-fantasy"] button[class*="group/status"] > *:first-child {
+  position: relative !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  overflow: visible !important;
+  flex: none !important;
+}
+
+html[data-cct-theme="final-fantasy"] button[class*="group/status"] > *:first-child * {
+  opacity: 0 !important;
+}
+
+/* The strip logo, for when there is no status row — e.g. under a finished
+   reply. Excluded inside the status button so the two can never both draw. */
+html[data-cct-theme="final-fantasy"] main div[class~="text-accent-brand"]:has(svg):not(:has(div[class~="text-accent-brand"])):not(button[class*="group/status"] *),
+html[data-cct-theme="final-fantasy"] main div[class~="text-brand-200"]:has(svg):not(:has(div[class~="text-brand-200"])):not(button[class*="group/status"] *) {
+  position: relative !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  overflow: visible !important;
+  flex: none !important;
+}
+
+html[data-cct-theme="final-fantasy"] main div[class~="text-accent-brand"]:has(svg):not(:has(div[class~="text-accent-brand"])):not(button[class*="group/status"] *) > *,
+html[data-cct-theme="final-fantasy"] main div[class~="text-brand-200"]:has(svg):not(:has(div[class~="text-brand-200"])):not(button[class*="group/status"] *) > * {
+  opacity: 0 !important;
+}
+
+/* One moogle definition for both slots. The `:not()` keeps it off the finished
+   reply's summary line, where the crystal is already the marker. */
+html[data-cct-theme="final-fantasy"] button[class*="group/status"] > *:first-child:not([data-yume-reply] *)::after,
+html[data-cct-theme="final-fantasy"] main div[class~="text-accent-brand"]:has(svg):not(:has(div[class~="text-accent-brand"])):not(button[class*="group/status"] *)::after,
+html[data-cct-theme="final-fantasy"] main div[class~="text-brand-200"]:has(svg):not(:has(div[class~="text-brand-200"])):not(button[class*="group/status"] *)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(var(--yume-ff-moogle-w) * 1.5px);
+  height: calc(var(--yume-ff-moogle-h) * 1.5px);
+  background-image: var(--yume-ff-moogle);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+  animation:
+    ff-moogle-frames 0.62s steps(1) infinite,
+    ff-moogle-hop 0.62s ease-in-out infinite;
+}
+
+/* Mutual exclusion. NOTE the condition uses [data-yume-reply], not
+   :has(.font-claude-response > *) — :has() cannot be nested inside another
+   :has(), so the earlier version was invalid and the browser dropped the whole
+   rule silently, which is why both slots kept drawing.
+
+   While a live status row is on screen it owns the moogle,
+   so the strip logo must not draw a second one. Once the reply has content the
+   status slot stops drawing (crystal takes over there) and the strip resumes.
+   Expressed as a suppression rule so neither side needs to know about the other
+   beyond this one place. */
+html[data-cct-theme="final-fantasy"] main:has(button[class*="group/status"]:not([data-yume-reply] *)) div[class~="text-accent-brand"]:has(svg),
+html[data-cct-theme="final-fantasy"] main:has(button[class*="group/status"]:not([data-yume-reply] *)) div[class~="text-brand-200"]:has(svg) {
+  --yume-strip-suppressed: 1;
+}
+
+html[data-cct-theme="final-fantasy"] main:has(button[class*="group/status"]:not([data-yume-reply] *)) div[class~="text-accent-brand"]:has(svg)::after,
+html[data-cct-theme="final-fantasy"] main:has(button[class*="group/status"]:not([data-yume-reply] *)) div[class~="text-brand-200"]:has(svg)::after {
+  content: none !important;
+}
+
+/* Mog introduces himself.
+   Hovering the greeting glyph — which this theme has already turned into a
+   moogle — pops a tooltip reading "Hi, I'm Claude…", which rather gives the
+   game away.
+
+   Targeted by .font-claude-response AND .italic: the mascot greeting is the
+   only tooltip carrying both, so ordinary tooltips keep their own text. The
+   original is collapsed with font-size:0 rather than display:none, because the
+   bubble sizes itself to its contents and hiding the text outright would leave
+   the ::after with no box to sit in.
+
+   The screen-reader copy lives in a separate, visually-clipped span[role=
+   "tooltip"] and is deliberately NOT touched — the costume shouldn't lie to
+   assistive tech about who is actually answering. */
+html[data-cct-theme="final-fantasy"]
+  [data-radix-popper-content-wrapper] div.font-claude-response.italic {
+  font-size: 0 !important;
+  font-style: normal !important;
+}
+
+html[data-cct-theme="final-fantasy"]
+  [data-radix-popper-content-wrapper] div.font-claude-response.italic::after {
+  content: "Hi, I\2019m Mog. How can I help you today, kupo?";
+  font-family: var(--ff-pixel-ui);
+  font-size: 11px;
+  line-height: 1.5;
+  font-style: normal;
+  letter-spacing: 0.2px;
+  color: #fff;
+}
+
+/* Wrappers that are width:0 / overflow:hidden until they animate open. */
+html[data-cct-theme="final-fantasy"] div:has(> div > svg[data-cds="Spark"]) {
+  overflow: visible !important;
+  min-width: 40px !important;
+}
+
+/* ------------------------------------------------------ sidebar nav icons */
+
+/* Row-to-icon mapping, and it is NOT a plain nth-of-type run.
+   "New" sits in its own wrapper (div.group.mt-1, 2 children) while Chats
+   through Customize are siblings inside div.contents — so New and Chats are
+   BOTH :nth-of-type(1), which showed the same icon twice and shifted the rest
+   down by one. New is matched by not being a .contents child; the other five
+   count within .contents.
+
+   The tray exclusions matter too: .df-products-block is inside
+   .dframe-sidebar-body, so without them this rule outranks the Design row's own
+   and stamped the "New" coin on it. */
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body button[data-row-main-button]:not(.df-bottom-tray *):not(.df-products-block *) .df-leading-slot {
+  position: relative;
+}
+
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body button[data-row-main-button]:not(.df-bottom-tray *):not(.df-products-block *) .df-leading-slot > * {
+  opacity: 0 !important;
+}
+
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body button[data-row-main-button]:not(.df-bottom-tray *):not(.df-products-block *) .df-leading-slot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  /* 24 from 48 native — an exact 2:1 downscale, so every source pixel maps to
+     the same number of device pixels and the art stays crisp. */
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body button[data-row-main-button]:not(.df-bottom-tray *):not(.df-products-block *):not(.contents > *) .df-leading-slot::after { background-image: var(--yume-nav-0); }   /* New */
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(1) .df-leading-slot::after { background-image: var(--yume-nav-1); }   /* Chats and tasks */
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(2) .df-leading-slot::after { background-image: var(--yume-nav-2); }   /* Projects */
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(3) .df-leading-slot::after { background-image: var(--yume-shop-nav-artifacts); }   /* Artifacts — blue-hood head from shop-items.png */
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(4) .df-leading-slot::after { background-image: var(--yume-nav-4); }   /* Scheduled */
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(5) .df-leading-slot::after { background-image: var(--yume-nav-5); }   /* Customize */
+
+/* ------------------------------------------------------- bottom tray */
+
+/* Design and the account row become their own menu windows, matching the
+   message bubbles and the composer. */
+html[data-cct-theme="final-fantasy"] .df-products-block,
+html[data-cct-theme="final-fantasy"] .df-footer-row {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 6px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+  margin: 4px 6px !important;
+}
+
+html[data-cct-theme="final-fantasy"] .df-user-menu-btn {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Design gets the palette — it reads better than the brush at 24px, where a
+   thin diagonal handle mostly disappears. The Labs badge beside it gets the
+   potion. */
+html[data-cct-theme="final-fantasy"] .df-products-block .df-leading-slot,
+html[data-cct-theme="final-fantasy"] .df-products-block button[data-row-main-button] > span:last-child:not(.df-leading-slot) {
+  position: relative;
+}
+
+html[data-cct-theme="final-fantasy"] .df-products-block .df-leading-slot > *,
+html[data-cct-theme="final-fantasy"] .df-products-block button[data-row-main-button] > span:last-child:not(.df-leading-slot) > * {
+  opacity: 0 !important;
+}
+
+html[data-cct-theme="final-fantasy"] .df-products-block .df-leading-slot::after,
+html[data-cct-theme="final-fantasy"] .df-products-block button[data-row-main-button] > span:last-child:not(.df-leading-slot)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+html[data-cct-theme="final-fantasy"] .df-products-block .df-leading-slot::after {
+  background-image: var(--yume-tray-1);   /* palette */
+}
+
+html[data-cct-theme="final-fantasy"] .df-products-block button[data-row-main-button] > span:last-child:not(.df-leading-slot)::after {
+  width: 16px;
+  height: 16px;
+  background-image: var(--yume-tray-2);   /* potion */
+}
+
+/* --------------------------------------------------- composer hairline */
+
+/* With --border-* set to pure white, any divider Claude draws inside the
+   composer renders as a hard rule instead of a subtle hairline. */
+html[data-cct-theme="final-fantasy"] div[class*="cursor-text"]:has([data-testid="chat-input"]) > div,
+html[data-cct-theme="final-fantasy"] div[class*="cursor-text"]:has([data-testid="chat-input"]) > div > div,
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] > * {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* --------------------------------------------- shop icons on Recents rows */
+
+/* A JRPG shop marks every line with the kind of thing it is. Claude's Recents
+   rows all carry the same speech-bubble glyph, so swap in equipment icons and
+   cycle them by row position — the list then reads as an inventory rather than
+   a column of identical bubbles. */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor .df-leading-slot {
+  position: relative;
+}
+
+/* Hide the stock glyph rather than removing it: the slot is a fixed 28x28 that
+   the row's flex layout measures, and display:none would collapse it. */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor .df-leading-slot > * {
+  opacity: 0 !important;
+}
+
+html[data-cct-theme="final-fantasy"] .df-recents-anchor .df-leading-slot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+1) .df-leading-slot::after { background-image: var(--yume-shop-0); }   /* sword */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+2) .df-leading-slot::after { background-image: var(--yume-shop-1); }   /* axe */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+3) .df-leading-slot::after { background-image: var(--yume-shop-2); }   /* shield */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+4) .df-leading-slot::after { background-image: var(--yume-shop-3); }   /* staff */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+5) .df-leading-slot::after { background-image: var(--yume-shop-4); }   /* flask */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+6) .df-leading-slot::after { background-image: var(--yume-shop-5); }   /* boots */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+7) .df-leading-slot::after { background-image: var(--yume-shop-6); }   /* helm */
+html[data-cct-theme="final-fantasy"] .df-recents-anchor [data-row-key]:nth-of-type(8n+8) .df-leading-slot::after { background-image: var(--yume-shop-7); }   /* gloves */
+
+/* ------------------------------------------------------ sidebar nav block */
+
+/* New / Chats and tasks / Projects / Artifacts / Scheduled / Customize.
+   These rows are <button data-row-main-button>, while Recents rows are <a>,
+   which is what separates the two groups. Scoped to .dframe-sidebar-body so
+   the Design row (same markup, but in .df-bottom-tray) is left alone. */
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body div.shrink-0:has(> div.contents > button[data-row-main-button]):not(.df-bottom-tray):not(.df-products-block) {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 6px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+  padding: 3px !important;
+  margin: 2px 0 6px !important;
+}
+
+/* ------------------------------------------------ banners above composer */
+
+/* Claude drops usage notices and prompts into the sticky strip that holds the
+   composer, and they span its full width — straight under the party. Capping
+   the width keeps the whole banner, close button included, clear of the
+   sprite zone on the right rather than hiding anything. */
+/* ------------------------------------------------- composer control row */
+
+/* Attach files, model picker, settings, mic, voice mode. Restyled as small
+   menu chips — squared corners, keyline, hard drop — but purely cosmetic:
+   no display, pointer-events or layout changes, so every control still works.
+   The send button and the mode pills are excluded; both are handled on their
+   own terms above and below. */
+html[data-cct-theme="final-fantasy"]
+  div[class*="cursor-text"]:has([data-testid="chat-input"])
+  button:not([aria-label*="Send" i]):not(.df-pill) {
+  border: 1px solid rgba(255, 255, 255, 0.42) !important;
+  border-radius: 3px !important;
+  background: linear-gradient(180deg, rgba(84, 114, 214, 0.45), rgba(18, 30, 92, 0.45)) !important;
+  color: #fff !important;
+  font-family: var(--ff-pixel-ui) !important;
+  box-shadow: 0 2px 0 rgba(3, 6, 22, 0.5);
+}
+
+html[data-cct-theme="final-fantasy"]
+  div[class*="cursor-text"]:has([data-testid="chat-input"])
+  button:not([aria-label*="Send" i]):not(.df-pill):hover {
+  border-color: var(--ff-gold) !important;
+  color: var(--ff-gold) !important;
+}
+
+/* Sidebar Home / Code switch as a JRPG segmented menu: the group is the
+   window, the sliding indicator is the highlighted row, active label is gold.
+
+   This comment used to say "Chat / Cowork" — it was wrong. claude.ai ships TWO
+   segmented controls with completely different markup: `.df-pills` is this one,
+   in the sidebar, and the composer's Chat/Cowork is a `[data-cds]` component
+   handled directly below. Because the name was wrong, the composer control was
+   never styled and sat there as a black pill on a brand-new chat, which is the
+   only place it appears. */
+html[data-cct-theme="final-fantasy"] .df-pills {
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 4px !important;
+  background: rgba(8, 14, 52, 0.55) !important;
+  box-shadow: inset 0 0 0 1px rgba(3, 6, 22, 0.6);
+}
+
+html[data-cct-theme="final-fantasy"] .df-pill {
+  border-radius: 3px !important;
+  font-family: var(--ff-pixel-ui) !important;
+  color: hsl(var(--text-300)) !important;
+}
+
+html[data-cct-theme="final-fantasy"] .df-pill[data-active="true"] {
+  color: var(--ff-gold) !important;
+}
+
+html[data-cct-theme="final-fantasy"] .df-pill-indicator {
+  border: 1px solid var(--ff-frame) !important;
+  border-radius: 3px !important;
+  background: linear-gradient(180deg, rgba(96, 128, 232, 0.75), rgba(24, 40, 110, 0.75)) !important;
+}
+
+/* Composer mode switch (Chat / Cowork) — only rendered on a brand-new chat.
+   A different component from .df-pills above: role=radiogroup, two
+   span[role="radio"] labels, and a separately positioned sliding thumb.
+
+   Driven through the component's OWN custom properties rather than overpainted.
+   The track and thumb read their colours from these two variables, so setting
+   them recolours the control without touching the thumb's transform or
+   transition — the slide keeps working untouched. They have to be declared on
+   the group itself: claude.ai sets them on `.dframe-content`, which is a closer
+   ancestor than <html>, so a declaration up at the theme root would lose. */
+html[data-cct-theme="final-fantasy"] [data-cds="SegmentedControl"] {
+  --cds-segmented-control-track: rgba(8, 14, 52, 0.62);
+  --cds-segmented-control-thumb: rgba(96, 128, 232, 0.75);
+  border-radius: 4px !important;
+  /* Two inset rings rather than a border: the group is sized to its contents,
+     and a real border would push the thumb out of alignment with its label. */
+  box-shadow: inset 0 0 0 1px rgba(3, 6, 22, 0.6),
+              0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+/* The label text lives in a nested span carrying its own utility classes, so
+   the colour has to reach descendants too, not just the radio itself. */
+html[data-cct-theme="final-fantasy"] [data-cds="SegmentedControl"] [role="radio"],
+html[data-cct-theme="final-fantasy"] [data-cds="SegmentedControl"] [role="radio"] * {
+  font-family: var(--ff-pixel-ui) !important;
+  color: hsl(var(--text-300)) !important;
+}
+
+html[data-cct-theme="final-fantasy"] [data-cds="SegmentedControl"] [role="radio"][data-checked],
+html[data-cct-theme="final-fantasy"] [data-cds="SegmentedControl"] [role="radio"][data-checked] * {
+  color: var(--ff-gold) !important;
+}
+
+/* The sliding thumb. Keyline via inset shadow, NOT a border: the thumb is
+   positioned with an inline width plus translateX computed from the segment it
+   covers, so a real border would make it 2px wider than its label and the
+   highlight would sit visibly off-centre after every switch. */
+html[data-cct-theme="final-fantasy"] [data-cds="SegmentedControl"] > [aria-hidden="true"] > div {
+  border-radius: 3px !important;
+  background: linear-gradient(180deg, rgba(96, 128, 232, 0.85), rgba(24, 40, 110, 0.85)) !important;
+  box-shadow: inset 0 0 0 1px var(--ff-frame) !important;
+}
+
+/* Tooltips become little menu windows. */
+html[data-cct-theme="final-fantasy"] [role="tooltip"] {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 5px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+  font-family: var(--ff-pixel-ui) !important;
+  color: #fff !important;
+}
+
+/* ------------------------------------------------------------- controls */
+
+/* Deliberately excludes the composer. [role="textbox"] matches the chat input,
+   which lives inside an overflow-y-auto scroller — so the gold ring got clipped
+   to just its top edge and read as a stray rule above the text. */
+html[data-cct-theme="final-fantasy"] button:focus-visible,
+html[data-cct-theme="final-fantasy"] a:focus-visible {
+  outline: 2px solid var(--ff-gold) !important;
+  outline-offset: 2px !important;
+}
+
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"]:focus,
+html[data-cct-theme="final-fantasy"] [data-testid="chat-input"]:focus-visible {
+  outline: none !important;
+}
+
+/* Scrollbar as a menu slider: white rail, gold thumb. */
+html[data-cct-theme="final-fantasy"] ::-webkit-scrollbar-thumb {
+  background: var(--ff-gold) !important;
+  border-radius: 2px !important;
+  box-shadow: inset 0 0 0 1px rgba(3, 6, 22, 0.5);
+}
+html[data-cct-theme="final-fantasy"] ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* -------------------------------------------------------------- scenery */
+
+/* Scenery: corner washes plus the moon, which sits top-right and carries its
+   own halo (baked into the SVG — a CSS filter here would blur the gradients
+   sharing this layer). */
+html[data-cct-theme="final-fantasy"]::before {
+  /* Moon and corner washes only. A full-viewport gradient does NOT belong on
+     this layer: _base.css puts it at z-index 2147483645, i.e. above the whole
+     page, so any wash here veils the message text — that was the "haze". The
+     page gradient now lives on main.dframe-content instead, behind content. */
+  background-image:
+    var(--yume-ff-moon),
+    radial-gradient(1100px 700px at 50% -14%, rgba(72, 116, 255, 0.16), transparent 72%),
+    radial-gradient(900px 620px at -8% 108%, rgba(30, 58, 176, 0.12), transparent 74%);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  /* Viewport-relative inset, not a fixed 60px/22px. A fixed offset is a larger
+     share of a small window, so the moon drifted inward exactly when there was
+     least room for it; scaling by vw/vh keeps it tucked into the corner.
+     clamp() stops it kissing the edge on a phone or floating far in on a 5K. */
+  background-position:
+    right clamp(10px, 3.4vw, 78px) top clamp(8px, 2.2vh, 34px),
+    center, center;
+  background-size: clamp(118px, 14vw, 208px), auto, auto;
+}
+
+/* Only on genuinely tiny viewports — above this it stays clear of the column
+   on its own now that the inset scales. */
+@media (max-width: 560px) {
+  html[data-cct-theme="final-fantasy"]::before { background-image: none, none, none; }
+}
+
+/* main.dframe-content paints an opaque background over body, so this is the
+   surface the page gradient has to live on. background-attachment: fixed
+   anchors it to the viewport — the scroll container is ~50,000px tall, and a
+   scrolling gradient would stretch to nothing.
+
+   The horizon silhouette rides this same element as the FIRST background
+   layer (first = frontmost within the element, still behind every child).
+   That placement is the whole "furthest back" requirement for free:
+   children (composer, messages, banners) paint over it, and the starfields
+   are position:fixed pseudo-elements at z-index 2147483644, far above.
+   Slotted through a custom property so the option toggle swaps one value
+   instead of restating this whole stack. */
+html[data-cct-theme="final-fantasy"] {
+  --ff-horizon: none;
+}
+html[data-cct-theme="final-fantasy"][data-yume-opt~="bottom-scenery"] {
+  --ff-horizon: var(--yume-ff-silhouette);
+}
+
+html[data-cct-theme="final-fantasy"] main.dframe-content {
+  background-image: var(--ff-horizon), linear-gradient(180deg,
+    hsl(226 62% 26%) 0%,
+    hsl(230 64% 18%) 26%,
+    hsl(233 66% 12%) 58%,
+    hsl(234 66% 9%) 100%) !important;
+  background-attachment: fixed, fixed !important;
+  background-repeat: no-repeat, no-repeat !important;
+  /* Right edge pinned to the viewport's right, feet on the bottom: the art is
+     composed with its subjects at the right, so they never leave the screen
+     and a wider window reveals more of the scene's left. Natural size on
+     purpose — scaling to the viewport would defeat that reveal. */
+  background-position: right bottom, center !important;
+  background-size:
+    calc(var(--yume-ff-silhouette-w) * 1px) calc(var(--yume-ff-silhouette-h) * 1px),
+    100% 100% !important;
+}
+
+/* On the aside, not .dframe-sidebar-body: the body starts ~38px down, and the
+   strip above it (collapse trigger, wordmark row) was left showing through as
+   black. Painting the aside covers the whole column; the body then has to be
+   made transparent or it would sit on top with its own flat colour. */
+html[data-cct-theme="final-fantasy"] aside.dframe-sidebar {
+  background-image: linear-gradient(180deg,
+    hsl(228 60% 17%) 0%,
+    hsl(233 64% 11%) 100%) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+
+html[data-cct-theme="final-fantasy"] .dframe-sidebar-body {
+  background: transparent !important;
+}
+
+/* Crystal motes drifting down — the FF answer to falling petals. */
+html[data-cct-theme="final-fantasy"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.75;
+  background-repeat: repeat;
+  background-image: var(--yume-ff-motes);
+  animation: cct-fall 34s linear infinite;
+}
+
+/* ---------------------------------------------------------- starfields */
+
+/* Wide swing on purpose: at 210s/7.4s the original was technically animating
+   but far too slow and too shallow to register as movement. */
+@keyframes ff-twinkle {
+  0%, 100% { opacity: 0.18; }
+  38%      { opacity: 1; }
+  64%      { opacity: 0.32; }
+}
+
+/* Two layers, because opacity animates per element rather than per background
+   layer — one tile could fall or twinkle, but not have some stars do each.
+   Different fall durations also give the sky a bit of parallax depth. */
+html[data-cct-theme="final-fantasy"] body::before,
+html[data-cct-theme="final-fantasy"] body::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483644;
+  will-change: transform;
+  background-repeat: repeat;
+}
+
+/* Far: dense, dim, steady. */
+html[data-cct-theme="final-fantasy"] body::before {
+  background-image: var(--yume-ff-stars-far);
+  opacity: 0.62;
+  animation: cct-fall 72s linear infinite !important;
+}
+
+/* Near: sparse, brighter, and the layer that twinkles. */
+html[data-cct-theme="final-fantasy"] body::after {
+  background-image: var(--yume-ff-stars-near);
+  animation:
+    cct-fall 46s linear infinite,
+    ff-twinkle 4.6s ease-in-out infinite !important;
+}
+
+/* ------------------------------------------------------ shooting stars */
+
+/* Spawned by content.js at random intervals; every custom property below is
+   set per-star so no two share a path. transform-origin sits at the head end
+   and the trail is drawn behind it, so rotating then translating along the
+   element's own X axis sends it along its length — the tail always points back
+   down the path it came from, with no second transform to keep in sync. */
+html[data-cct-theme="final-fantasy"] .yume-shooting-star {
+  position: fixed;
+  z-index: 2147483643;
+  width: var(--len, 140px);
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: 0 50%;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(180, 214, 255, 0) 0%,
+    rgba(190, 224, 255, 0.55) 55%,
+    rgba(236, 248, 255, 0.95) 88%,
+    #ffffff 100%);
+  filter: drop-shadow(0 0 6px rgba(150, 210, 255, 0.85));
+  animation: yume-shoot var(--dur, 1.4s) cubic-bezier(0.25, 0.5, 0.5, 1) forwards;
+}
+
+@keyframes yume-shoot {
+  0%   { transform: rotate(var(--ang, 30deg)) translateX(0); opacity: 0; }
+  12%  { opacity: 1; }
+  72%  { opacity: 1; }
+  100% { transform: rotate(var(--ang, 30deg)) translateX(var(--travel, 100vw)); opacity: 0; }
+}
+
+/* --------------------------------------------------------------- motion */
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-cct-theme="final-fantasy"]::before,
+  html[data-cct-theme="final-fantasy"]::after,
+  html[data-cct-theme="final-fantasy"] body::before,
+  html[data-cct-theme="final-fantasy"] body::after,
+  html[data-cct-theme="final-fantasy"] div[class*="cursor-text"]:has([data-testid="chat-input"]),
+  html[data-cct-theme="final-fantasy"] div[class*="cursor-text"]:has([data-testid="chat-input"])::before,
+  html[data-cct-theme="final-fantasy"]:has(div[data-is-streaming="true"])
+    div[class*="cursor-text"]:has([data-testid="chat-input"])::before,
+  html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-latest],
+  html[data-cct-theme="final-fantasy"] div[data-is-streaming][data-yume-reply]::before,
+  html[data-cct-theme="final-fantasy"] .yume-party-member,
+    html[data-cct-theme="final-fantasy"] .yume-shooting-star,
+  html[data-cct-theme="final-fantasy"] div:has(> svg[data-cds="Spark"])::after,
+      html[data-cct-theme="final-fantasy"] a[data-row-main-button]:hover::before {
+    animation: none !important;
+  }
+}
+
+/* The CODE tab's sidebar has four rows — New, Artifacts, Customize, More —
+   sharing the Home markup, so the positional mapping above dressed them in
+   Home's icons for those positions (Artifacts wore Projects' book, Customize
+   wore Artifacts' hood, More wore Scheduled's clock). data-frame-mode="code"
+   on the app root scopes a corrected set; higher specificity wins over the
+   Home rules. */
+html[data-cct-theme="final-fantasy"] .dframe-root[data-frame-mode="code"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(1) .df-leading-slot::after { background-image: var(--yume-nav-0); }               /* New — palette, as on Home */
+html[data-cct-theme="final-fantasy"] .dframe-root[data-frame-mode="code"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(2) .df-leading-slot::after { background-image: var(--yume-shop-nav-artifacts); } /* Artifacts — blue hood */
+html[data-cct-theme="final-fantasy"] .dframe-root[data-frame-mode="code"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(3) .df-leading-slot::after { background-image: var(--yume-nav-5); }               /* Customize — suitcase, as on Home */
+html[data-cct-theme="final-fantasy"] .dframe-root[data-frame-mode="code"] .dframe-sidebar-body .contents > button[data-row-main-button]:nth-of-type(4) .df-leading-slot::after { background-image: var(--yume-shop-nav-more); }       /* More — the frog */
+
+/* On a fresh Home chat the greeting ("What can we tackle together?") can run
+   to two lines, straight through the two leftmost party members. Those two
+   KNEEL there — pose 4, the battle sheet's crouch, already in the strips —
+   and stand back up the moment a conversation starts (.font-display only
+   exists on the empty view). Clicks and chocobo falls still override via
+   data-pose, so every animation works unchanged; they simply return to the
+   kneel instead of the stand while the greeting is up. */
+html[data-cct-theme="final-fantasy"]:has(.font-display) .yume-party-member[data-member="0"][data-pose="idle"],
+html[data-cct-theme="final-fantasy"]:has(.font-display) .yume-party-member[data-member="1"][data-pose="idle"] {
+  animation: none !important;
+  background-position-x: calc(4 / (var(--yume-party-poses) - 1) * 100%);
+}
+
+/* Anthropicons PUA glyphs adopted as sprites (content.js stamps
+   data-yume-icon on the host span): Routines' bolt, Dispatch's hourglass,
+   Customize-sidebar's star. The glyph is kept for layout but made
+   transparent; the sprite draws over it. */
+html[data-cct-theme="final-fantasy"] [data-yume-icon] {
+  color: transparent !important;
+  position: relative;
+}
+html[data-cct-theme="final-fantasy"] [data-yume-icon]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px;
+  height: 18px;
+  background: center / contain no-repeat;
+  image-rendering: pixelated;
+}
+html[data-cct-theme="final-fantasy"] [data-yume-icon="bolt"]::after { background-image: var(--yume-shop-icon-bolt); }
+html[data-cct-theme="final-fantasy"] [data-yume-icon="hourglass"]::after { background-image: var(--yume-shop-icon-hourglass); }
+html[data-cct-theme="final-fantasy"] [data-yume-icon="star"]::after { background-image: var(--yume-shop-icon-star); }
+html[data-cct-theme="final-fantasy"] [data-yume-icon="artifacts"]::after { background-image: var(--yume-shop-nav-artifacts); }
+html[data-cct-theme="final-fantasy"] [data-yume-icon="case"]::after { background-image: var(--yume-nav-5); }
+
+/* ------------------------------------------------- cowork footer tray */
+
+/* The strip under the composer in Cowork mode (Project / Manual / usage).
+   Matched on two of its utility classes: bg-surface-1 is what paints the
+   opaque grey band that broke the illusion, and rounded-b-[20px] is what
+   distinguishes this strip from every other bg-surface-1 panel. Styled as a
+   second menu window stacked under the composer. */
+html[data-cct-theme="final-fantasy"] div[class*="rounded-b-["][class*="bg-surface-1"] {
+  background: var(--ff-window) !important;
+  box-shadow: inset 0 0 0 2px var(--ff-frame), var(--ff-frame-shadow) !important;
+  border-radius: 0 0 5px 5px !important;
+  color: #fff !important;
+}
+
+/* The tray's icons are NOT svg — they are Private Use Area codepoints
+   (U+E027, U+E085 …) rendered from Anthropicons-Variable. Overriding
+   font-family here without naming that font turns every one of them into
+   tofu. Listing it after the pixel face fixes that for free: font fallback is
+   per-character, and the pixel font has no glyphs in the PUA, so the icon
+   codepoints fall through to Anthropicons while the labels render in pixels. */
+html[data-cct-theme="final-fantasy"] div[class*="rounded-b-["][class*="bg-surface-1"],
+html[data-cct-theme="final-fantasy"] div[class*="rounded-b-["][class*="bg-surface-1"] * {
+  font-family: var(--ff-pixel-ui), "Anthropicons-Variable" !important;
+}
+
+html[data-cct-theme="final-fantasy"] div[class*="rounded-b-["][class*="bg-surface-1"] button:hover {
+  color: var(--ff-gold) !important;
+}
+
+/* ------------------------------------------- optional: colourful text */
+
+/* OFF by default; switched on per-theme from the popup (⚙ on the card), which
+   stamps data-yume-opt on <html>. See themes/themes.json -> options.
+
+   Picks out markdown structure the way an old JRPG menu picks out keywords:
+   gold for emphasis, cyan for italics, magenta for headings, green for code.
+   Scoped to the reply body so the user's own message bubbles, the composer and
+   the sidebar are untouched. */
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response strong,
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response b {
+  color: var(--ff-gold) !important;
+  text-shadow: 1px 1px 0 rgba(3, 6, 22, 0.8);
+}
+
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response em,
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response i {
+  color: var(--ff-crystal-cyan) !important;
+  font-style: italic !important;
+}
+
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response h1,
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response h2,
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response h3,
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response h4 {
+  color: #ff8ad8 !important;
+  text-shadow: 1px 1px 0 rgba(3, 6, 22, 0.85);
+}
+
+/* Inline code only. Fenced blocks keep their own syntax highlighting, which
+   this would otherwise flatten to one colour. */
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response code:not(pre code) {
+  color: #7ce8a4 !important;
+}
+
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response a {
+  color: #9db4ff !important;
+  text-decoration-color: rgba(157, 180, 255, 0.5) !important;
+}
+
+/* List markers pick up the gold too, which is what makes a bulleted list read
+   as a JRPG menu rather than a document. */
+html[data-cct-theme="final-fantasy"][data-yume-opt~="rich-text"] .font-claude-response li::marker {
+  color: var(--ff-gold) !important;
+}
+
+/* -------------------------------------------------------------- chocobo */
+
+/* Drive-by easter egg. content.js spawns one of three runs every few
+   minutes; all share the two-frame sprint cycle below. The art faces LEFT
+   natively, so rightward runs carry scaleX(-1) inside their keyframes —
+   written as translateX(..) scaleX(-1), which mirrors the sprite in place
+   and then translates it, keeping the maths readable. */
+@keyframes ff-choco-gait {
+  0%, 49.99% { background-position-x: 0%; }
+  50%, 100%  { background-position-x: 100%; }
+}
+
+html[data-cct-theme="final-fantasy"] .yume-choco {
+  position: absolute;
+  width: calc(var(--yume-ff-choco-w) * 2px);
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  background-image: var(--yume-ff-choco);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+/* Variant A — the full parkour route: in along the bottom of the screen,
+   a leap onto the composer, across the top THROUGH the party (z-index 39
+   keeps it one layer behind the members at 40), a leap off the right edge,
+   and out along the bottom. The geometry differs per viewport and composer
+   size, so the TRAJECTORY is measured and driven by content.js through the
+   Web Animations API — this wrapper only sets the stage. The inner sprite
+   keeps the CSS gait and the rightward mirror, so WAAPI composes cleanly on
+   the wrapper without ever fighting the sprite's own transform. */
+html[data-cct-theme="final-fantasy"] .yume-choco-a {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--yume-ff-choco-w) * 2px);
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  z-index: 39;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5));
+}
+
+html[data-cct-theme="final-fantasy"] .yume-choco-a .yume-choco,
+html[data-cct-theme="final-fantasy"] .yume-choco-sky .yume-choco {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(-1);   /* art faces left; this run goes right */
+  animation: ff-choco-gait 0.22s steps(1) infinite;
+}
+
+/* The parkour's ground and leap segments. A composer-child bird gets clipped
+   the moment it leaves the content column — claude.ai wraps the app in
+   overflow-hidden scroll containers (measured live: the chat scroller alone
+   eats everything left of its own edge), which is why the b/c runs always
+   showed while the parkour never did. position: fixed on <body> escapes every
+   ancestor clip; the z sits one notch under the starfields so the bird stays
+   behind the falling stars but above the page. The crossing segment still
+   belongs to the composer-child bird (z 39, behind the party) — the two hand
+   off at the leap landings, where their positions coincide exactly. */
+html[data-cct-theme="final-fantasy"] .yume-choco-sky {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: calc(var(--yume-ff-choco-w) * 2px);
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  z-index: 2147483643;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5));
+}
+
+/* Variants B/C — behind the composer's text, hugging its top line. The clip
+   wrapper does the "emerging from behind the frame edge" reveal: overflow
+   hidden, so the sprite is disclosed pixel by pixel at one edge and swallowed
+   at the other. z-index -1 works because claude.ai's composer is already a
+   stacking context (relative z-[1]): a negative child paints above the
+   composer's own background but below all of its content, so typing always
+   reads over the bird. */
+html[data-cct-theme="final-fantasy"] .yume-choco-clip {
+  position: absolute;
+  top: 3px;
+  left: 8px;
+  right: 8px;
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes ff-choco-run-b {
+  from { transform: translateX(var(--choco-dist, 800px)); }
+  to   { transform: translateX(calc(var(--yume-ff-choco-w) * -2px)); }
+}
+@keyframes ff-choco-run-c {
+  from { transform: translateX(calc(var(--yume-ff-choco-w) * -2px)) scaleX(-1); }
+  to   { transform: translateX(var(--choco-dist, 800px)) scaleX(-1); }
+}
+
+html[data-cct-theme="final-fantasy"] .yume-choco-b {
+  animation:
+    ff-choco-gait 0.22s steps(1) infinite,
+    ff-choco-run-b var(--choco-dur, 4.2s) linear forwards;
+}
+html[data-cct-theme="final-fantasy"] .yume-choco-c {
+  animation:
+    ff-choco-gait 0.22s steps(1) infinite,
+    ff-choco-run-c var(--choco-dur, 4.2s) linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-cct-theme="final-fantasy"] .yume-choco,
+  html[data-cct-theme="final-fantasy"] .yume-choco-clip,
+  html[data-cct-theme="final-fantasy"] .yume-choco-sky {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------- Claude Code tab */
+
+/* claude.ai/code is a different app shell (the "epitaxy" design system): the
+   composer is .epitaxy-prompt, transcripts are epitaxy-* blocks, and none of
+   the Home-tab hooks (.cursor-text, [data-testid="chat-input"],
+   .font-claude-response, [data-is-streaming]) exist. Everything below gives
+   the code tab the same treatment the Home composer gets; content.js's
+   composer() also accepts .epitaxy-prompt, which is what routes the party and
+   the chocobo here. */
+
+/* The prompt box becomes the menu window, with the same breathing glow.
+   Only the REAL composer: the code tab also ships a compact prompt variant
+   (marked by its --prompt-compact-bg token) that wraps things like the
+   repo/branch chip row — framing that drew a long stray window above the
+   composer. The compact family stays unframed. */
+html[data-cct-theme="final-fantasy"] .epitaxy-prompt:not([class*="prompt-compact-bg"]) {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ff-frame-shadow);
+  /* A stacking context, so the chocobo's clipped runs can sit at z-index -1 —
+     above this window's own background, below the text being typed. The Home
+     composer gets this from claude.ai itself (relative z-[1]); here it has to
+     be granted. */
+  z-index: 0 !important;
+  animation: ff-breathe 4.2s ease-in-out infinite;
+}
+
+html[data-cct-theme="final-fantasy"] .epitaxy-prompt .tiptap,
+html[data-cct-theme="final-fantasy"] .epitaxy-prompt .tiptap * {
+  font-family: var(--ff-body) !important;
+}
+
+/* The peeking Lottie critter on the prompt's shoulder. Charming, but that
+   perch belongs to the party now — and two mascots is one too many. */
+html[data-cct-theme="final-fantasy"] .epitaxy-composer-width div.pointer-events-none > button[aria-hidden="true"][tabindex="-1"] {
+  display: none !important;
+}
+
+/* Working indicators: the code tab marks "busy" with pulsing accent dots
+   (titlebar status, step rows like "Cloning repository"). Each one becomes a
+   working Mog, exactly like the Home status row — original hidden, moogle
+   drawn in the slot, and the hop cadence replaces the opacity pulse. */
+html[data-cct-theme="final-fantasy"] .epitaxy-root span[class*="text-accent"][class*="animate-pulse"] {
+  color: transparent !important;
+  animation: none !important;
+  position: relative;
+}
+html[data-cct-theme="final-fantasy"] .epitaxy-root span[class*="text-accent"][class*="animate-pulse"] > * {
+  opacity: 0 !important;
+}
+html[data-cct-theme="final-fantasy"] .epitaxy-root span[class*="text-accent"][class*="animate-pulse"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: calc(var(--yume-ff-moogle-w) * 1px);
+  height: calc(var(--yume-ff-moogle-h) * 1px);
+  transform: translateX(-50%);
+  background-image: var(--yume-ff-moogle);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation: ff-moogle-frames 0.62s steps(1) infinite;
+}
+
+/* The scroll-edge scrims fade content under the titlebar and over the
+   composer — hardcoded to the stock page colour (rgb(32,32,31)), so on the
+   starfield they read as two dirty black smudges. The sky needs no fading. */
+html[data-cct-theme="final-fantasy"] .epitaxy-top-scrim,
+html[data-cct-theme="final-fantasy"] .epitaxy-bottom-scrim {
+  display: none !important;
+}
+
+/* The prompt paints its fill through a NEGATIVE-z child (absolute inset-0
+   -z-[1]: grey background + inset rings) which sits above the window gradient
+   on the element itself — the "two different shades" inner box. Cleared, the
+   menu window and its white frame are the only paint. */
+html[data-cct-theme="final-fantasy"] .epitaxy-prompt > div.absolute.inset-0 {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* The transcript's working spark is not an svg: it is an 18px window
+   (span.inline-block.overflow-hidden) over a tall vertical sprite STRIP,
+   drawn via mask-image in currentcolor. Hide the strip, free the window's
+   clipping, and let Mog work the slot. */
+html[data-cct-theme="final-fantasy"] .epitaxy-root span.inline-block.overflow-hidden.shrink-0:has(> div[style*="mask-image"][style*="currentcolor"]) {
+  overflow: visible !important;
+  position: relative;
+}
+html[data-cct-theme="final-fantasy"] .epitaxy-root span.inline-block.overflow-hidden.shrink-0:has(> div[style*="mask-image"][style*="currentcolor"]) > div {
+  /* display, NOT visibility: the strip is ~1500px tall, and a hidden-but-
+     laid-out box inside the now-unclipped window still counts toward every
+     ancestor scroller's scrollable height. Shipping visibility:hidden here
+     inflated the transcript's scroll range by the strip's full length each
+     time the spark mounted — the scroller compensated, the glyph re-rendered,
+     and the page "popped from the top" while the scrollbar grew in a loop.
+     display:none removes the box; nothing to overflow. */
+  display: none !important;
+}
+html[data-cct-theme="final-fantasy"] .epitaxy-root span.inline-block.overflow-hidden.shrink-0:has(> div[style*="mask-image"][style*="currentcolor"])::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: calc(var(--yume-ff-moogle-w) * 1px);
+  height: calc(var(--yume-ff-moogle-h) * 1px);
+  transform: translateX(-50%);
+  background-image: var(--yume-ff-moogle);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation: ff-moogle-frames 0.62s steps(1) infinite;
+}
+
+/* The code composer's Send button is 24px wide and sits only 10px off the
+   window's right border; the 40px hand sprite is centered on its button by
+   default, so its right half (and glow) hung past the frame. Anchoring the
+   sprite's right edge to the button pulls the whole hand inboard — it now
+   points left into the text from just inside the border. */
+html[data-cct-theme="final-fantasy"] .epitaxy-prompt button[aria-label*="Send" i]::after {
+  left: auto;
+  right: 0;
+}
+
+/* The sidebar's "Send feedback" button matches the send-hand rule by its
+   aria-label, which put a pointing hand beside the profile row. It gets the
+   menu crystal instead — half-scale (2 source px per screen px, still crisp
+   under pixelated rendering) to sit inside the 32px button. */
+html[data-cct-theme="final-fantasy"] button[aria-label*="feedback" i]::after {
+  background-image: var(--yume-ff-menu-crystal);
+  width: calc(var(--yume-ff-menu-crystal-w) * 0.5px);
+  height: calc(var(--yume-ff-menu-crystal-h) * 0.5px);
+  transform: none;              /* the hand's mirror flip does not apply */
+  filter: drop-shadow(0 0 5px rgba(139, 234, 255, 0.5));
+}
+
+/* The user's turns get the user window, matching Home's message bubbles.
+   On the INNER bubble, not .epitaxy-user-turn itself: the turn is a flex
+   column of [message bubble] + [a 24px hover-actions row], and framing the
+   whole column boxed that empty strip in with the text — the "second empty
+   row" under every question. The bubble is identified by the design token it
+   paints with, which is more stable than its utility soup. */
+html[data-cct-theme="final-fantasy"] .epitaxy-user-turn > div[class*="user-message-background"] {
+  background: var(--ff-window-user) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ff-frame-shadow);
+}
+
+/* The party bobs while the code tab is working — the pulsing dot IS the
+   "Claude is busy" signal here, standing in for Home's data-is-streaming. */
+html[data-cct-theme="final-fantasy"]:has(.epitaxy-root span[class*="text-accent"][class*="animate-pulse"]) .yume-party-member[data-pose="idle"] {
+  animation: ff-member-idle 0.92s steps(1) infinite;
+  animation-delay: var(--party-phase, 0s);
+}

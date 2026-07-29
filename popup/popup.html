@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yume Forge</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div class="title-row">
+      <h1>Yume Forge</h1>
+      <span id="current-badge" class="current-badge"></span>
+    </div>
+    <nav id="chips" class="chips"></nav>
+  </header>
+
+  <button id="reset" class="reset-row">
+    <span>🤎 Claude Default</span>
+    <span class="reset-hint">reset</span>
+  </button>
+
+  <main id="theme-list"></main>
+
+  <footer>
+    <button id="import-theme" class="studio-btn">📥 Import a theme</button>
+    <button id="paste-theme" class="contact-btn" title="Paste a YUME1: code">Paste code</button>
+    <!-- Kept out of the tab order and off-screen; the button above drives it. -->
+    <input id="import-file" type="file" accept=".json,.txt,.zip,application/json,text/plain,application/zip" hidden />
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="../lib/theme-engine.js"></script>
+  <script src="../lib/packer.js"></script>
+  <script src="../lib/themezip.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

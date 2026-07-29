@@ -1,0 +1,40 @@
+/* Claude Themes — "dracula" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="dracula"],
+html[data-cct-theme="dracula"] * {
+  --bg-000: 232 14% 22% !important;
+  --bg-100: 231 15% 18% !important;
+  --bg-200: 232 16% 15% !important;
+  --bg-300: 233 17% 12% !important;
+  --bg-400: 234 18% 9% !important;
+  --bg-500: 234 18% 9% !important;
+  --accent-brand: 326 100% 74% !important;
+  --accent-000: 265 89% 78% !important;
+  --accent-100: 265 76% 66% !important;
+  --accent-200: 265 76% 66% !important;
+  --accent-900: 265 45% 24% !important;
+  --brand-000: 326 88% 66% !important;
+  --brand-100: 326 100% 74% !important;
+  --brand-200: 326 100% 74% !important;
+  --brand-900: 326 40% 16% !important;
+  --border-100: 265 55% 86% !important;
+  --border-200: 265 55% 86% !important;
+  --border-300: 265 55% 86% !important;
+  --border-400: 265 55% 86% !important;
+  --text-000: 60 30% 96% !important;
+  --text-100: 60 30% 96% !important;
+  --text-200: 60 10% 80% !important;
+  --text-300: 60 10% 80% !important;
+  --text-400: 232 10% 62% !important;
+  --text-500: 232 10% 62% !important;
+  --pictogram-100: 232 13% 34% !important;
+  --pictogram-200: 232 14% 27% !important;
+  --pictogram-300: 232 14% 22% !important;
+  --pictogram-400: 231 15% 18% !important;
+}
+
+html[data-cct-theme="dracula"]::before {
+  background:
+    radial-gradient(760px 520px at -5% -5%, hsl(265 80% 60% / 0.2), transparent 70%),
+    radial-gradient(760px 520px at 105% 108%, hsl(326 90% 62% / 0.18), transparent 70%);
+}

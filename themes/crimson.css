@@ -1,0 +1,50 @@
+/* Claude Themes — "crimson" 🩸 black & blood red, pulsing glow. Shared rules: _base.css */
+
+html[data-cct-theme="crimson"],
+html[data-cct-theme="crimson"] * {
+  --bg-000: 0 25% 10% !important;
+  --bg-100: 0 28% 7.5% !important;
+  --bg-200: 0 30% 6% !important;
+  --bg-300: 0 32% 4.5% !important;
+  --bg-400: 0 35% 3% !important;
+  --bg-500: 0 35% 3% !important;
+  --accent-brand: 0 85% 55% !important;
+  --accent-000: 0 90% 70% !important;
+  --accent-100: 0 82% 58% !important;
+  --accent-200: 0 82% 58% !important;
+  --accent-900: 0 55% 19% !important;
+  --brand-000: 0 78% 50% !important;
+  --brand-100: 0 85% 55% !important;
+  --brand-200: 0 85% 55% !important;
+  --brand-900: 0 45% 11% !important;
+  --border-100: 0 45% 80% !important;
+  --border-200: 0 45% 80% !important;
+  --border-300: 0 45% 80% !important;
+  --border-400: 0 45% 80% !important;
+  --text-000: 0 20% 95% !important;
+  --text-100: 0 20% 95% !important;
+  --text-200: 0 10% 77% !important;
+  --text-300: 0 10% 77% !important;
+  --text-400: 0 6% 58% !important;
+  --text-500: 0 6% 58% !important;
+  --pictogram-100: 0 22% 22% !important;
+  --pictogram-200: 0 24% 16% !important;
+  --pictogram-300: 0 25% 10% !important;
+  --pictogram-400: 0 28% 7.5% !important;
+}
+
+html[data-cct-theme="crimson"]::before {
+  background:
+    radial-gradient(130% 100% at 50% 50%, transparent 55%, hsl(0 60% 6% / 0.5) 100%),
+    radial-gradient(720px 460px at 104% -6%, hsl(0 80% 40% / 0.16), transparent 70%);
+}
+
+html[data-cct-theme="crimson"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  background: radial-gradient(900px 300px at 50% 116%, hsl(0 90% 45% / 0.22), transparent 75%);
+  animation: cct-pulse 7s ease-in-out infinite alternate;
+}

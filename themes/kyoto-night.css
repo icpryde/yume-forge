@@ -1,0 +1,41 @@
+/* Claude Themes — "kyoto-night" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="kyoto-night"],
+html[data-cct-theme="kyoto-night"] * {
+  --bg-000: 240 18% 16.5% !important;
+  --bg-100: 240 20% 12.5% !important;
+  --bg-200: 241 22% 10% !important;
+  --bg-300: 242 24% 7.5% !important;
+  --bg-400: 243 28% 5% !important;
+  --bg-500: 243 28% 5% !important;
+  --accent-brand: 5 74% 58% !important;
+  --accent-000: 5 82% 70% !important;
+  --accent-100: 5 74% 58% !important;
+  --accent-200: 5 74% 58% !important;
+  --accent-900: 5 50% 22% !important;
+  --brand-000: 5 68% 54% !important;
+  --brand-100: 5 74% 58% !important;
+  --brand-200: 5 74% 58% !important;
+  --brand-900: 5 30% 12% !important;
+  --border-100: 240 25% 84% !important;
+  --border-200: 240 25% 84% !important;
+  --border-300: 240 25% 84% !important;
+  --border-400: 240 25% 84% !important;
+  --text-000: 40 32% 96% !important;
+  --text-100: 40 32% 96% !important;
+  --text-200: 40 14% 77% !important;
+  --text-300: 40 14% 77% !important;
+  --text-400: 240 8% 60% !important;
+  --text-500: 240 8% 60% !important;
+  --pictogram-100: 240 15% 30% !important;
+  --pictogram-200: 240 17% 24% !important;
+  --pictogram-300: 240 18% 16.5% !important;
+  --pictogram-400: 240 20% 12.5% !important;
+}
+
+html[data-cct-theme="kyoto-night"]::before {
+  background:
+    radial-gradient(circle 120px at 85% 13%, hsl(5 80% 62% / 0.3) 62%, transparent 64%),
+    radial-gradient(circle 320px at 85% 13%, hsl(5 80% 60% / 0.16), transparent 70%),
+    radial-gradient(850px 550px at -5% 105%, hsl(255 60% 42% / 0.24), transparent 70%);
+}

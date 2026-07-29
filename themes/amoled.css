@@ -1,0 +1,36 @@
+/* Claude Themes — "amoled" 🖤 true black OLED, mint accent. Shared rules: _base.css */
+
+html[data-cct-theme="amoled"],
+html[data-cct-theme="amoled"] * {
+  --bg-000: 0 0% 7% !important;
+  --bg-100: 0 0% 4% !important;
+  --bg-200: 0 0% 2.5% !important;
+  --bg-300: 0 0% 1.5% !important;
+  --bg-400: 0 0% 0% !important;
+  --bg-500: 0 0% 0% !important;
+  --accent-brand: 160 85% 45% !important;
+  --accent-000: 160 90% 55% !important;
+  --accent-100: 160 85% 42% !important;
+  --accent-200: 160 85% 42% !important;
+  --accent-900: 162 60% 14% !important;
+  --brand-000: 160 78% 42% !important;
+  --brand-100: 160 85% 45% !important;
+  --brand-200: 160 85% 45% !important;
+  --brand-900: 160 40% 9% !important;
+  --border-100: 0 0% 88% !important;
+  --border-200: 0 0% 88% !important;
+  --border-300: 0 0% 88% !important;
+  --border-400: 0 0% 88% !important;
+  --text-000: 0 0% 98% !important;
+  --text-100: 0 0% 96% !important;
+  --text-200: 0 0% 79% !important;
+  --text-300: 0 0% 79% !important;
+  --text-400: 0 0% 57% !important;
+  --text-500: 0 0% 57% !important;
+  --pictogram-100: 0 0% 20% !important;
+  --pictogram-200: 0 0% 13% !important;
+  --pictogram-300: 0 0% 7% !important;
+  --pictogram-400: 0 0% 4% !important;
+}
+
+/* Deliberately no scenery, no particles — pure black minimalism. */

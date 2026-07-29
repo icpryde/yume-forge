@@ -1,0 +1,364 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+  background: #17161a;
+  color: #f2efe9;
+}
+
+header {
+  padding: 14px 16px 10px;
+  position: sticky;
+  top: 0;
+  background: #17161a;
+  z-index: 2;
+  border-bottom: 1px solid #232127;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.current-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d97757;
+  background: #d977571a;
+  border: 1px solid #d9775740;
+  border-radius: 999px;
+  padding: 3px 10px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  flex: 0 0 auto;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #a7a19a;
+  background: #211f25;
+  border: 1px solid #2c2a30;
+  border-radius: 999px;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.chip:hover { border-color: #4d4954; color: #e8e4dd; }
+.chip.active {
+  color: #17161a;
+  background: #e8e4dd;
+  border-color: #e8e4dd;
+}
+
+.reset-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 24px);
+  margin: 10px 12px 0;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: inherit;
+  background: #1e1d22;
+  border: 1.5px solid #2c2a30;
+  border-radius: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+.reset-row:hover { border-color: #55515c; }
+.reset-row.active { border-color: #d97757; }
+.reset-hint { font-size: 10.5px; color: #8c8781; font-weight: 500; }
+.reset-row.active .reset-hint { color: #d97757; }
+
+main {
+  padding: 2px 12px 12px;
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #8c8781;
+  margin: 14px 2px 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* The card is a container now, not the button: custom themes need edit and
+   delete controls that sit outside the "select this theme" hit area. */
+.theme-card {
+  position: relative;
+  border: 1.5px solid #2c2a30;
+  border-radius: 12px;
+  background: #1e1d22;
+  transition: border-color 0.12s ease, transform 0.08s ease;
+  overflow: hidden;
+}
+
+.theme-pick {
+  display: block;
+  width: 100%;
+  padding: 10px 10px 9px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+}
+
+.theme-card:hover {
+  border-color: #55515c;
+  transform: translateY(-1px);
+}
+
+.theme-card.active {
+  border-color: #d97757;
+}
+
+.theme-card.active::after {
+  content: "✓";
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #d97757;
+}
+
+/* Mini preview: a tiny mock chat window */
+.preview {
+  border-radius: 8px;
+  height: 52px;
+  margin-bottom: 8px;
+  padding: 7px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.preview .line {
+  height: 5px;
+  border-radius: 3px;
+  width: 78%;
+  opacity: 0.55;
+}
+
+.preview .line.short {
+  width: 45%;
+}
+
+.preview .bubble {
+  align-self: flex-end;
+  height: 10px;
+  width: 38%;
+  border-radius: 5px;
+}
+
+.theme-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.theme-mode {
+  font-size: 10px;
+  color: #8c8781;
+  margin-top: 1px;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px 11px;
+  font-size: 10.5px;
+  color: #6f6a63;
+  border-top: 1px solid #26242a;
+}
+
+.contact-btn {
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #a7a19a;
+  background: #211f25;
+  border: 1px solid #2c2a30;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.contact-btn:hover {
+  color: #e8e4dd;
+  border-color: #55515c;
+}
+
+/* --- custom-theme affordances ------------------------------------------- */
+
+/* Revealed on hover so the grid stays calm at rest. */
+.card-tools {
+  position: absolute;
+  top: 6px;
+  left: 7px;
+  display: flex;
+  gap: 4px;
+  /* Was hidden until hover, which suited edit/delete — you go looking for those.
+     Export is the opposite: it's the answer to "how do I share this?", so it has
+     to be visible without knowing it's there. Dimmed, not hidden. */
+  opacity: 0.45;
+  transition: opacity 0.12s ease;
+}
+.theme-card:hover .card-tools { opacity: 1; }
+
+.tool {
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1;
+  color: #e8e4dd;
+  background: #0009;
+  border: 1px solid #ffffff2e;
+  border-radius: 6px;
+  padding: 4px 5px;
+  cursor: pointer;
+  backdrop-filter: blur(3px);
+}
+.tool:hover { background: #000c; border-color: #ffffff5c; }
+
+/* Export is on every card, so the tools row is no longer custom-only. Keep it
+   discoverable without it sitting on top of the artwork all the time: fade in
+   on hover as before, but also on keyboard focus, which hover never reaches. */
+.card-tools:focus-within { opacity: 1; }
+
+/* Inline settings panel. Expands inside the card rather than opening another
+   surface: with a single toggle, a separate page or a context menu would be
+   more navigation than content. */
+.theme-card.has-settings { grid-column: 1 / -1; }
+
+.theme-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 9px 10px 10px;
+  border-top: 1px solid #ffffff1f;
+  background: #ffffff08;
+}
+
+.opt-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+.opt-row input[type="checkbox"] {
+  margin: 1px 0 0;
+  accent-color: #c9a227;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+.opt-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.opt-label { font-size: 11px; color: #efece6; line-height: 1.25; }
+.opt-hint { font-size: 10px; color: #9b968c; line-height: 1.3; }
+
+/* Chocobo preview row in the settings panel. */
+.opt-preview { align-items: center; justify-content: space-between; cursor: default; }
+.opt-preview-label { font-size: 11px; color: #efece6; line-height: 1.25; }
+.opt-preview-btns { display: flex; gap: 4px; flex: 0 0 auto; }
+.opt-preview-btn {
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  color: #e8e4dd;
+  background: #2a2833;
+  border: 1px solid #3a3744;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.opt-preview-btn:hover { border-color: #c9a227; color: #ffd75e; }
+
+/* Toast — export/import are the only actions here with no visible result on
+   the card itself, so they need to say what happened. */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 56px;
+  transform: translate(-50%, 8px);
+  max-width: calc(100% - 28px);
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #f2efe9;
+  background: #16161acc;
+  border: 1px solid #ffffff26;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  z-index: 10;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.bad { border-color: #ff8f8f5c; color: #ffd9d9; }
+
+@media (prefers-reduced-motion: reduce) {
+  .toast { transition: none; }
+}
+
+.studio-btn {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: #17161a;
+  background: #e8e4dd;
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: filter 0.12s ease;
+}
+.studio-btn:hover { filter: brightness(1.06); }
+
+.empty-note {
+  color: #6f6a63;
+  font-size: 12px;
+  padding: 18px 4px;
+  text-align: center;
+}

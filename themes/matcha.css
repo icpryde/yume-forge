@@ -1,0 +1,40 @@
+/* Claude Themes — "matcha" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="matcha"],
+html[data-cct-theme="matcha"] * {
+  --bg-000: 90 45% 99% !important;
+  --bg-100: 88 38% 96% !important;
+  --bg-200: 87 34% 92.5% !important;
+  --bg-300: 86 30% 89.5% !important;
+  --bg-400: 85 27% 85.5% !important;
+  --bg-500: 85 27% 85.5% !important;
+  --accent-brand: 96 44% 40% !important;
+  --accent-000: 96 52% 30% !important;
+  --accent-100: 96 48% 36% !important;
+  --accent-200: 96 48% 36% !important;
+  --accent-900: 96 45% 90% !important;
+  --brand-000: 96 42% 36% !important;
+  --brand-100: 96 42% 36% !important;
+  --brand-200: 96 44% 40% !important;
+  --brand-900: 100 30% 10% !important;
+  --border-100: 96 30% 22% !important;
+  --border-200: 96 30% 22% !important;
+  --border-300: 96 30% 22% !important;
+  --border-400: 96 30% 22% !important;
+  --text-000: 100 28% 13% !important;
+  --text-100: 100 28% 13% !important;
+  --text-200: 100 13% 31% !important;
+  --text-300: 100 13% 31% !important;
+  --text-400: 96 8% 45% !important;
+  --text-500: 96 8% 45% !important;
+  --pictogram-100: 85 27% 85.5% !important;
+  --pictogram-200: 84 24% 80% !important;
+  --pictogram-300: 90 45% 99% !important;
+  --pictogram-400: 88 38% 96% !important;
+}
+
+html[data-cct-theme="matcha"]::before {
+  background:
+    radial-gradient(820px 520px at 103% -8%, hsl(96 50% 80% / 0.4), transparent 70%),
+    radial-gradient(900px 520px at -8% 108%, hsl(96 40% 75% / 0.34), transparent 70%);
+}

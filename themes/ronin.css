@@ -1,0 +1,41 @@
+/* Claude Themes — "ronin" ⚔️ slate & rising red sun. Shared rules: _base.css */
+
+html[data-cct-theme="ronin"],
+html[data-cct-theme="ronin"] * {
+  --bg-000: 210 12% 13% !important;
+  --bg-100: 212 14% 10% !important;
+  --bg-200: 214 16% 8.5% !important;
+  --bg-300: 216 18% 7% !important;
+  --bg-400: 218 20% 5% !important;
+  --bg-500: 218 20% 5% !important;
+  --accent-brand: 355 80% 55% !important;
+  --accent-000: 185 55% 60% !important;
+  --accent-100: 185 50% 48% !important;
+  --accent-200: 185 50% 48% !important;
+  --accent-900: 190 40% 17% !important;
+  --brand-000: 355 72% 50% !important;
+  --brand-100: 355 80% 55% !important;
+  --brand-200: 355 80% 55% !important;
+  --brand-900: 355 40% 12% !important;
+  --border-100: 210 20% 82% !important;
+  --border-200: 210 20% 82% !important;
+  --border-300: 210 20% 82% !important;
+  --border-400: 210 20% 82% !important;
+  --text-000: 210 20% 95% !important;
+  --text-100: 210 20% 95% !important;
+  --text-200: 210 11% 77% !important;
+  --text-300: 210 11% 77% !important;
+  --text-400: 212 7% 58% !important;
+  --text-500: 212 7% 58% !important;
+  --pictogram-100: 212 12% 25% !important;
+  --pictogram-200: 212 13% 18% !important;
+  --pictogram-300: 210 12% 13% !important;
+  --pictogram-400: 212 14% 10% !important;
+}
+
+html[data-cct-theme="ronin"]::before {
+  background:
+    radial-gradient(circle 130px at 18% 16%, hsl(355 80% 52% / 0.3) 64%, transparent 66%),
+    radial-gradient(circle 340px at 18% 16%, hsl(355 80% 52% / 0.12), transparent 70%),
+    radial-gradient(850px 500px at 105% 110%, hsl(215 30% 25% / 0.3), transparent 70%);
+}

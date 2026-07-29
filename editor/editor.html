@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Yume Forge — Theme Studio</title>
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◆</span>
+    <h1>Theme Studio</h1>
+  </div>
+  <div class="topbar-actions">
+    <button id="btn-import" class="ghost">Import…</button>
+    <button id="btn-export" class="ghost">Export file</button>
+    <button id="btn-share" class="ghost">Copy share code</button>
+    <button id="btn-save" class="primary">Save theme</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ------------------------------------------------------------ sidebar -->
+  <aside class="rail">
+    <div class="rail-head">
+      <span>My themes</span>
+      <button id="btn-new" class="mini" title="New theme">＋</button>
+    </div>
+    <div id="theme-rail" class="rail-list"></div>
+    <p class="rail-hint">
+      Custom themes live in this browser. Use <b>Export</b> or <b>Copy share
+      code</b> to move one somewhere else.
+    </p>
+  </aside>
+
+  <!-- ------------------------------------------------------------ controls -->
+  <main class="controls">
+
+    <section class="card">
+      <h2>Identity</h2>
+      <div class="grid-2">
+        <label class="field">
+          <span>Name</span>
+          <input id="f-name" type="text" maxlength="40" placeholder="Midnight Arcade">
+        </label>
+        <label class="field narrow">
+          <span>Emoji</span>
+          <input id="f-emoji" type="text" maxlength="4" placeholder="🎨">
+        </label>
+      </div>
+      <div class="grid-2">
+        <label class="field">
+          <span>Subtitle</span>
+          <input id="f-subtitle" type="text" maxlength="40" placeholder="Dark · custom">
+        </label>
+        <label class="field">
+          <span>Author <small>(optional)</small></span>
+          <input id="f-author" type="text" maxlength="40" placeholder="you">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Palette</h2>
+      <p class="hint">
+        Three colours drive the whole ramp — Claude's ~25 design tokens are
+        derived from them. Fine-tune individual tokens below if you need to.
+      </p>
+
+      <div class="modes">
+        <label><input type="radio" name="mode" value="dark" checked> Dark</label>
+        <label><input type="radio" name="mode" value="light"> Light</label>
+      </div>
+
+      <div class="swatches">
+        <label class="swatch">
+          <span>Background</span>
+          <input id="f-bg" type="color">
+          <input id="f-bg-hex" class="hex" type="text" maxlength="7" spellcheck="false">
+        </label>
+        <label class="swatch">
+          <span>Text</span>
+          <input id="f-text" type="color">
+          <input id="f-text-hex" class="hex" type="text" maxlength="7" spellcheck="false">
+        </label>
+        <label class="swatch">
+          <span>Accent</span>
+          <input id="f-accent" type="color">
+          <input id="f-accent-hex" class="hex" type="text" maxlength="7" spellcheck="false">
+        </label>
+      </div>
+
+      <div class="row-actions">
+        <button id="btn-rederive" class="ghost small">Re-derive tokens</button>
+        <button id="btn-random" class="ghost small">Surprise me</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="collapsible" data-target="tokens-body">
+        <span class="caret">▸</span> Advanced tokens
+      </h2>
+      <div id="tokens-body" class="collapsed">
+        <p class="hint">
+          Raw <code>H S% L%</code> triplets. Edits here stick until you press
+          <b>Re-derive tokens</b>.
+        </p>
+        <div id="token-grid" class="token-grid"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="collapsible" data-target="css-body">
+        <span class="caret">▸</span> Custom CSS
+      </h2>
+      <div id="css-body" class="collapsed">
+        <p class="hint">
+          Appended after the palette. <code>&amp;</code> expands to this theme's
+          root selector — e.g.
+          <code>&amp; [data-user-message-bubble="true"] { border-radius: 2px; }</code>
+        </p>
+        <textarea id="f-css" spellcheck="false" rows="10"
+          placeholder="& [data-user-message-bubble=&quot;true&quot;] {&#10;  border-radius: 2px !important;&#10;}"></textarea>
+      </div>
+    </section>
+
+    <section class="card danger-card">
+      <h2>Danger zone</h2>
+      <div class="row-actions">
+        <button id="btn-duplicate" class="ghost small">Duplicate</button>
+        <button id="btn-delete" class="danger small">Delete theme</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ------------------------------------------------------------ preview -->
+  <section class="preview-pane">
+    <div class="preview-head">
+      <span>Preview</span>
+      <label class="live-toggle">
+        <input id="f-live" type="checkbox">
+        <span>Live on claude.ai</span>
+      </label>
+    </div>
+
+    <div id="preview" class="preview-root">
+      <div class="pv-side">
+        <div class="pv-brand">Claude</div>
+        <div class="pv-row pv-active">New chat</div>
+        <div class="pv-row">Projects</div>
+        <div class="pv-row">Recents</div>
+      </div>
+      <div class="pv-main">
+        <div class="pv-msg">
+          <p>Claude's reply sits on the page background, using
+             <code>--text-100</code> over <code>--bg-500</code>.</p>
+          <pre>const theme = forge();</pre>
+        </div>
+        <div class="pv-user">A message from you</div>
+        <div class="pv-msg"><p>Another reply, so you can judge the rhythm.</p></div>
+        <div class="pv-composer">
+          <span class="pv-placeholder">How can I help you today?</span>
+          <span class="pv-send">↑</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-foot">
+      <span id="status" class="status"></span>
+    </div>
+  </section>
+</div>
+
+<!-- ------------------------------------------------------------- import -->
+<dialog id="import-dialog">
+  <form method="dialog">
+    <h2>Import a theme</h2>
+    <p class="hint">Paste a share code (starts with <code>YUME1:</code>) or raw theme JSON.</p>
+    <textarea id="import-text" rows="7" spellcheck="false" placeholder="YUME1:eyJzY2hlbWEiOjEs…"></textarea>
+    <p class="hint">…or load a <code>.json</code> file you were sent:</p>
+    <input id="import-file" type="file" accept=".json,application/json">
+    <p id="import-error" class="error"></p>
+    <menu>
+      <button value="cancel" class="ghost">Cancel</button>
+      <button id="import-confirm" value="import" class="primary">Import</button>
+    </menu>
+  </form>
+</dialog>
+
+<script src="../lib/theme-engine.js"></script>
+<script src="editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+{
+  "categories": [
+    {
+      "id": "japanese",
+      "label": "🌸 Japanese"
+    },
+    {
+      "id": "aesthetic",
+      "label": "✨ Aesthetic"
+    },
+    {
+      "id": "developer",
+      "label": "💻 Developer"
+    },
+    {
+      "id": "calm",
+      "label": "🌿 Calm"
+    },
+    {
+      "id": "retro",
+      "label": "🎮 Retro"
+    },
+    {
+      "id": "custom",
+      "label": "🛠️ Mine"
+    }
+  ],
+  "themes": [
+    {
+      "id": "sakura",
+      "category": "japanese",
+      "name": "Sakura",
+      "emoji": "🌸",
+      "mode": "Light · falling petals",
+      "bg": "#fdf0f4",
+      "text": "#7a5563",
+      "accent": "#dd4e88"
+    },
+    {
+      "id": "sakura-night",
+      "category": "japanese",
+      "name": "Sakura Night",
+      "emoji": "🌙",
+      "mode": "Dark · glowing petals",
+      "bg": "#241a20",
+      "text": "#c8a9ba",
+      "accent": "#ee6fa4"
+    },
+    {
+      "id": "momiji",
+      "category": "japanese",
+      "name": "Momiji",
+      "emoji": "🍁",
+      "mode": "Dark · falling leaves",
+      "bg": "#241a15",
+      "text": "#c3a693",
+      "accent": "#e8663c"
+    },
+    {
+      "id": "kyoto-night",
+      "category": "japanese",
+      "name": "Kyoto Night",
+      "emoji": "⛩️",
+      "mode": "Dark · red moon",
+      "bg": "#1b1b27",
+      "text": "#c4c0d6",
+      "accent": "#e04a3f"
+    },
+    {
+      "id": "hotaru",
+      "category": "japanese",
+      "name": "Hotaru",
+      "emoji": "🌟",
+      "mode": "Dark · fireflies",
+      "bg": "#101e20",
+      "text": "#a9beb9",
+      "accent": "#f2cf46"
+    },
+    {
+      "id": "bamboo",
+      "category": "japanese",
+      "name": "Bamboo",
+      "emoji": "🎋",
+      "mode": "Dark · falling leaves",
+      "bg": "#14201a",
+      "text": "#a8bfae",
+      "accent": "#5cc26a"
+    },
+    {
+      "id": "ronin",
+      "category": "japanese",
+      "name": "Ronin",
+      "emoji": "⚔️",
+      "mode": "Dark · rising sun",
+      "bg": "#171b1f",
+      "text": "#aab4bd",
+      "accent": "#e02f42"
+    },
+    {
+      "id": "neo-tokyo",
+      "category": "aesthetic",
+      "name": "Neo Tokyo",
+      "emoji": "🌆",
+      "mode": "Dark · neon pulse",
+      "bg": "#161022",
+      "text": "#c9bcd8",
+      "accent": "#f23eb2"
+    },
+    {
+      "id": "synthwave",
+      "category": "aesthetic",
+      "name": "Synthwave",
+      "emoji": "🕶️",
+      "mode": "Dark · pulsing sun",
+      "bg": "#1d1030",
+      "text": "#b3a1cc",
+      "accent": "#f03ee8"
+    },
+    {
+      "id": "cosmos",
+      "category": "aesthetic",
+      "name": "Cosmos",
+      "emoji": "🌌",
+      "mode": "Dark · drifting stars",
+      "bg": "#191430",
+      "text": "#aaa3c8",
+      "accent": "#a06ce8"
+    },
+    {
+      "id": "lantern-night",
+      "category": "aesthetic",
+      "name": "Lantern Night",
+      "emoji": "🏮",
+      "mode": "Dark · floating lanterns",
+      "bg": "#211613",
+      "text": "#c4a58e",
+      "accent": "#f09435"
+    },
+    {
+      "id": "cotton-candy",
+      "category": "aesthetic",
+      "name": "Cotton Candy",
+      "emoji": "🍬",
+      "mode": "Light · pastel duotone",
+      "bg": "#fbeef7",
+      "text": "#8a7188",
+      "accent": "#ea6cb2"
+    },
+    {
+      "id": "neko-cafe",
+      "category": "aesthetic",
+      "name": "Neko Café",
+      "emoji": "🐾",
+      "mode": "Light · falling paws",
+      "bg": "#fdf6ee",
+      "text": "#8a7362",
+      "accent": "#e0765a"
+    },
+    {
+      "id": "summer-meadow",
+      "category": "aesthetic",
+      "name": "Summer Meadow",
+      "emoji": "🌾",
+      "mode": "Light · anime film",
+      "bg": "#faf6ea",
+      "text": "#8a7a62",
+      "accent": "#ef7c2a"
+    },
+    {
+      "id": "terminal",
+      "category": "developer",
+      "name": "Terminal",
+      "emoji": "💻",
+      "mode": "Dark · CRT scanlines",
+      "bg": "#0e120e",
+      "text": "#7ba37b",
+      "accent": "#2fdb56"
+    },
+    {
+      "id": "midnight-code",
+      "category": "developer",
+      "name": "Midnight Code",
+      "emoji": "🌙",
+      "mode": "Dark · blueprint grid",
+      "bg": "#1b2129",
+      "text": "#9fb0c0",
+      "accent": "#3da2f5"
+    },
+    {
+      "id": "nord",
+      "category": "developer",
+      "name": "Nord",
+      "emoji": "❄️",
+      "mode": "Dark · aurora + snow",
+      "bg": "#2e3440",
+      "text": "#aeb6c4",
+      "accent": "#88c0d0"
+    },
+    {
+      "id": "dracula",
+      "category": "developer",
+      "name": "Dracula",
+      "emoji": "🧛",
+      "mode": "Dark · classic palette",
+      "bg": "#282a36",
+      "text": "#b0aec4",
+      "accent": "#ff79c6"
+    },
+    {
+      "id": "amoled",
+      "category": "developer",
+      "name": "AMOLED",
+      "emoji": "🖤",
+      "mode": "Dark · true black",
+      "bg": "#000000",
+      "text": "#9c9c9c",
+      "accent": "#17d88a"
+    },
+    {
+      "id": "final-fantasy",
+      "category": "retro",
+      "name": "Final Fantasy",
+      "emoji": "💎",
+      "mode": "Dark · party + crystal",
+      "bg": "#0b1240",
+      "text": "#dbe4ff",
+      "accent": "#ffd75e",
+      "options": [
+        {
+          "id": "rich-text",
+          "label": "Colourful text",
+          "hint": "Bold, italics, headings, links and code picked out in menu colours",
+          "default": false
+        },
+        {
+          "id": "menu-sounds",
+          "label": "Menu sounds",
+          "hint": "The classic cursor blip when you hover a menu item, and a chime when you select",
+          "default": true
+        },
+        {
+          "id": "bottom-scenery",
+          "label": "Horizon scenery",
+          "hint": "A silhouetted scene along the bottom, behind everything",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "crimson",
+      "category": "developer",
+      "name": "Crimson",
+      "emoji": "🩸",
+      "mode": "Dark · pulsing red",
+      "bg": "#1c0d0d",
+      "text": "#bda3a3",
+      "accent": "#e83a3a"
+    },
+    {
+      "id": "matcha",
+      "category": "calm",
+      "name": "Matcha",
+      "emoji": "🍵",
+      "mode": "Light · green tea",
+      "bg": "#f3f7ec",
+      "text": "#77816a",
+      "accent": "#5f9339"
+    },
+    {
+      "id": "golden-hour",
+      "category": "calm",
+      "name": "Golden Hour",
+      "emoji": "🌅",
+      "mode": "Light · floating dust",
+      "bg": "#fcf3e6",
+      "text": "#8d7a64",
+      "accent": "#ee6b31"
+    },
+    {
+      "id": "lofi-rain",
+      "category": "calm",
+      "name": "Lofi Rain",
+      "emoji": "🌧️",
+      "mode": "Dark · rainfall",
+      "bg": "#1c2129",
+      "text": "#9fadbd",
+      "accent": "#5f96d8"
+    },
+    {
+      "id": "deep-ocean",
+      "category": "calm",
+      "name": "Deep Ocean",
+      "emoji": "🌊",
+      "mode": "Dark · rising bubbles",
+      "bg": "#0b1b2b",
+      "text": "#8fa9bd",
+      "accent": "#26c6b0"
+    }
+  ]
+}

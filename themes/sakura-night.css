@@ -1,0 +1,54 @@
+/* Claude Themes — "sakura-night" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="sakura-night"],
+html[data-cct-theme="sakura-night"] * {
+  --bg-000: 330 12% 15% !important;
+  --bg-100: 330 14% 11.5% !important;
+  --bg-200: 331 16% 9.5% !important;
+  --bg-300: 332 18% 7.5% !important;
+  --bg-400: 333 20% 5% !important;
+  --bg-500: 333 20% 5% !important;
+  --accent-brand: 340 80% 68% !important;
+  --accent-000: 340 85% 75% !important;
+  --accent-100: 340 75% 62% !important;
+  --accent-200: 340 75% 62% !important;
+  --accent-900: 340 45% 22% !important;
+  --brand-000: 340 70% 60% !important;
+  --brand-100: 340 80% 68% !important;
+  --brand-200: 340 80% 68% !important;
+  --brand-900: 335 35% 13% !important;
+  --border-100: 340 45% 82% !important;
+  --border-200: 340 45% 82% !important;
+  --border-300: 340 45% 82% !important;
+  --border-400: 340 45% 82% !important;
+  --text-000: 340 30% 96% !important;
+  --text-100: 340 30% 96% !important;
+  --text-200: 335 15% 79% !important;
+  --text-300: 335 15% 79% !important;
+  --text-400: 330 8% 60% !important;
+  --text-500: 330 8% 60% !important;
+  --pictogram-100: 331 14% 28% !important;
+  --pictogram-200: 331 15% 21% !important;
+  --pictogram-300: 330 12% 15% !important;
+  --pictogram-400: 330 14% 11.5% !important;
+}
+
+html[data-cct-theme="sakura-night"]::before {
+  background:
+    radial-gradient(circle 110px at 86% 12%, hsl(340 70% 72% / 0.28) 62%, transparent 64%),
+    radial-gradient(circle 300px at 86% 12%, hsl(340 75% 68% / 0.14), transparent 70%),
+    radial-gradient(800px 520px at -6% 106%, hsl(320 50% 40% / 0.22), transparent 70%);
+}
+
+html[data-cct-theme="sakura-night"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.7;
+  background-repeat: repeat;
+  animation: cct-fall 30s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><defs><g id='f'><ellipse cx='0' cy='-8' rx='4' ry='8'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(72)'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(144)'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(216)'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(288)'/><circle r='2.5' fill='%23ffd2e6'/></g><ellipse id='p' cx='0' cy='0' rx='3' ry='6'/></defs><g fill='%23ff8fc2' opacity='0.7'><use href='%23f' transform='translate(38,52) scale(1.05) rotate(15)'/><use href='%23f' transform='translate(202,122) scale(0.75) rotate(-30)'/><use href='%23f' transform='translate(122,242) scale(1.2) rotate(40)'/><use href='%23f' transform='translate(248,332) scale(0.65) rotate(70)'/><use href='%23f' transform='translate(62,398) scale(0.95) rotate(-15)'/><use href='%23p' transform='translate(152,62) rotate(35)'/><use href='%23p' transform='translate(92,152) rotate(-50)'/><use href='%23p' transform='translate(232,212) rotate(20)'/><use href='%23p' transform='translate(32,282) rotate(60)'/><use href='%23p' transform='translate(182,382) rotate(-25)'/><use href='%23p' transform='translate(112,438) rotate(45)'/></g></svg>");
+}

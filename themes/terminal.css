@@ -1,0 +1,44 @@
+/* Claude Themes — "terminal" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="terminal"],
+html[data-cct-theme="terminal"] * {
+  --bg-000: 120 10% 8.5% !important;
+  --bg-100: 120 12% 6.5% !important;
+  --bg-200: 120 14% 5% !important;
+  --bg-300: 120 16% 3.5% !important;
+  --bg-400: 120 20% 2% !important;
+  --bg-500: 120 20% 2% !important;
+  --accent-brand: 130 78% 52% !important;
+  --accent-000: 130 85% 60% !important;
+  --accent-100: 130 78% 46% !important;
+  --accent-200: 130 78% 46% !important;
+  --accent-900: 130 60% 14% !important;
+  --brand-000: 130 70% 42% !important;
+  --brand-100: 130 78% 52% !important;
+  --brand-200: 130 78% 52% !important;
+  --brand-900: 130 40% 8% !important;
+  --border-100: 130 45% 68% !important;
+  --border-200: 130 45% 68% !important;
+  --border-300: 130 45% 68% !important;
+  --border-400: 130 45% 68% !important;
+  --text-000: 120 35% 90% !important;
+  --text-100: 120 30% 87% !important;
+  --text-200: 120 16% 70% !important;
+  --text-300: 120 16% 70% !important;
+  --text-400: 120 8% 50% !important;
+  --text-500: 120 8% 50% !important;
+  --pictogram-100: 120 12% 24% !important;
+  --pictogram-200: 120 13% 17% !important;
+  --pictogram-300: 120 10% 8.5% !important;
+  --pictogram-400: 120 12% 6.5% !important;
+  --font-sans: "Cascadia Code", "Consolas", "JetBrains Mono", ui-monospace, monospace !important;
+  --font-serif: "Cascadia Code", "Consolas", ui-monospace, monospace !important;
+  --font-anthropic-sans: "Cascadia Code", "Consolas", ui-monospace, monospace !important;
+  --font-anthropic-serif: "Cascadia Code", "Consolas", ui-monospace, monospace !important;
+}
+
+html[data-cct-theme="terminal"]::before {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, hsl(130 80% 50% / 0.03) 2px 3px),
+    radial-gradient(125% 95% at 50% 50%, transparent 58%, hsl(130 60% 18% / 0.28) 100%);
+}

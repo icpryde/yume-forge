@@ -1,0 +1,52 @@
+/* Claude Themes — "synthwave" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="synthwave"],
+html[data-cct-theme="synthwave"] * {
+  --bg-000: 265 42% 12% !important;
+  --bg-100: 266 45% 9.5% !important;
+  --bg-200: 268 48% 8% !important;
+  --bg-300: 270 50% 6.5% !important;
+  --bg-400: 272 52% 4.5% !important;
+  --bg-500: 272 52% 4.5% !important;
+  --accent-brand: 300 92% 62% !important;
+  --accent-000: 180 90% 60% !important;
+  --accent-100: 180 82% 48% !important;
+  --accent-200: 180 82% 48% !important;
+  --accent-900: 190 60% 18% !important;
+  --brand-000: 300 85% 58% !important;
+  --brand-100: 300 92% 62% !important;
+  --brand-200: 300 92% 62% !important;
+  --brand-900: 290 45% 15% !important;
+  --border-100: 300 60% 80% !important;
+  --border-200: 300 60% 80% !important;
+  --border-300: 300 60% 80% !important;
+  --border-400: 300 60% 80% !important;
+  --text-000: 285 35% 96% !important;
+  --text-100: 285 35% 96% !important;
+  --text-200: 280 18% 80% !important;
+  --text-300: 280 18% 80% !important;
+  --text-400: 272 11% 62% !important;
+  --text-500: 272 11% 62% !important;
+  --pictogram-100: 266 32% 27% !important;
+  --pictogram-200: 266 36% 20% !important;
+  --pictogram-300: 265 42% 12% !important;
+  --pictogram-400: 266 45% 9.5% !important;
+}
+
+html[data-cct-theme="synthwave"]::before {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, hsl(300 90% 60% / 0.02) 3px 4px),
+    radial-gradient(700px 460px at 104% -6%, hsl(180 85% 50% / 0.16), transparent 70%),
+    radial-gradient(640px 420px at -6% -8%, hsl(265 85% 55% / 0.2), transparent 70%);
+}
+
+html[data-cct-theme="synthwave"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  background:
+    radial-gradient(circle 320px at 50% 118%, hsl(320 95% 58% / 0.3) 30%, hsl(28 95% 58% / 0.16) 60%, transparent 75%);
+  animation: cct-pulse 6s ease-in-out infinite alternate;
+}

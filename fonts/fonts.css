@@ -1,0 +1,34 @@
+/* Yume Forge — bundled webfonts.
+   Both are SIL Open Font License 1.1 (see OFL.txt). Shipped inside the
+   extension so nothing is fetched from the network at runtime.
+
+   Declared for every page but *applied* only by themes that opt in, so the
+   other 24 themes are unaffected.
+
+   URLs are ABSOLUTE via the @@extension_id placeholder: a relative url() in
+   content-script CSS can end up resolved against the PAGE (seen live on
+   /code: Chrome fetched claude.ai/PressStart2P.woff2, got the app shell's
+   HTML, and logged "invalid sfntVersion 0x3C21444F" — that magic number is
+   ASCII for "<!DO"). The placeholder pins resolution to this extension in
+   every context.
+
+   Press Start 2P — chunky NES-era face. Great for short chrome (titles,
+                    buttons, labels); unreadable for paragraphs.
+   Silkscreen     — smaller, tighter pixel face. Holds up at UI sizes and is
+                    the workhorse for sidebar rows and metadata. */
+
+@font-face {
+  font-family: "Yume Press Start";
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/PressStart2P.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Yume Silkscreen";
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Silkscreen.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

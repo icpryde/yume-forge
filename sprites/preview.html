@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- Party sprite check. Reads --yume-party-frame-w/h from the generated
+     party.css, so it stays correct whether the sheet came from
+     tools/sprites.mjs (drawn) or tools/rip-assets.py (ripped). -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>Party sprite preview</title>
+<link rel="stylesheet" href="party.css">
+<link rel="stylesheet" href="crystal.css">
+<style>
+  :root { --zoom: 6; }
+  body { background:#0a1024; color:#cfe0ff; font:13px ui-monospace,monospace; padding:24px; }
+  h2 { font-size:12px; letter-spacing:.1em; text-transform:uppercase; opacity:.6; margin:26px 0 10px; }
+
+  .party, .frame {
+    width:  calc(var(--yume-party-frame-w) * 1px * var(--zoom));
+    height: calc(var(--yume-party-frame-h) * 1px * var(--zoom));
+    background-image: var(--yume-party-sprite);
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+  }
+  .party { animation: idle 1s steps(1) infinite; }
+  @keyframes idle { 0%,49.9% { background-position-x: 0%; } 50%,100% { background-position-x: 100%; } }
+  .f2 { background-position-x: 100%; }
+  .row { display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; }
+
+  .crystal {
+    width:  calc(var(--yume-ff-crystal-w) * 1px * var(--zoom));
+    height: calc(var(--yume-ff-crystal-h) * 1px * var(--zoom));
+    background: var(--yume-ff-crystal) center/contain no-repeat;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 10px rgba(140,225,255,.8));
+  }
+</style>
+</head>
+<body>
+  <h2>animated idle (1s, 2 frames)</h2>
+  <div class="party"></div>
+
+  <h2>frame A / frame B</h2>
+  <div class="row">
+    <div class="frame"></div>
+    <div class="frame f2"></div>
+  </div>
+
+  <h2>crystal</h2>
+  <div class="crystal"></div>
+</body>
+</html>

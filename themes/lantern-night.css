@@ -1,0 +1,53 @@
+/* Claude Themes — "lantern-night" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="lantern-night"],
+html[data-cct-theme="lantern-night"] * {
+  --bg-000: 12 18% 12% !important;
+  --bg-100: 12 20% 9.5% !important;
+  --bg-200: 11 22% 8% !important;
+  --bg-300: 10 24% 6% !important;
+  --bg-400: 9 26% 4% !important;
+  --bg-500: 9 26% 4% !important;
+  --accent-brand: 28 90% 58% !important;
+  --accent-000: 35 95% 66% !important;
+  --accent-100: 33 88% 55% !important;
+  --accent-200: 33 88% 55% !important;
+  --accent-900: 28 60% 20% !important;
+  --brand-000: 28 82% 54% !important;
+  --brand-100: 28 90% 58% !important;
+  --brand-200: 28 90% 58% !important;
+  --brand-900: 20 40% 11% !important;
+  --border-100: 30 50% 80% !important;
+  --border-200: 30 50% 80% !important;
+  --border-300: 30 50% 80% !important;
+  --border-400: 30 50% 80% !important;
+  --text-000: 35 45% 95% !important;
+  --text-100: 35 45% 95% !important;
+  --text-200: 30 20% 78% !important;
+  --text-300: 30 20% 78% !important;
+  --text-400: 26 11% 59% !important;
+  --text-500: 26 11% 59% !important;
+  --pictogram-100: 12 18% 26% !important;
+  --pictogram-200: 12 19% 19% !important;
+  --pictogram-300: 12 18% 12% !important;
+  --pictogram-400: 12 20% 9.5% !important;
+}
+
+html[data-cct-theme="lantern-night"]::before {
+  background:
+    radial-gradient(720px 480px at 108% 108%, hsl(28 85% 50% / 0.22), transparent 70%),
+    radial-gradient(680px 460px at -8% 104%, hsl(10 75% 45% / 0.18), transparent 70%);
+}
+
+html[data-cct-theme="lantern-night"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: -460px;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.7;
+  background-repeat: repeat;
+  animation: cct-rise 44s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><defs><g id='o'><circle r='7' fill-opacity='0.15'/><circle r='3.5' fill-opacity='0.45'/><circle r='1.6' fill-opacity='0.85'/></g></defs><g fill='%23ffb75e'><use href='%23o' transform='translate(46,64) scale(1.1)'/><use href='%23o' transform='translate(196,126) scale(0.7)'/><use href='%23o' transform='translate(120,246) scale(1.3)'/><use href='%23o' transform='translate(248,330) scale(0.6)'/><use href='%23o' transform='translate(66,400) scale(0.9)'/><use href='%23o' transform='translate(226,34) scale(0.5)'/><use href='%23o' transform='translate(30,186) scale(0.55)'/><use href='%23o' transform='translate(168,438) scale(0.65)'/></g></svg>");
+}

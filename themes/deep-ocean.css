@@ -1,0 +1,53 @@
+/* Claude Themes — "deep-ocean" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="deep-ocean"],
+html[data-cct-theme="deep-ocean"] * {
+  --bg-000: 205 55% 14% !important;
+  --bg-100: 207 60% 10.5% !important;
+  --bg-200: 209 65% 8.5% !important;
+  --bg-300: 211 70% 6.5% !important;
+  --bg-400: 213 75% 4.5% !important;
+  --bg-500: 213 75% 4.5% !important;
+  --accent-brand: 174 70% 48% !important;
+  --accent-000: 184 80% 60% !important;
+  --accent-100: 174 70% 44% !important;
+  --accent-200: 174 70% 44% !important;
+  --accent-900: 188 55% 17% !important;
+  --brand-000: 174 64% 42% !important;
+  --brand-100: 174 70% 48% !important;
+  --brand-200: 174 70% 48% !important;
+  --brand-900: 205 45% 9% !important;
+  --border-100: 184 45% 76% !important;
+  --border-200: 184 45% 76% !important;
+  --border-300: 184 45% 76% !important;
+  --border-400: 184 45% 76% !important;
+  --text-000: 190 42% 95% !important;
+  --text-100: 190 42% 95% !important;
+  --text-200: 195 24% 78% !important;
+  --text-300: 195 24% 78% !important;
+  --text-400: 200 14% 60% !important;
+  --text-500: 200 14% 60% !important;
+  --pictogram-100: 207 40% 26% !important;
+  --pictogram-200: 207 45% 19% !important;
+  --pictogram-300: 205 55% 14% !important;
+  --pictogram-400: 207 60% 10.5% !important;
+}
+
+html[data-cct-theme="deep-ocean"]::before {
+  background:
+    radial-gradient(1000px 520px at 50% -18%, hsl(185 80% 60% / 0.2), transparent 70%),
+    radial-gradient(130% 100% at 50% 50%, transparent 55%, hsl(210 80% 6% / 0.4) 100%);
+}
+
+html[data-cct-theme="deep-ocean"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: -460px;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.55;
+  background-repeat: repeat;
+  animation: cct-rise 30s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><g fill='none' stroke='%237fd8e8' stroke-opacity='0.5'><circle cx='40' cy='60' r='5'/><circle cx='190' cy='110' r='3'/><circle cx='250' cy='230' r='6'/><circle cx='90' cy='300' r='4'/><circle cx='160' cy='400' r='5'/><circle cx='30' cy='430' r='3'/></g><g fill='%237fd8e8' fill-opacity='0.4'><circle cx='140' cy='40' r='1.6'/><circle cx='230' cy='170' r='1.4'/><circle cx='60' cy='200' r='1.8'/><circle cx='200' cy='330' r='1.5'/><circle cx='110' cy='450' r='1.7'/></g></svg>");
+}

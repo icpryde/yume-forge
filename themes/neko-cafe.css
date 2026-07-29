@@ -1,0 +1,53 @@
+/* Claude Themes — "neko-cafe" 🐾 kawaii cream & peach, falling paws. Shared rules: _base.css */
+
+html[data-cct-theme="neko-cafe"],
+html[data-cct-theme="neko-cafe"] * {
+  --bg-000: 30 80% 99% !important;
+  --bg-100: 28 65% 96% !important;
+  --bg-200: 27 58% 93% !important;
+  --bg-300: 26 52% 90% !important;
+  --bg-400: 25 46% 86% !important;
+  --bg-500: 25 46% 86% !important;
+  --accent-brand: 15 75% 62% !important;
+  --accent-000: 15 68% 45% !important;
+  --accent-100: 15 72% 55% !important;
+  --accent-200: 15 72% 55% !important;
+  --accent-900: 15 70% 91% !important;
+  --brand-000: 15 68% 56% !important;
+  --brand-100: 15 68% 56% !important;
+  --brand-200: 15 75% 62% !important;
+  --brand-900: 18 40% 13% !important;
+  --border-100: 20 35% 27% !important;
+  --border-200: 20 35% 27% !important;
+  --border-300: 20 35% 27% !important;
+  --border-400: 20 35% 27% !important;
+  --text-000: 20 40% 16% !important;
+  --text-100: 20 40% 16% !important;
+  --text-200: 20 20% 34% !important;
+  --text-300: 20 20% 34% !important;
+  --text-400: 22 12% 48% !important;
+  --text-500: 22 12% 48% !important;
+  --pictogram-100: 25 46% 86% !important;
+  --pictogram-200: 24 40% 81% !important;
+  --pictogram-300: 30 80% 99% !important;
+  --pictogram-400: 28 65% 96% !important;
+}
+
+html[data-cct-theme="neko-cafe"]::before {
+  background:
+    radial-gradient(620px 440px at -4% -6%, hsl(15 85% 82% / 0.45), transparent 70%),
+    radial-gradient(700px 480px at 104% 108%, hsl(35 85% 80% / 0.4), transparent 70%);
+}
+
+html[data-cct-theme="neko-cafe"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.55;
+  background-repeat: repeat;
+  animation: cct-fall 32s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><defs><g id='w'><ellipse cx='0' cy='2.5' rx='4.5' ry='3.6'/><circle cx='-4.4' cy='-2.6' r='1.7'/><circle cx='-1.5' cy='-4.4' r='1.7'/><circle cx='1.5' cy='-4.4' r='1.7'/><circle cx='4.4' cy='-2.6' r='1.7'/></g></defs><g fill='%23e8a58a' opacity='0.75'><use href='%23w' transform='translate(44,56) scale(1.1) rotate(15)'/><use href='%23w' transform='translate(200,120) scale(0.8) rotate(-25)'/><use href='%23w' transform='translate(120,240) scale(1.25) rotate(35)'/><use href='%23w' transform='translate(248,330) scale(0.7) rotate(-60)'/><use href='%23w' transform='translate(64,398) scale(1) rotate(10)'/><use href='%23w' transform='translate(154,58) scale(0.6) rotate(70)'/><use href='%23w' transform='translate(90,152) scale(0.7) rotate(-15)'/><use href='%23w' transform='translate(230,212) scale(0.6) rotate(45)'/><use href='%23w' transform='translate(32,284) scale(0.65) rotate(-40)'/><use href='%23w' transform='translate(182,384) scale(0.75) rotate(25)'/></g></svg>");
+}

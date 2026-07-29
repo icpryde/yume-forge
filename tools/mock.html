@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<!--
+  Yume Forge — offline theme harness.
+
+  Mirrors the parts of claude.ai's DOM that themes actually hook: the sidebar
+  rows, an assistant reply, a user bubble and the composer. Class names and
+  data-attributes below were read off the live app, and the column geometry
+  matches what it measures at ~1280px wide (sidebar 290, content column 585).
+
+  Open it directly, or screenshot it:
+    node tools/sprites.mjs && node tools/ambience.mjs
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless \
+      --screenshot=/tmp/mock.png --window-size=1280,900 tools/mock.html
+
+  Switch themes by editing the data-cct-theme attribute on <html>.
+-->
+<html lang="en" data-cct-theme="final-fantasy" data-yume-party="dom">
+<head>
+<meta charset="utf-8">
+<title>Yume Forge — theme harness</title>
+
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../sprites/party.css">
+<link rel="stylesheet" href="../sprites/party-strips.css">
+<link rel="stylesheet" href="../sprites/crystal.css">
+<link rel="stylesheet" href="../sprites/cursor.css">
+<link rel="stylesheet" href="../sprites/moogle.css">
+<link rel="stylesheet" href="../sprites/items.css">
+<link rel="stylesheet" href="../sprites/nav-icons.css">
+<link rel="stylesheet" href="../sprites/ambience.css">
+<link rel="stylesheet" href="../themes/_base.css">
+<link rel="stylesheet" href="../themes/final-fantasy.css">
+
+<style>
+  /* --- a minimal stand-in for Claude's own base layer -------------------- */
+  :root {
+    --font-anthropic-sans: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-anthropic-mono: ui-monospace, Menlo, monospace;
+    /* Claude's real dark defaults, so an un-themed load looks right too. */
+    --bg-000: 60 2.3% 16.9%; --bg-100: 60 1.6% 12.4%; --bg-200: 60 2.1% 9.2%;
+    --bg-300: 0 0% 7.5%; --bg-400: 0 0% 4.3%; --bg-500: 0 0% 4.3%;
+    --text-000: 60 14% 97%; --text-100: 60 14% 97%; --text-200: 55 9% 74%;
+    --text-300: 55 9% 74%; --text-400: 48 5% 57%; --text-500: 48 5% 57%;
+    --accent-brand: 14.8 63% 60%; --border-300: 52 12% 87%;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    background: hsl(var(--bg-500));
+    color: hsl(var(--text-100));
+    font-family: var(--font-anthropic-sans);
+    display: grid; grid-template-columns: 290px 1fr;
+  }
+  aside {
+    background: hsl(var(--bg-400));
+    border-right: 1px solid hsl(var(--border-300) / .12);
+    padding: 14px 10px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .brand { font-weight: 600; padding: 6px 10px 14px; opacity: .9; }
+  a[data-row-main-button] {
+    display: flex; align-items: center; gap: 8px;
+    height: 34px; padding-left: 14px; border-radius: 8px;
+    color: hsl(var(--text-300)); text-decoration: none; font-size: 13px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  a[data-row-main-button]:hover { background: hsl(var(--bg-200)); }
+  .df-recents-anchor .df-leading-slot { width:28px; height:28px; flex:none; display:inline-block; }
+  .df-recents-anchor a[data-row-main-button] { gap:6px; padding-left:6px; }
+  .sidebar-label { font-size: 11px; opacity: .5; padding: 14px 14px 4px; }
+
+  main { position: relative; display: flex; flex-direction: column; align-items: center; padding: 28px 0 24px; }
+  .col { width: 585px; max-width: calc(100% - 32px); }
+
+  /* assistant message chain */
+  .msg-row { margin-bottom: 22px; }
+  .font-claude-response { line-height: 1.65rem; font-size: 15px; }
+  .font-claude-response p { margin: 0 0 12px; }
+  .font-claude-response pre {
+    background: hsl(var(--bg-000) / .5); padding: 10px 12px; border-radius: 8px;
+    font-family: var(--font-anthropic-mono); font-size: 13px; overflow-x: auto; margin: 0 0 12px;
+  }
+  .user-row { display: flex; justify-content: flex-end; margin-bottom: 22px; }
+  [data-user-message-bubble="true"] {
+    background: hsl(var(--bg-300)); border-radius: .75rem;
+    padding: .625rem 1rem; max-width: 75%; font-size: 15px;
+  }
+
+  /* composer */
+  fieldset { border: 0; margin: 0; padding: 0; width: 100%; }
+  .composer-outer { position: relative; margin-top: 10px; }
+  .cursor-text {
+    display: flex; flex-direction: column; background: hsl(var(--bg-000));
+    border: 1px solid hsl(var(--border-300) / .15);
+    border-radius: 20px; position: relative; z-index: 10; cursor: text;
+  }
+  .composer-inner { display: flex; flex-direction: column; margin: 14px; gap: 12px; }
+  [data-testid="chat-input"] { min-height: 46px; font-size: 15px; color: hsl(var(--text-100)); outline: 0; }
+  .composer-tools { display: flex; align-items: center; gap: 8px; font-size: 13px; opacity: .85; }
+  .composer-tools .spacer { flex: 1; }
+  .pill { border: 1px solid hsl(var(--border-300) / .25); border-radius: 999px; padding: 4px 10px; }
+  .df-pills { position:relative; display:flex; gap:2px; padding:2px; border-radius:999px;
+              background:hsl(var(--bg-200)); }
+  .df-pill { position:relative; z-index:1; background:none; border:0; color:hsl(var(--text-300));
+             font:inherit; padding:3px 10px; border-radius:999px; cursor:pointer; }
+  .df-pill-indicator { position:absolute; left:2px; top:2px; width:52px; bottom:2px;
+                       border-radius:999px; background:hsl(var(--bg-000)); }
+  .composer-tools button { font:inherit; background:hsl(var(--bg-200)); color:hsl(var(--text-200));
+                           border:0; border-radius:8px; padding:4px 9px; cursor:pointer; }
+  .send { background: hsl(var(--accent-brand)); color: #111; border: 0; border-radius: 999px;
+          width: 30px; height: 30px; font-size: 14px; cursor: pointer; }
+  /* real app fades this 0 -> 1 while working; pinned to 1 so the harness
+     shows the working state */
+  .spark-wrap { display:inline-block; opacity:1; }
+  .h5box { position:relative; height:20px; width:0; overflow:hidden; flex:none;
+           display:flex; align-items:center; justify-content:center; }
+  .group\/status { display:flex; align-items:center; gap:8px; background:none; border:0;
+                    color:hsl(var(--text-400)); font:inherit; padding:4px 0; }
+  .status-outer { padding-left:8px; }
+  .nav-block .contents { display:contents; }
+  .nav-block button[data-row-main-button] { display:flex; align-items:center; gap:8px; width:100%;
+    background:none; border:0; color:hsl(var(--text-300)); font:inherit; padding:5px 8px; text-align:left; }
+  .nav-block .df-leading-slot { width:20px; height:20px; flex:none; display:inline-block; }
+  .sticky-strip { position:relative; }
+  .mock-glyph { width:32px; height:32px; margin:0 0 10px 4px; }
+  /* mirrors Claude's real wrapper: opaque surface + rounding + inset shadow */
+  .alert-band { width:100%; background:#1a1a19; border-radius:20px 20px 0 0;
+                padding:8px 14px 28px; box-shadow: inset 0 1px 0 #ffffff14; }
+  .mock-banner { display:flex; align-items:center; justify-content:space-between;
+     background:hsl(var(--bg-200)); color:hsl(var(--text-300)); font-size:12px;
+     padding:7px 12px; border-radius:8px 8px 0 0; margin-bottom:-4px; }
+  .dframe-sidebar-body { display:flex; flex-direction:column; gap:2px; flex:1; }
+  /* harness only: hover cannot be captured in a screenshot */
+  a[data-row-main-button].force-cursor::before { opacity: 1 !important; }
+  h2.font-title { font-size: 28px; text-align: center; margin: 30px 0 26px; }
+</style>
+</head>
+<body>
+
+<aside class="dframe-sidebar" aria-label="Sidebar"><div class="dframe-sidebar-body">
+  <div class="brand">Claude</div>
+  <div class="shrink-0 nav-block">
+    <div class="group mt-1 nav-new-wrap"><button data-row-main-button data-row><span class="df-leading-slot"></span><span>New</span></button></div>
+    <div class="contents">
+    <button data-row-main-button data-row><span class="df-leading-slot"></span><span>Chats and tasks</span></button>
+    <button data-row-main-button data-row><span class="df-leading-slot"></span><span>Projects</span></button>
+    <button data-row-main-button data-row><span class="df-leading-slot"></span><span>Artifacts</span></button>
+    <button data-row-main-button data-row><span class="df-leading-slot"></span><span>Scheduled</span></button>
+    <button data-row-main-button data-row><span class="df-leading-slot"></span><span>Customize</span></button>
+  </div></div>
+  <div class="sidebar-label">Recents</div>
+  <div class="df-recents-anchor"><div class="group/section">
+    <div data-row-key="chat:0"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Recent conversation one</span></a></div></div></div>
+    <div data-row-key="chat:1"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Recent conversation two</span></a></div></div></div>
+    <div data-row-key="chat:2"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">A longer chat title that wraps</span></a></div></div></div>
+    <div data-row-key="chat:3"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Short one</span></a></div></div></div>
+    <div data-row-key="chat:4"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Untitled</span></a></div></div></div>
+    <div data-row-key="chat:5"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Draft ideas</span></a></div></div></div>
+    <div data-row-key="chat:6"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Notes to self</span></a></div></div></div>
+    <div data-row-key="chat:7"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Weekend project</span></a></div></div></div>
+    <div data-row-key="chat:8"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Reading list</span></a></div></div></div>
+    <div data-row-key="chat:9"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Scratch pad</span></a></div></div></div>
+    <div data-row-key="chat:10"><div><div data-row><a data-row-main-button href="#"><span class="df-leading-slot"></span><span class="flex-1 min-w-0">Another placeholder</span></a></div></div></div>
+  </div></div>
+</div></aside>
+
+<main class="dframe-content">
+  <div class="col">
+    <h2 class="font-title">Hello, there</h2>
+
+    <div role="article" aria-label="Message 1 of 4">
+      <div class="msg-row">
+        <div class="group group/message-row"><div class="contents">
+          <div data-is-streaming="false" data-yume-reply class="group relative">
+            <div class="font-claude-response">
+              <p>The crystal marks every reply. Windows use the gradient fill with a hard
+                 white frame, an inner bevel and a hard drop shadow underneath.</p>
+              <pre>node tools/sprites.mjs
+node tools/ambience.mjs</pre>
+              <p>Long-form prose deliberately stays in a readable face — chrome is pixel,
+                 paragraphs are not.</p>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="user-row">
+      <div data-user-message-bubble="true">Can the party stand on top of the composer?</div>
+    </div>
+
+    <div role="article" aria-label="Message 3 of 4">
+      <div class="msg-row">
+        <div class="group group/message-row"><div class="contents">
+          <div data-is-streaming="true" data-yume-latest data-yume-reply class="group relative">
+            <div class="font-claude-response">
+              <p>They do — four of them, idling out of phase so it reads as a party rather
+                 than one puppet.</p>
+              <div class="status-outer"><button class="group/status"><div class="h5box"><div class="pt-1 spark-wrap"><svg data-cds="Spark" width="20" height="20" viewBox="0 0 20 20"><path fill="#e07ad0" d="M10 0l2 8 8 2-8 2-2 8-2-8-8-2 8-2z"/></svg></div></div><span class="status-text">Untangling</span></button></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="msg-row placeholder-streaming"><div data-is-streaming="false" class="group relative"></div></div>
+    <div class="sticky bottom-0 sticky-strip">
+    <div class="mock-banner-wrap"><div class="alert-band"><div class="mock-glyph" data-yume-glyph data-yume-moogle><svg width="32" height="32" viewBox="0 0 32 32"><path fill="#ffd75e" d="M16 0l3 13 13 3-13 3-3 13-3-13-13-3 13-3z"/></svg></div>
+    <div class="mock-banner" data-yume-party-pad>You've used 75% of your weekly limit<span class="mock-x">×</span></div></div></div>
+    <fieldset>
+      <div class="composer-outer">
+        <div class="cursor-text">
+          <div class="composer-inner">
+            <div class="relative font-large">
+              <div data-testid="chat-input" role="textbox">How can I help you today?</div>
+            </div>
+            <div class="composer-tools">
+              <div class="df-pills" data-segmented="true" role="group" aria-label="Mode"><div class="df-pill-indicator"></div><button class="df-pill" data-active="true">Chat</button><button class="df-pill">Cowork</button></div><button aria-label="Add files, connectors, and more">+</button>
+              <span class="spacer"></span>
+              <button aria-label="Model: Opus 5 High">Opus 5 High</button>
+              <button class="send" aria-label="Send message"><span>↑</span></button>
+            </div>
+          </div>
+          <div class="yume-party">
+            <div class="yume-party-member" data-member="0" data-pose="idle"></div>
+            <div class="yume-party-member" data-member="1" data-pose="idle"></div>
+            <div class="yume-party-member" data-member="2" data-pose="idle"></div>
+            <div class="yume-party-member" data-member="3" data-pose="idle"></div>
+          </div>
+        </div>
+      </div>
+    </fieldset></div>
+  </div>
+</main>
+
+</body>
+</html>

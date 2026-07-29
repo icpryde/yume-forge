@@ -1,0 +1,93 @@
+{
+  "manifest_version": 3,
+  "name": "Yume Forge — Claude Themes",
+  "version": "1.0.0",
+  "description": "Themes for claude.ai — pick one, or import and share your own.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_popup": "popup/popup.html",
+    "default_title": "Yume Forge"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "options_ui": {
+    "page": "editor/editor.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://claude.ai/*"
+      ],
+      "run_at": "document_start",
+      "js": [
+        "lib/theme-engine.js",
+        "content.js"
+      ],
+      "css": [
+        "fonts/fonts.css",
+        "sprites/party.css",
+        "sprites/party-strips.css",
+        "sprites/chocobo.css",
+        "sprites/crystal.css",
+        "sprites/menu-crystal.css",
+        "sprites/cursor.css",
+        "sprites/moogle.css",
+        "sprites/items.css",
+        "sprites/nav-icons.css",
+        "sprites/shop-icons.css",
+        "sprites/silhouette.css",
+        "sprites/ambience.css",
+        "themes/_base.css",
+        "themes/sakura.css",
+        "themes/sakura-night.css",
+        "themes/momiji.css",
+        "themes/cosmos.css",
+        "themes/lantern-night.css",
+        "themes/lofi-rain.css",
+        "themes/synthwave.css",
+        "themes/kyoto-night.css",
+        "themes/neo-tokyo.css",
+        "themes/summer-meadow.css",
+        "themes/matcha.css",
+        "themes/terminal.css",
+        "themes/midnight-code.css",
+        "themes/nord.css",
+        "themes/dracula.css",
+        "themes/deep-ocean.css",
+        "themes/hotaru.css",
+        "themes/neko-cafe.css",
+        "themes/cotton-candy.css",
+        "themes/bamboo.css",
+        "themes/ronin.css",
+        "themes/amoled.css",
+        "themes/crimson.css",
+        "themes/golden-hour.css",
+        "themes/final-fantasy.css"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fonts/*",
+        "themes/*",
+        "sprites/*",
+        "sounds/*"
+      ],
+      "matches": [
+        "https://claude.ai/*"
+      ]
+    }
+  ]
+}

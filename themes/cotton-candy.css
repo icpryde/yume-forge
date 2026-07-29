@@ -1,0 +1,54 @@
+/* Claude Themes — "cotton-candy" 🍬 pastel pink & blue duotone. Shared rules: _base.css */
+
+html[data-cct-theme="cotton-candy"],
+html[data-cct-theme="cotton-candy"] * {
+  --bg-000: 320 70% 98.5% !important;
+  --bg-100: 310 60% 96.5% !important;
+  --bg-200: 300 50% 94% !important;
+  --bg-300: 280 45% 92% !important;
+  --bg-400: 260 40% 89% !important;
+  --bg-500: 260 40% 89% !important;
+  --accent-brand: 325 80% 66% !important;
+  --accent-000: 210 75% 50% !important;
+  --accent-100: 210 75% 58% !important;
+  --accent-200: 210 75% 58% !important;
+  --accent-900: 210 70% 91% !important;
+  --brand-000: 325 72% 60% !important;
+  --brand-100: 325 72% 60% !important;
+  --brand-200: 325 80% 66% !important;
+  --brand-900: 320 40% 13% !important;
+  --border-100: 300 35% 30% !important;
+  --border-200: 300 35% 30% !important;
+  --border-300: 300 35% 30% !important;
+  --border-400: 300 35% 30% !important;
+  --text-000: 290 35% 16% !important;
+  --text-100: 290 35% 16% !important;
+  --text-200: 285 18% 35% !important;
+  --text-300: 285 18% 35% !important;
+  --text-400: 280 12% 50% !important;
+  --text-500: 280 12% 50% !important;
+  --pictogram-100: 260 40% 89% !important;
+  --pictogram-200: 265 36% 84% !important;
+  --pictogram-300: 320 70% 98.5% !important;
+  --pictogram-400: 310 60% 96.5% !important;
+}
+
+html[data-cct-theme="cotton-candy"]::before {
+  background:
+    radial-gradient(720px 520px at -6% 20%, hsl(325 90% 82% / 0.5), transparent 70%),
+    radial-gradient(720px 520px at 106% 30%, hsl(210 90% 82% / 0.5), transparent 70%),
+    radial-gradient(800px 420px at 50% 114%, hsl(270 80% 85% / 0.4), transparent 72%);
+}
+
+html[data-cct-theme="cotton-candy"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.6;
+  background-repeat: repeat;
+  animation: cct-fall 40s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><g fill='%23f5a0cf' fill-opacity='0.4'><circle cx='40' cy='56' r='6'/><circle cx='196' cy='122' r='4'/><circle cx='120' cy='244' r='7'/><circle cx='250' cy='330' r='3.5'/><circle cx='64' cy='400' r='5'/></g><g fill='%23a0c8f5' fill-opacity='0.4'><circle cx='152' cy='60' r='4.5'/><circle cx='88' cy='154' r='3.5'/><circle cx='232' cy='214' r='5.5'/><circle cx='32' cy='286' r='4'/><circle cx='182' cy='386' r='6'/></g></svg>");
+}

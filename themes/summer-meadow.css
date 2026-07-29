@@ -1,0 +1,41 @@
+/* Claude Themes — "summer-meadow" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="summer-meadow"],
+html[data-cct-theme="summer-meadow"] * {
+  --bg-000: 48 65% 99% !important;
+  --bg-100: 46 58% 96% !important;
+  --bg-200: 45 52% 93% !important;
+  --bg-300: 44 46% 90% !important;
+  --bg-400: 43 42% 86% !important;
+  --bg-500: 43 42% 86% !important;
+  --accent-brand: 24 85% 56% !important;
+  --accent-000: 202 76% 38% !important;
+  --accent-100: 202 76% 46% !important;
+  --accent-200: 202 76% 46% !important;
+  --accent-900: 202 70% 90% !important;
+  --brand-000: 24 78% 52% !important;
+  --brand-100: 24 78% 52% !important;
+  --brand-200: 24 85% 56% !important;
+  --brand-900: 24 35% 12% !important;
+  --border-100: 34 32% 24% !important;
+  --border-200: 34 32% 24% !important;
+  --border-300: 34 32% 24% !important;
+  --border-400: 34 32% 24% !important;
+  --text-000: 30 38% 15% !important;
+  --text-100: 30 38% 15% !important;
+  --text-200: 30 18% 33% !important;
+  --text-300: 30 18% 33% !important;
+  --text-400: 34 12% 47% !important;
+  --text-500: 34 12% 47% !important;
+  --pictogram-100: 43 42% 86% !important;
+  --pictogram-200: 42 36% 81% !important;
+  --pictogram-300: 48 65% 99% !important;
+  --pictogram-400: 46 58% 96% !important;
+}
+
+html[data-cct-theme="summer-meadow"]::before {
+  background:
+    repeating-conic-gradient(from 190deg at 4% -6%, hsl(45 100% 80% / 0.1) 0 5deg, transparent 5deg 17deg),
+    radial-gradient(520px 420px at 4% -6%, hsl(45 100% 75% / 0.5), transparent 70%),
+    radial-gradient(1000px 420px at 50% 114%, hsl(90 50% 70% / 0.3), transparent 72%);
+}

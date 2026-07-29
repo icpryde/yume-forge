@@ -1,0 +1,53 @@
+/* Claude Themes — "bamboo" 🎋 dark grove, falling leaves. Shared rules: _base.css */
+
+html[data-cct-theme="bamboo"],
+html[data-cct-theme="bamboo"] * {
+  --bg-000: 140 18% 11.5% !important;
+  --bg-100: 142 20% 9% !important;
+  --bg-200: 144 22% 7.5% !important;
+  --bg-300: 146 24% 6% !important;
+  --bg-400: 148 26% 4.5% !important;
+  --bg-500: 148 26% 4.5% !important;
+  --accent-brand: 130 55% 55% !important;
+  --accent-000: 90 60% 62% !important;
+  --accent-100: 90 55% 50% !important;
+  --accent-200: 90 55% 50% !important;
+  --accent-900: 100 45% 17% !important;
+  --brand-000: 130 50% 50% !important;
+  --brand-100: 130 55% 55% !important;
+  --brand-200: 130 55% 55% !important;
+  --brand-900: 135 35% 11% !important;
+  --border-100: 120 30% 80% !important;
+  --border-200: 120 30% 80% !important;
+  --border-300: 120 30% 80% !important;
+  --border-400: 120 30% 80% !important;
+  --text-000: 110 30% 95% !important;
+  --text-100: 110 30% 95% !important;
+  --text-200: 120 14% 78% !important;
+  --text-300: 120 14% 78% !important;
+  --text-400: 130 8% 58% !important;
+  --text-500: 130 8% 58% !important;
+  --pictogram-100: 142 17% 24% !important;
+  --pictogram-200: 142 18% 17% !important;
+  --pictogram-300: 140 18% 11.5% !important;
+  --pictogram-400: 142 20% 9% !important;
+}
+
+html[data-cct-theme="bamboo"]::before {
+  background:
+    radial-gradient(820px 460px at 50% -10%, hsl(110 45% 40% / 0.18), transparent 70%),
+    radial-gradient(130% 100% at 50% 50%, transparent 58%, hsl(146 40% 4% / 0.4) 100%);
+}
+
+html[data-cct-theme="bamboo"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.6;
+  background-repeat: repeat;
+  animation: cct-fall 26s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><defs><ellipse id='b' cx='0' cy='0' rx='2.2' ry='9'/></defs><g opacity='0.7'><use href='%23b' fill='%237cc86e' transform='translate(44,58) rotate(30)'/><use href='%23b' fill='%23a8d878' transform='translate(198,120) rotate(-45)'/><use href='%23b' fill='%237cc86e' transform='translate(120,242) rotate(60) scale(1.2)'/><use href='%23b' fill='%2360b055' transform='translate(248,330) rotate(-70)'/><use href='%23b' fill='%23a8d878' transform='translate(64,398) rotate(20)'/><use href='%23b' fill='%2360b055' transform='translate(154,60) rotate(75) scale(0.8)'/><use href='%23b' fill='%237cc86e' transform='translate(90,154) rotate(-20) scale(0.9)'/><use href='%23b' fill='%23a8d878' transform='translate(230,212) rotate(45) scale(0.7)'/><use href='%23b' fill='%2360b055' transform='translate(32,286) rotate(-55) scale(0.8)'/><use href='%23b' fill='%237cc86e' transform='translate(182,386) rotate(15) scale(0.9)'/></g></svg>");
+}

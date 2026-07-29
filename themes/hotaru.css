@@ -1,0 +1,54 @@
+/* Claude Themes — "hotaru" 🌟 firefly summer night. Shared rules: _base.css */
+
+html[data-cct-theme="hotaru"],
+html[data-cct-theme="hotaru"] * {
+  --bg-000: 185 28% 12% !important;
+  --bg-100: 188 30% 9% !important;
+  --bg-200: 190 33% 7.5% !important;
+  --bg-300: 192 36% 6% !important;
+  --bg-400: 194 40% 4% !important;
+  --bg-500: 194 40% 4% !important;
+  --accent-brand: 45 90% 60% !important;
+  --accent-000: 160 60% 62% !important;
+  --accent-100: 160 55% 50% !important;
+  --accent-200: 160 55% 50% !important;
+  --accent-900: 165 45% 18% !important;
+  --brand-000: 45 82% 55% !important;
+  --brand-100: 45 90% 60% !important;
+  --brand-200: 45 90% 60% !important;
+  --brand-900: 50 40% 14% !important;
+  --border-100: 165 35% 80% !important;
+  --border-200: 165 35% 80% !important;
+  --border-300: 165 35% 80% !important;
+  --border-400: 165 35% 80% !important;
+  --text-000: 165 35% 95% !important;
+  --text-100: 165 35% 95% !important;
+  --text-200: 170 16% 78% !important;
+  --text-300: 170 16% 78% !important;
+  --text-400: 180 9% 58% !important;
+  --text-500: 180 9% 58% !important;
+  --pictogram-100: 188 24% 24% !important;
+  --pictogram-200: 188 26% 17% !important;
+  --pictogram-300: 185 28% 12% !important;
+  --pictogram-400: 188 30% 9% !important;
+}
+
+html[data-cct-theme="hotaru"]::before {
+  background:
+    radial-gradient(circle 90px at 82% 14%, hsl(50 60% 85% / 0.2) 60%, transparent 62%),
+    radial-gradient(circle 260px at 82% 14%, hsl(50 60% 80% / 0.1), transparent 70%),
+    radial-gradient(900px 520px at 20% 112%, hsl(160 55% 30% / 0.22), transparent 70%);
+}
+
+html[data-cct-theme="hotaru"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: -460px;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.75;
+  background-repeat: repeat;
+  animation: cct-rise 50s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><defs><g id='y'><circle r='5' fill-opacity='0.12'/><circle r='2.2' fill-opacity='0.4'/><circle r='1' fill-opacity='0.9'/></g></defs><g fill='%23ffe97a'><use href='%23y' transform='translate(48,70) scale(1)'/><use href='%23y' transform='translate(198,128) scale(0.7)'/><use href='%23y' transform='translate(122,250) scale(1.15)'/><use href='%23y' transform='translate(246,334) scale(0.6)'/><use href='%23y' transform='translate(66,402) scale(0.85)'/></g><g fill='%23d4f57a'><use href='%23y' transform='translate(226,40) scale(0.55)'/><use href='%23y' transform='translate(30,190) scale(0.6)'/><use href='%23y' transform='translate(170,440) scale(0.7)'/></g></svg>");
+}

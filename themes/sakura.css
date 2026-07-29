@@ -1,0 +1,54 @@
+/* Claude Themes — "sakura" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="sakura"],
+html[data-cct-theme="sakura"] * {
+  --bg-000: 350 100% 99.4% !important;
+  --bg-100: 348 70% 97.3% !important;
+  --bg-200: 346 60% 94.7% !important;
+  --bg-300: 345 55% 92.2% !important;
+  --bg-400: 344 48% 88.8% !important;
+  --bg-500: 344 48% 88.8% !important;
+  --accent-brand: 340 72% 60% !important;
+  --accent-000: 335 65% 44% !important;
+  --accent-100: 338 70% 54% !important;
+  --accent-200: 338 70% 54% !important;
+  --accent-900: 340 75% 92% !important;
+  --brand-000: 340 62% 52% !important;
+  --brand-100: 340 62% 52% !important;
+  --brand-200: 340 72% 60% !important;
+  --brand-900: 340 40% 12% !important;
+  --border-100: 340 35% 28% !important;
+  --border-200: 340 35% 28% !important;
+  --border-300: 340 35% 28% !important;
+  --border-400: 340 35% 28% !important;
+  --text-000: 340 32% 14% !important;
+  --text-100: 340 32% 14% !important;
+  --text-200: 340 16% 34% !important;
+  --text-300: 340 16% 34% !important;
+  --text-400: 340 10% 50% !important;
+  --text-500: 340 10% 50% !important;
+  --pictogram-100: 344 48% 88.8% !important;
+  --pictogram-200: 344 40% 84% !important;
+  --pictogram-300: 350 100% 99.4% !important;
+  --pictogram-400: 348 70% 97.3% !important;
+}
+
+html[data-cct-theme="sakura"]::before {
+  background:
+    radial-gradient(600px 420px at 8% -6%, hsl(340 80% 85% / 0.5), transparent 70%),
+    radial-gradient(720px 500px at 102% -2%, hsl(200 80% 88% / 0.42), transparent 70%),
+    radial-gradient(950px 600px at 50% 112%, hsl(340 72% 88% / 0.35), transparent 72%);
+}
+
+html[data-cct-theme="sakura"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.75;
+  background-repeat: repeat;
+  animation: cct-fall 28s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><defs><g id='f'><ellipse cx='0' cy='-8' rx='4' ry='8'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(72)'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(144)'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(216)'/><ellipse cx='0' cy='-8' rx='4' ry='8' transform='rotate(288)'/><circle r='2.5' fill='%23ffe3ef'/></g><ellipse id='p' cx='0' cy='0' rx='3' ry='6'/></defs><g fill='%23f5a3c7' opacity='0.65'><use href='%23f' transform='translate(38,52) scale(1.1) rotate(15)'/><use href='%23f' transform='translate(202,122) scale(0.8) rotate(-30)'/><use href='%23f' transform='translate(122,242) scale(1.25) rotate(40)'/><use href='%23f' transform='translate(248,332) scale(0.7) rotate(70)'/><use href='%23f' transform='translate(62,398) scale(1) rotate(-15)'/><use href='%23p' transform='translate(152,62) rotate(35)'/><use href='%23p' transform='translate(92,152) rotate(-50)'/><use href='%23p' transform='translate(232,212) rotate(20)'/><use href='%23p' transform='translate(32,282) rotate(60)'/><use href='%23p' transform='translate(182,382) rotate(-25)'/><use href='%23p' transform='translate(112,438) rotate(45)'/></g></svg>");
+}

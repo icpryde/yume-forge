@@ -1,0 +1,53 @@
+/* Claude Themes — "nord" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="nord"],
+html[data-cct-theme="nord"] * {
+  --bg-000: 222 16% 28% !important;
+  --bg-100: 220 16% 22% !important;
+  --bg-200: 221 16% 19% !important;
+  --bg-300: 220 17% 16% !important;
+  --bg-400: 220 18% 13% !important;
+  --bg-500: 220 18% 13% !important;
+  --accent-brand: 193 43% 67% !important;
+  --accent-000: 213 32% 70% !important;
+  --accent-100: 193 43% 58% !important;
+  --accent-200: 193 43% 58% !important;
+  --accent-900: 194 30% 22% !important;
+  --brand-000: 193 43% 60% !important;
+  --brand-100: 193 43% 67% !important;
+  --brand-200: 193 43% 67% !important;
+  --brand-900: 220 16% 12% !important;
+  --border-100: 219 28% 88% !important;
+  --border-200: 219 28% 88% !important;
+  --border-300: 219 28% 88% !important;
+  --border-400: 219 28% 88% !important;
+  --text-000: 218 27% 94% !important;
+  --text-100: 218 27% 92% !important;
+  --text-200: 219 18% 78% !important;
+  --text-300: 219 18% 78% !important;
+  --text-400: 220 11% 60% !important;
+  --text-500: 220 11% 60% !important;
+  --pictogram-100: 221 15% 38% !important;
+  --pictogram-200: 221 15% 32% !important;
+  --pictogram-300: 222 16% 28% !important;
+  --pictogram-400: 220 16% 22% !important;
+}
+
+html[data-cct-theme="nord"]::before {
+  background:
+    radial-gradient(900px 320px at 28% -8%, hsl(160 70% 60% / 0.2), transparent 70%),
+    radial-gradient(900px 320px at 72% -10%, hsl(265 70% 65% / 0.16), transparent 70%);
+}
+
+html[data-cct-theme="nord"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.6;
+  background-repeat: repeat;
+  animation: cct-fall 36s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><g fill='%23eceff4' fill-opacity='0.55'><circle cx='30' cy='40' r='2.2'/><circle cx='150' cy='90' r='1.5'/><circle cx='240' cy='60' r='2.8'/><circle cx='80' cy='170' r='1.8'/><circle cx='200' cy='210' r='2.4'/><circle cx='40' cy='280' r='1.4'/><circle cx='260' cy='320' r='1.9'/><circle cx='120' cy='360' r='2.6'/><circle cx='180' cy='430' r='1.6'/><circle cx='60' cy='440' r='2.1'/></g></svg>");
+}

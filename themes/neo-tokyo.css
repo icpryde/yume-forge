@@ -1,0 +1,51 @@
+/* Claude Themes — "neo-tokyo" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="neo-tokyo"],
+html[data-cct-theme="neo-tokyo"] * {
+  --bg-000: 260 26% 14% !important;
+  --bg-100: 261 28% 10.5% !important;
+  --bg-200: 262 30% 8.5% !important;
+  --bg-300: 263 32% 6.5% !important;
+  --bg-400: 264 36% 4.5% !important;
+  --bg-500: 264 36% 4.5% !important;
+  --accent-brand: 322 88% 60% !important;
+  --accent-000: 190 92% 58% !important;
+  --accent-100: 190 88% 48% !important;
+  --accent-200: 190 88% 48% !important;
+  --accent-900: 195 70% 18% !important;
+  --brand-000: 322 80% 56% !important;
+  --brand-100: 322 88% 60% !important;
+  --brand-200: 322 88% 60% !important;
+  --brand-900: 322 45% 14% !important;
+  --border-100: 315 55% 78% !important;
+  --border-200: 315 55% 78% !important;
+  --border-300: 315 55% 78% !important;
+  --border-400: 315 55% 78% !important;
+  --text-000: 300 25% 97% !important;
+  --text-100: 300 25% 97% !important;
+  --text-200: 285 16% 80% !important;
+  --text-300: 285 16% 80% !important;
+  --text-400: 275 10% 62% !important;
+  --text-500: 275 10% 62% !important;
+  --pictogram-100: 262 20% 30% !important;
+  --pictogram-200: 261 22% 22% !important;
+  --pictogram-300: 260 26% 14% !important;
+  --pictogram-400: 261 28% 10.5% !important;
+}
+
+html[data-cct-theme="neo-tokyo"]::before {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, hsl(190 90% 60% / 0.02) 3px 4px),
+    radial-gradient(720px 520px at -4% 104%, hsl(322 90% 55% / 0.26), transparent 70%),
+    radial-gradient(720px 520px at 104% -4%, hsl(190 90% 55% / 0.22), transparent 70%);
+}
+
+html[data-cct-theme="neo-tokyo"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  background: radial-gradient(950px 320px at 50% 115%, hsl(322 95% 60% / 0.24), transparent 75%);
+  animation: cct-pulse 5s ease-in-out infinite alternate;
+}

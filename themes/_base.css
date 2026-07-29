@@ -1,0 +1,65 @@
+/* ============================================================
+   Claude Themes — shared base (loaded before all theme files)
+   ------------------------------------------------------------
+   Keyframes, glow chrome (bubbles / input / scrollbars) and the
+   ambience layer used by every theme. Individual themes live in
+   ./<theme-id>.css and only contain their palette + decorations.
+   ============================================================ */
+
+/* Layers using this are positioned `top: -460px; bottom: 0`, so the box spans
+   -460..viewportHeight. Translating -460 -> 0 means that at the START of every
+   cycle the box's bottom edge sits 460px ABOVE the viewport bottom, leaving
+   that strip empty — particles vanish in a block and sweep back down. Going
+   0 -> +460 keeps the viewport covered at both ends, and since the tile is
+   exactly 460 tall the wrap is invisible. */
+@keyframes cct-fall  { from { transform: translateY(0); } to { transform: translateY(460px); } }
+@keyframes cct-rise  { from { transform: translateY(0); } to { transform: translateY(-460px); } }
+@keyframes cct-pulse { from { opacity: 0.4; } to { opacity: 0.85; } }
+
+/* User message bubble — accent glow, chat-style corner */
+html[data-cct-theme] [data-user-message-bubble="true"] {
+  border: 1px solid hsl(var(--accent-brand) / 0.4) !important;
+  background: linear-gradient(135deg, hsl(var(--accent-brand) / 0.16), hsl(var(--bg-300)) 65%) !important;
+  box-shadow: 0 4px 20px hsl(var(--accent-brand) / 0.16) !important;
+  border-radius: 1.25rem 1.25rem 0.5rem 1.25rem !important;
+}
+
+/* Message input — soft accent glow.
+   Excludes any theme declaring the composer-glow feature (final-fantasy, and
+   whatever it is called once exported and re-imported): those animate
+   box-shadow themselves, and a CSS animation can never outrank an important
+   author declaration, so this rule silently pinned the shadow and the
+   breathing glow never rendered. content.js stamps data-yume-feat alongside
+   data-cct-theme, so both land in the same paint. The literal id stays as
+   well — it costs nothing and keeps the bundled theme correct even if the
+   feature attribute is ever missed. */
+html[data-cct-theme]:not([data-cct-theme="final-fantasy"]):not([data-yume-feat~="composer-glow"]) div[class*="cursor-text"]:has([data-testid="chat-input"]) {
+  border-color: hsl(var(--accent-brand) / 0.45) !important;
+  box-shadow: 0 0 0 1px hsl(var(--accent-brand) / 0.28),
+              0 6px 32px hsl(var(--accent-brand) / 0.18) !important;
+}
+
+/* Scrollbars in the accent color */
+html[data-cct-theme] ::-webkit-scrollbar { width: 9px; height: 9px; }
+html[data-cct-theme] ::-webkit-scrollbar-track { background: transparent; }
+html[data-cct-theme] ::-webkit-scrollbar-thumb {
+  background: hsl(var(--accent-brand) / 0.45);
+  border-radius: 9px;
+}
+html[data-cct-theme] ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--accent-brand) / 0.7);
+}
+
+/* Ambience layer — themes paint their scenery onto this */
+html[data-cct-theme]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483645;
+}
+
+/* Accessibility: no motion for users who opted out */
+@media (prefers-reduced-motion: reduce) {
+  html[data-cct-theme]::after { animation: none !important; }
+}

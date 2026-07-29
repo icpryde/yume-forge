@@ -1,0 +1,54 @@
+/* Claude Themes — "cosmos" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="cosmos"],
+html[data-cct-theme="cosmos"] * {
+  --bg-000: 250 30% 12% !important;
+  --bg-100: 252 32% 9.5% !important;
+  --bg-200: 254 35% 7.5% !important;
+  --bg-300: 256 38% 6% !important;
+  --bg-400: 258 40% 4% !important;
+  --bg-500: 258 40% 4% !important;
+  --accent-brand: 270 75% 68% !important;
+  --accent-000: 200 90% 68% !important;
+  --accent-100: 200 80% 56% !important;
+  --accent-200: 200 80% 56% !important;
+  --accent-900: 210 55% 22% !important;
+  --brand-000: 270 65% 62% !important;
+  --brand-100: 270 75% 68% !important;
+  --brand-200: 270 75% 68% !important;
+  --brand-900: 260 40% 14% !important;
+  --border-100: 265 50% 84% !important;
+  --border-200: 265 50% 84% !important;
+  --border-300: 265 50% 84% !important;
+  --border-400: 265 50% 84% !important;
+  --text-000: 250 40% 96% !important;
+  --text-100: 250 40% 96% !important;
+  --text-200: 252 20% 80% !important;
+  --text-300: 252 20% 80% !important;
+  --text-400: 250 12% 61% !important;
+  --text-500: 250 12% 61% !important;
+  --pictogram-100: 252 25% 26% !important;
+  --pictogram-200: 252 27% 19% !important;
+  --pictogram-300: 250 30% 12% !important;
+  --pictogram-400: 252 32% 9.5% !important;
+}
+
+html[data-cct-theme="cosmos"]::before {
+  background:
+    radial-gradient(760px 460px at 80% -10%, hsl(270 80% 55% / 0.2), transparent 70%),
+    radial-gradient(700px 460px at -6% 30%, hsl(190 80% 50% / 0.12), transparent 70%),
+    radial-gradient(820px 520px at 60% 112%, hsl(300 70% 45% / 0.14), transparent 70%);
+}
+
+html[data-cct-theme="cosmos"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.75;
+  background-repeat: repeat;
+  animation: cct-fall 60s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><defs><path id='s' d='M0,-6 L1.2,-1.2 L6,0 L1.2,1.2 L0,6 L-1.2,1.2 L-6,0 L-1.2,-1.2 Z'/></defs><g fill='%23ffffff' fill-opacity='0.6'><circle cx='34' cy='44' r='1.6'/><circle cx='150' cy='92' r='1.1'/><circle cx='238' cy='58' r='1.9'/><circle cx='82' cy='168' r='1.2'/><circle cx='204' cy='212' r='1.5'/><circle cx='42' cy='282' r='1'/><circle cx='258' cy='318' r='1.4'/><circle cx='118' cy='362' r='1.7'/><circle cx='178' cy='428' r='1.1'/><circle cx='58' cy='438' r='1.5'/></g><g fill='%23c9a6ff' fill-opacity='0.7'><use href='%23s' transform='translate(200,40) scale(0.8)'/><use href='%23s' transform='translate(60,220) scale(0.6)'/><use href='%23s' transform='translate(240,400) scale(0.9)'/></g></svg>");
+}

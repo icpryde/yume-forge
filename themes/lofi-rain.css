@@ -1,0 +1,53 @@
+/* Claude Themes — "lofi-rain" (palette + decorations). Shared rules: _base.css */
+
+html[data-cct-theme="lofi-rain"],
+html[data-cct-theme="lofi-rain"] * {
+  --bg-000: 220 15% 15% !important;
+  --bg-100: 220 17% 12% !important;
+  --bg-200: 221 19% 10% !important;
+  --bg-300: 222 21% 8% !important;
+  --bg-400: 223 23% 5.5% !important;
+  --bg-500: 223 23% 5.5% !important;
+  --accent-brand: 215 60% 62% !important;
+  --accent-000: 205 75% 68% !important;
+  --accent-100: 210 62% 56% !important;
+  --accent-200: 210 62% 56% !important;
+  --accent-900: 215 45% 22% !important;
+  --brand-000: 215 55% 58% !important;
+  --brand-100: 215 60% 62% !important;
+  --brand-200: 215 60% 62% !important;
+  --brand-900: 220 30% 12% !important;
+  --border-100: 215 30% 82% !important;
+  --border-200: 215 30% 82% !important;
+  --border-300: 215 30% 82% !important;
+  --border-400: 215 30% 82% !important;
+  --text-000: 215 25% 94% !important;
+  --text-100: 215 25% 94% !important;
+  --text-200: 216 13% 77% !important;
+  --text-300: 216 13% 77% !important;
+  --text-400: 218 8% 58% !important;
+  --text-500: 218 8% 58% !important;
+  --pictogram-100: 220 14% 27% !important;
+  --pictogram-200: 220 15% 20% !important;
+  --pictogram-300: 220 15% 15% !important;
+  --pictogram-400: 220 17% 12% !important;
+}
+
+html[data-cct-theme="lofi-rain"]::before {
+  background:
+    radial-gradient(700px 460px at 85% -8%, hsl(210 60% 55% / 0.12), transparent 70%),
+    radial-gradient(130% 100% at 50% 50%, transparent 60%, hsl(222 40% 5% / 0.4) 100%);
+}
+
+html[data-cct-theme="lofi-rain"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.4;
+  background-repeat: repeat;
+  animation: cct-fall 9s linear infinite;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='460'><g fill='%238fb8d8' fill-opacity='0.4'><rect x='30' y='40' width='1.3' height='15' rx='0.65' transform='rotate(10 30 40)'/><rect x='150' y='90' width='1.3' height='13' rx='0.65' transform='rotate(10 150 90)'/><rect x='240' y='55' width='1.3' height='16' rx='0.65' transform='rotate(10 240 55)'/><rect x='85' y='165' width='1.3' height='14' rx='0.65' transform='rotate(10 85 165)'/><rect x='200' y='210' width='1.3' height='15' rx='0.65' transform='rotate(10 200 210)'/><rect x='40' y='280' width='1.3' height='13' rx='0.65' transform='rotate(10 40 280)'/><rect x='260' y='320' width='1.3' height='15' rx='0.65' transform='rotate(10 260 320)'/><rect x='120' y='360' width='1.3' height='16' rx='0.65' transform='rotate(10 120 360)'/><rect x='180' y='425' width='1.3' height='13' rx='0.65' transform='rotate(10 180 425)'/><rect x='60' y='440' width='1.3' height='14' rx='0.65' transform='rotate(10 60 440)'/></g></svg>");
+}
