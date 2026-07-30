@@ -4,7 +4,7 @@
 
 First public release.
 
-- Modified Yume Forge browser add-on with import, export, sharing, and theme
+- Yume Forge Modified browser add-on with import, export, sharing, and theme
   studio support.
 - Final Fantasy theme for Claude Home and Code views.
 - One complete add-on download with Final Fantasy already bundled.

@@ -37,10 +37,10 @@ const SUITES = [
   // Needs the built extension archive and the dist/ package used to create
   // internal theme-import fixtures.
   // Guarding on the zip alone was exactly backwards: whoever was handed
-  // yume-forge.zip satisfies that check by construction and is precisely the
+  // yume-forge-modified.zip satisfies that check by construction and is precisely the
   // person without dist/, so the suite ran and died on an unhandled ENOENT.
   ["zips", "tools/zip-test.mjs", () =>
-    existsSync(join(homedir(), "Downloads", "yume-forge.zip")) &&
+    existsSync(join(homedir(), "Downloads", "yume-forge-modified.zip")) &&
     existsSync(resolve(ROOT, "dist/final-fantasy.yume.json"))],
 ];
 

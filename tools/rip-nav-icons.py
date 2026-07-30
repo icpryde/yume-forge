@@ -194,7 +194,7 @@ def data_uri(img):
 
 def main():
     # The source sheets are build inputs and are deliberately NOT shipped in
-    # yume-forge.zip (they are 3.3MB and the art is already baked into the
+    # yume-forge-modified.zip (they are 3.3MB and the art is already baked into the
     # generated CSS as data URIs). Running this script without them used to
     # print three "skip" lines, exit 0, and then unconditionally overwrite
     # sprites/nav-icons.css with an empty :root — wiping all 17 nav/tray/gear

@@ -1,4 +1,4 @@
-# Yume Forge
+# Yume Forge Modified
 
 A fork of [Yume Themes for Claude](https://chromewebstore.google.com/detail/ipfkpkhddkhndibomlaklpfaikjfdlgb)
 (by Mohamed El-Harras) with three things added:
@@ -14,10 +14,10 @@ A fork of [Yume Themes for Claude](https://chromewebstore.google.com/detail/ipfk
 
 ## Download
 
-The [latest release](https://github.com/icpryde/yume-forge/releases/latest)
+The [latest release](https://github.com/icpryde/yume-forge-modified/releases/latest)
 contains one download:
 
-- **`yume-forge.zip`** — the complete modified Yume Forge browser add-on,
+- **`yume-forge-modified.zip`** — the complete modified browser add-on,
   including the bundled Final Fantasy theme and all other themes.
 
 Final Fantasy is already included. No separate theme download or import is
@@ -44,12 +44,15 @@ extension console.
 
 It's an unpacked extension — nothing to build.
 
-1. Unzip `yume-forge.zip` if you haven't (Load unpacked needs a folder, not
-   the archive)
-2. Open `chrome://extensions` (or `arc://extensions`)
-3. Turn on **Developer mode** (top right)
-4. **Load unpacked** → select the `yume-forge` folder
-5. Reload any open claude.ai tab
+1. Disable or remove any existing **Yume Forge** or **Yume Themes for Claude**
+   extension first. Chrome will not replace it automatically, and running both
+   can make their styles conflict.
+2. Unzip `yume-forge-modified.zip` (Load unpacked needs a folder, not the
+   archive).
+3. Open `chrome://extensions` (or `arc://extensions`).
+4. Turn on **Developer mode** (top right).
+5. **Load unpacked** → select the `yume-forge-modified` folder.
+6. Reload any open claude.ai tab.
 
 After changing any file, press **↻** on the extension's card. Reloading the
 claude.ai tab alone is not enough.
@@ -92,11 +95,11 @@ extension.
 ### Building the shareable zip
 
 ```bash
-node tools/package.mjs            # -> ~/Downloads/yume-forge.zip
+node tools/package.mjs            # -> ~/Downloads/yume-forge-modified.zip
 node tools/package.mjs --out .    # somewhere else
 ```
 
-Unzip `yume-forge.zip`, then **Load unpacked** the folder.
+Unzip `yume-forge-modified.zip`, then **Load unpacked** the folder.
 
 The file list is an explicit **allowlist**. A denylist ships whatever new junk
 lands in the tree next, and you find out after handing the file to someone. The
@@ -337,12 +340,12 @@ node tools/cursor.mjs
 node tools/ambience.mjs
 ```
 
-The `tools/rip-*.py` scripts need the source sheets in `sources/sprites/`, and those
-are **not** in `yume-forge.zip` (3.3MB, and the art is already baked into the
-generated CSS as data URIs). They now refuse to run without them rather than
-overwriting the generated CSS with an empty one — which is what
-`rip-nav-icons.py` used to do, silently, taking all 17 nav/tray/gear icons with
-it.
+The `tools/rip-*.py` scripts need the source sheets in `sources/sprites/`, and
+those are **not** in `yume-forge-modified.zip` (3.3MB, and the art is already
+baked into the generated CSS as data URIs). They now refuse to run without
+them rather than overwriting the generated CSS with an empty one — which is
+what `rip-nav-icons.py` used to do, silently, taking all 17 nav/tray/gear icons
+with it.
 
 ## Working on it
 

@@ -5,7 +5,7 @@
 // Two release-critical claims are tested here:
 //
 //   1. zipped theme files can be handed to the popup and imported
-//   2. yume-forge.zip is a complete, loadable extension with no junk in it
+//   2. yume-forge-modified.zip is complete and loadable with no junk in it
 //
 // The extension archive is the real release output. Theme archives are
 // internal fixtures now: Final Fantasy is bundled in the extension and is no
@@ -25,7 +25,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CHROME = findChrome();
 const OUT = process.argv[2] ? resolve(process.argv[2]) : join(homedir(), "Downloads");
 
-const EXT_ZIP = join(OUT, "yume-forge.zip");
+const EXT_ZIP = join(OUT, "yume-forge-modified.zip");
 
 // Build an internal theme-import fixture. This proves zip import still works
 // without creating or advertising a second public release download.
@@ -305,11 +305,11 @@ if (!vm) {
 
 const tmp = await mkdtemp(join(tmpdir(), "yume-ziptest-"));
 await run("unzip", ["-qq", EXT_ZIP, "-d", tmp]);
-const base = join(tmp, "yume-forge");
+const base = join(tmp, "yume-forge-modified");
 
 const listed = (await run("unzip", ["-Z1", EXT_ZIP])).stdout
   .split("\n").map((s) => s.trim()).filter(Boolean)
-  .map((s) => s.replace(/^yume-forge\//, ""))
+  .map((s) => s.replace(/^yume-forge-modified\//, ""))
   .filter((s) => !s.endsWith("/"));
 
 const manifest = JSON.parse(await readFile(join(base, "manifest.json"), "utf8"));
@@ -393,8 +393,8 @@ junk.length
 }
 
 // The zip has to unzip to a folder Chrome can load, not a pile of loose files.
-listed.length && (await run("unzip", ["-Z1", EXT_ZIP])).stdout.startsWith("yume-forge/")
-  ? ok("archive contains a single top-level yume-forge/ folder")
+listed.length && (await run("unzip", ["-Z1", EXT_ZIP])).stdout.startsWith("yume-forge-modified/")
+  ? ok("archive contains a single top-level yume-forge-modified/ folder")
   : fail("archive is not wrapped in a single folder — Load unpacked needs one");
 
 // Sanity: the theme CSS list should still be every file in themes/.

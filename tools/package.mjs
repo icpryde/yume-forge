@@ -1,10 +1,10 @@
-// Yume Forge — build the shareable extension zip.
+// Yume Forge Modified — build the shareable extension zip.
 //
 //   node tools/package.mjs [--out ~/Downloads]
 //
 // Produces:
 //
-//   yume-forge.zip      the extension, ready to unzip and Load unpacked
+//   yume-forge-modified.zip      ready to unzip and Load unpacked
 //
 // The extension list is an explicit ALLOWLIST. A denylist ("everything except
 // *.png") silently ships whatever new junk lands in the tree next — an editor
@@ -62,7 +62,7 @@ const PRUNE = [
   "tools/.glyph.html", "tools/.pack-a.html", "tools/.pack-b.html", "tools/.b64check.html",
 ];
 
-const NAME = "yume-forge";
+const NAME = "yume-forge-modified";
 
 async function sh(cmd, args, cwd) {
   const { stdout } = await run(cmd, args, { cwd, maxBuffer: 64 * 1024 * 1024 });

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Yume Forge — Claude Themes",
+  "name": "Yume Forge Modified — Claude Themes",
   "version": "1.0.0",
   "description": "Themes for claude.ai — pick one, or import and share your own.",
   "icons": {
@@ -15,7 +15,7 @@
       "128": "icons/icon128.png"
     },
     "default_popup": "popup/popup.html",
-    "default_title": "Yume Forge"
+    "default_title": "Yume Forge Modified"
   },
   "permissions": [
     "storage"
