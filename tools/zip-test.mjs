@@ -2,15 +2,15 @@
 //
 //   node tools/zip-test.mjs
 //
-// Two claims are being made by tools/package.mjs, and both are the kind that
-// look fine right up until someone else opens the file:
+// Two release-critical claims are tested here:
 //
-//   1. the theme zip can be handed to the popup as-is and imports
-//   2. the extension zip is a complete, loadable extension with no junk in it
+//   1. zipped theme files can be handed to the popup and imported
+//   2. yume-forge.zip is a complete, loadable extension with no junk in it
 //
-// So this tests the REAL archives in ~/Downloads, not a synthetic stand-in.
-// The zip is read by the actual lib/themezip.js, in a real browser, since the
-// inflater it depends on (DecompressionStream) only exists there.
+// The extension archive is the real release output. Theme archives are
+// internal fixtures now: Final Fantasy is bundled in the extension and is no
+// longer published as a separate download. The fixtures still exercise the
+// actual lib/themezip.js in a real browser.
 
 import { readFile, rm, writeFile, mkdtemp } from "node:fs/promises";
 import { execFile } from "node:child_process";
@@ -26,7 +26,18 @@ const CHROME = findChrome();
 const OUT = process.argv[2] ? resolve(process.argv[2]) : join(homedir(), "Downloads");
 
 const EXT_ZIP = join(OUT, "yume-forge.zip");
-const THEME_ZIP = join(OUT, "yume-forge-final-fantasy.zip");
+
+// Build an internal theme-import fixture. This proves zip import still works
+// without creating or advertising a second public release download.
+const vdir = await mkdtemp(join(tmpdir(), "yume-variants-"));
+const src = join(vdir, "src");
+const at = (d) => ({ cwd: d });
+await run("mkdir", ["-p", src]);
+await run("cp", [resolve(ROOT, "dist/final-fantasy.yume.json"), join(src, "final-fantasy.yume.json")]);
+await run("cp", [resolve(ROOT, "dist/final-fantasy.yume.txt"), join(src, "final-fantasy.yume.txt")]);
+await writeFile(join(src, "READ ME FIRST.txt"), "Internal theme-import test fixture.\n", "utf8");
+const THEME_ZIP = join(vdir, "zip-X.zip");
+await run("zip", ["-rqX", THEME_ZIP, "."], at(src));
 
 let bad = 0;
 const ok = (m) => console.log("ok   " + m);
@@ -146,18 +157,10 @@ if (!m) {
 // folder in Finder, or the download truncates. Build the variants for real and
 // run each through the actual reader.
 
-const vdir = await mkdtemp(join(tmpdir(), "yume-variants-"));
-const src = join(vdir, "src");
-const at = (d) => ({ cwd: d });
-await run("mkdir", ["-p", src]);
-await run("cp", [resolve(ROOT, "dist/final-fantasy.yume.json"), join(src, "final-fantasy.yume.json")]);
-await run("cp", [resolve(ROOT, "dist/final-fantasy.yume.txt"), join(src, "final-fantasy.yume.txt")]);
-await writeFile(join(src, "READ ME FIRST.txt"), "Install instructions, not a theme.\n", "utf8");
-
 const mk = async (name, build) => { const p = join(vdir, name); await build(p); return { name, path: p }; };
 
 const VARIANTS = [
-  await mk("zip-X.zip",      (p) => run("zip", ["-rqX", p, "."], at(src))),
+  { name: "zip-X.zip", path: THEME_ZIP },
   await mk("zip-plain.zip",  (p) => run("zip", ["-rq", p, "."], at(src))),
   await mk("zip-stored.zip", (p) => run("zip", ["-rq", "-0", p, "."], at(src))),
   await mk("ditto.zip",      (p) => run("ditto", ["-c", "-k", "--sequesterRsrc", src, p])),
@@ -403,5 +406,5 @@ themeCss.length === themeFiles.length
 
 await rm(tmp, { recursive: true, force: true });
 
-console.log(bad ? `\n${bad} check(s) failed` : "\npackaging clean — both archives verified");
+console.log(bad ? `\n${bad} check(s) failed` : "\npackaging clean — extension archive verified");
 process.exit(bad ? 1 : 0);

@@ -15,14 +15,13 @@ A fork of [Yume Themes for Claude](https://chromewebstore.google.com/detail/ipfk
 ## Download
 
 The [latest release](https://github.com/icpryde/yume-forge/releases/latest)
-contains two separate downloads:
+contains one download:
 
 - **`yume-forge.zip`** — the complete modified Yume Forge browser add-on,
   including the bundled Final Fantasy theme and all other themes.
-- **`yume-forge-final-fantasy.zip`** — only the self-contained Final Fantasy
-  theme, for people who already have this modified Yume Forge add-on.
 
-The theme-only zip can be imported directly; it does not need to be unzipped.
+Final Fantasy is already included. No separate theme download or import is
+needed.
 
 The original's 24 themes are all still here and untouched. The theme covers
 both faces of claude.ai: the Home chat and the **Code tab** (a separate app
@@ -90,15 +89,14 @@ frictionless. `lib/themezip.js` walks the central directory and inflates with
 costs no dependency. The file type is sniffed from the magic bytes, not the
 extension.
 
-### Building the shareable zips
+### Building the shareable zip
 
 ```bash
-node tools/package.mjs            # -> ~/Downloads/*.zip
+node tools/package.mjs            # -> ~/Downloads/yume-forge.zip
 node tools/package.mjs --out .    # somewhere else
 ```
 
-- `yume-forge.zip` — the extension. Unzip, then **Load unpacked** the folder.
-- `yume-forge-final-fantasy.zip` — the theme alone, importable as-is.
+Unzip `yume-forge.zip`, then **Load unpacked** the folder.
 
 The file list is an explicit **allowlist**. A denylist ships whatever new junk
 lands in the tree next, and you find out after handing the file to someone. The
@@ -361,15 +359,15 @@ node tools/glyph-test.mjs  # working-glyph states, asserted on computed style
 sh tools/convert-sounds.sh # sources/sounds -> the shipped wavs (gains documented inside)
 node tools/pack-test.mjs   # bundled vs exported-and-reimported, diffed
 node tools/popup-test.mjs  # drives the real popup through import -> export
-node tools/package.mjs     # build the two shareable zips
-node tools/zip-test.mjs    # those real archives + zips made by other tools
+node tools/package.mjs     # build the shareable extension zip
+node tools/zip-test.mjs    # verify it + theme-import test fixtures
 ```
 
 The browser-driving suites find Chrome themselves (`tools/chrome.mjs`, which
 also checks Chromium/Brave/Edge and the usual Linux and Windows paths). Set
 `CHROME=/path/to/binary` to point them somewhere else.
 
-`popup-test` and `zip-test` need a packed theme and the built archives; they
+`popup-test` and `zip-test` need a packed theme and the built extension; they
 skip themselves with a note when those are absent, so
 `node tools/check.mjs` on a fresh copy runs what it can and passes:
 

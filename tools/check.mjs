@@ -13,8 +13,8 @@
 //   pack-test.mjs   renders bundled vs exported-and-reimported and diffs the
 //                   computed styles
 //   popup-test.mjs  drives the real popup through import -> export
-//   zip-test.mjs    reads the actual built archives, plus zips made by other
-//                   tools and deliberately broken ones
+//   zip-test.mjs    reads the actual extension archive, plus internal theme
+//                   import fixtures made by other tools and broken on purpose
 
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -34,7 +34,8 @@ const SUITES = [
   // Drives the real popup: import a packaged theme, export it again, check
   // what would have been downloaded. Needs a packed theme to feed it.
   ["popup", "tools/popup-test.mjs", () => existsSync(resolve(ROOT, "dist/final-fantasy.yume.json"))],
-  // Needs BOTH the built archives and the dist/ package they are built from.
+  // Needs the built extension archive and the dist/ package used to create
+  // internal theme-import fixtures.
   // Guarding on the zip alone was exactly backwards: whoever was handed
   // yume-forge.zip satisfies that check by construction and is precisely the
   // person without dist/, so the suite ran and died on an unhandled ENOENT.

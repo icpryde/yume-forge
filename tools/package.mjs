@@ -1,14 +1,10 @@
-// Yume Forge — build the shareable zips.
+// Yume Forge — build the shareable extension zip.
 //
 //   node tools/package.mjs [--out ~/Downloads]
 //
-// Produces two archives:
+// Produces:
 //
-//   yume-forge.zip                    the extension, ready to Load unpacked
-//   yume-forge-final-fantasy.zip      just the Final Fantasy theme, importable
-//                                     straight from the popup (lib/themezip.js
-//                                     reads the archive, so nobody has to
-//                                     unzip anything)
+//   yume-forge.zip      the extension, ready to unzip and Load unpacked
 //
 // The extension list is an explicit ALLOWLIST. A denylist ("everything except
 // *.png") silently ships whatever new junk lands in the tree next — an editor
@@ -17,8 +13,7 @@
 
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { readFile, writeFile, mkdir, rm, cp, stat } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { mkdir, rm, cp, stat } from "node:fs/promises";
 import { dirname, resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir, tmpdir } from "node:os";
@@ -43,7 +38,7 @@ const OUT = argOut > 0 && process.argv[argOut + 1]
 //     art as data URIs and merely cites the sources in comments).
 //   sprites/*.png, *.svg — debug dumps from the same rippers. Nothing loads
 //     them; grep for them in the CSS and you get comments.
-//   dist/ — generated exports; the theme zip is built from them separately.
+//   dist/ — generated theme exports used by tests and the popup workflow.
 //   .DS_Store — Finder litter, and it lands in every folder if you let it.
 const INCLUDE = [
   "manifest.json",
@@ -109,72 +104,6 @@ async function buildExtensionZip() {
   return { out, stage };
 }
 
-/* --------------------------------------------------------- theme bundle */
-
-const THEME_ID = "final-fantasy";
-
-async function buildThemeZip() {
-  const json = rel(`dist/${THEME_ID}.yume.json`);
-  if (!existsSync(json)) {
-    throw new Error(`dist/${THEME_ID}.yume.json is missing — run: node tools/pack-theme.mjs ${THEME_ID}`);
-  }
-  const pkg = JSON.parse(await readFile(json, "utf8"));
-
-  const folder = `${NAME}-${THEME_ID}`;
-  const stage = join(await mkTemp(), folder);
-  await mkdir(stage, { recursive: true });
-
-  await cp(json, join(stage, `${THEME_ID}.yume.json`));
-  await cp(rel(`dist/${THEME_ID}.yume.txt`), join(stage, `${THEME_ID}.yume.txt`));
-
-  await writeFile(join(stage, "READ ME FIRST.txt"), `${pkg.emoji} ${pkg.name} — a theme for Yume Forge
-${"=".repeat(56)}
-
-TO INSTALL
-----------
-1. Click the Yume Forge icon in your browser toolbar.
-2. Click "Import a theme" at the bottom.
-3. Pick this zip. That's it — no need to unzip it first.
-4. The theme appears under "Mine". Click it.
-
-The popup reads the archive itself, so the zip is the thing you hand over.
-
-
-WHAT'S IN HERE
---------------
-${THEME_ID}.yume.json   the theme. This is what gets imported.
-${THEME_ID}.yume.txt    the same theme as a YUME1: text code, for pasting
-                            into a chat instead of sending a file. Import it
-                            with "Paste code".
-
-Both are self-contained: the sprites, the pixel fonts and the whole stylesheet
-are inlined. Nothing is downloaded when the theme runs.
-
-
-YOU NEED THE EXTENSION
-----------------------
-This file is the theme, not the code that runs it. It needs Yume Forge itself
-(yume-forge.zip) — the Chrome Web Store version can't read it.
-
-
-WHAT THE THEME DOES
--------------------
-Blue menu windows with the white FF border, the four FF1 party members idling
-above the composer (click one), Mog as the working glyph, a crystal, pixel
-fonts, a breathing glow on the chat box, drifting motes, a moon and the odd
-shooting star.
-
-This is an unofficial, non-commercial fan project. Final Fantasy and related
-names and characters belong to their respective owners. This project is not
-affiliated with or endorsed by Square Enix.
-`, "utf8");
-
-  const out = join(OUT, `${folder}.zip`);
-  await rm(out, { force: true });
-  await sh("zip", ["-rqX", out, folder], dirname(stage));
-  return { out, stage };
-}
-
 let tmpN = 0;
 async function mkTemp() {
   // No Math.random(): a counter is enough and keeps runs reproducible.
@@ -189,9 +118,8 @@ async function mkTemp() {
 await mkdir(OUT, { recursive: true });
 
 const ext = await buildExtensionZip();
-const theme = await buildThemeZip();
 
-for (const { out } of [ext, theme]) {
+for (const { out } of [ext]) {
   const s = await stat(out);
   const n = (await sh("unzip", ["-l", out])).trim().split("\n").pop().trim().split(/\s+/)[1];
   console.log(`${(s.size / 1024).toFixed(0).padStart(5)}KB  ${String(n).padStart(3)} files  ${out}`);
