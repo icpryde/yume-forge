@@ -147,15 +147,16 @@ html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"] *,
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] * {
   font-family: var(--ff-body) !important;
-  /* An OPTICAL reduction, not a metric one — the distinction matters, because
-     guessing at it produced two wrong sizes in a row.
-     Measured, Press Start 2P and Silkscreen are identical at the same px:
-     same 11px cap, 8px x-height, 13px ascender, and the same 701px width for
-     the same sentence. So 0.84em (a "it must be wider" guess) shrank prose for
-     nothing, and 1em (matching the metrics) still read too big — because Press
-     Start is the far heavier face: thicker strokes, no thin letters, more ink
-     in the same box. 0.92em trims that weight without touching legibility. */
-  font-size: 0.92em !important;
+  /* 0.92rem, and it must be REM: this selector list includes `*`, so an em
+     here multiplies at EVERY nesting level — claude.ai nests reply markup
+     ~5 deep, so 0.92em compounded to ~11px ("way too small") while the
+     shallow user bubble stayed near full size. rem is anchored to the root
+     and lands the same 14.7px at any depth.
+     Why 0.92 at all: the two pixel faces are metrically identical (same cap,
+     x-height, and sentence width at equal px), but Press Start 2P is far
+     heavier — thicker strokes, no thin letters — so unscaled it reads
+     oversized. This is a small optical trim of that weight, nothing more. */
+  font-size: 0.92rem !important;
   letter-spacing: normal;
   /* Colour set EXPLICITLY, not left to claude.ai's --text-* tokens.
      Overriding those tokens works only while the app paints prose through

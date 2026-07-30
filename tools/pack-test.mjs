@@ -75,7 +75,9 @@ const BODY = `
   <div class="text-text-200 text-balance text-center font-display"><span class="select-none">Hey there, Chris</span></div>
   <div role="article"><div class="contents">
     <div data-is-streaming="false" data-yume-reply="1" class="group relative">
-      <div class="font-claude-response"><p>A finished reply with some text in it.</p></div>
+      <div class="font-claude-response"><p>A finished reply with some text in it.</p>
+        <div><div><ul><li><p class="deep-probe">nested five levels down</p></li></ul></div></div>
+      </div>
       <button class="group/status flex items-center gap-2"><div class="relative h-5 flex items-center"><div class="pt-1"><svg data-cds="Spark" viewBox="0 0 100 100" width="20" height="20"><path d="M50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40Z"/></svg></div></div><span class="truncate font-base">Weighing options</span></button>
     </div>
   </div></div>
@@ -171,6 +173,10 @@ const PROBES = JSON.stringify([
   ["title type",     "h2.font-title",                                   null,      ["fontFamily", "fontSize", "color"]],
   ["reply body",     ".font-claude-response",                           null,      ["fontFamily", "color"]],
   ["reply colour",   ".font-claude-response p",                          null,      ["color"]],
+  // em compounding regression: 0.92em on a `*` selector shrank each nesting
+  // level by another 8% — ~11px five levels down while shallow text stayed
+  // full size. rem must land the SAME size at any depth.
+  ["reply deep",     ".font-claude-response .deep-probe",                null,      ["fontSize"]],
   // The crystal beside a reply. Width is derived from the asset's aspect, so
   // it doubles as a provenance check: the ripped crystal.png is 8x16 -> 16px
   // wide at height 32, while the hand-drawn fallback is 24x32 -> 24px. A
@@ -376,6 +382,7 @@ const MUST_BE_STYLED = {
   // Explicit, not inherited from claude.ai tokens — a different app build
   // left this near-black on the dark window.
   "reply colour":  ["color", /rgb\(255, 255, 255\)/],
+  "reply deep":    ["fontSize", /^14\.72px$/],
   "reply crystal": ["width", /^16px$/],
   "horizon":       ["backgroundSize", /1878px 409px/],
   "cowork tray":   ["backgroundImage", /linear-gradient/],
