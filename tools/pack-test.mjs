@@ -170,6 +170,7 @@ const PROBES = JSON.stringify([
   ["body text",      "main.dframe-content",                             null,      ["color", "fontFamily"]],
   ["title type",     "h2.font-title",                                   null,      ["fontFamily", "fontSize", "color"]],
   ["reply body",     ".font-claude-response",                           null,      ["fontFamily", "color"]],
+  ["reply colour",   ".font-claude-response p",                          null,      ["color"]],
   ["reply window",   "[data-yume-reply]",                               null,      ["borderTopWidth", "borderTopColor", "borderRadius", "backgroundColor", "boxShadow"]],
   ["composer",       ".cursor-text",                                    null,      ["borderTopColor", "borderRadius", "animationName", "animationDuration", "boxShadow"]],
   ["composer party", ".cursor-text",                                    "::before", ["content", "backgroundImage", "width", "height", "animationName"]],
@@ -364,6 +365,12 @@ const MUST_BE_STYLED = {
   "mog tip text":  ["content", /Mog/],
   "greeting":      ["fontFamily", /Press Start/],
   "greeting span": ["fontFamily", /Press Start/],
+  // Message text must use the face that HAS lowercase. Silkscreen renders
+  // lowercase as capitals, which read as shouting prose.
+  "reply body":    ["fontFamily", /Press Start/],
+  // Explicit, not inherited from claude.ai tokens — a different app build
+  // left this near-black on the dark window.
+  "reply colour":  ["color", /rgb\(255, 255, 255\)/],
   "horizon":       ["backgroundSize", /1878px 409px/],
   "cowork tray":   ["backgroundImage", /linear-gradient/],
   "tray font":     ["fontFamily", /Silkscreen/],
@@ -389,7 +396,9 @@ const MUST_BE_STYLED = {
   "chocobo sky":   ["position", /^fixed$/],
   "chocobo sky spr": ["animationName", /ff-choco-gait/],
   "code prompt":   ["animationName", /ff-breathe/],
-  "code prompt txt": ["fontFamily", /Silkscreen/],
+  // The code composer is prose you type, so it rides --ff-body (Press Start
+  // 2P) like the Home composer — Silkscreen would shout it back at you.
+  "code prompt txt": ["fontFamily", /Press Start/],
   "code mascot":   ["display", /^none$/],
   "code mog dot":  ["animationName", /ff-moogle-frames/],
   "code user turn": ["backgroundImage", /linear-gradient/],

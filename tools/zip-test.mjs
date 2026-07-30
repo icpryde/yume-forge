@@ -23,7 +23,11 @@ import { homedir, tmpdir } from "node:os";
 const run = promisify(execFile);
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CHROME = findChrome();
-const OUT = process.argv[2] ? resolve(process.argv[2]) : join(homedir(), "Downloads");
+// Defaults to the repo's release/ dir — where tools/package.mjs writes. It
+// used to default to ~/Downloads, which could hold an OLDER build: the suite
+// then verified the stale zip and reported "packaging clean" while the fix
+// under test was absent from the artifact. Verify what you just built.
+const OUT = process.argv[2] ? resolve(process.argv[2]) : resolve(ROOT, "release");
 
 const EXT_ZIP = join(OUT, "yume-forge-modified.zip");
 

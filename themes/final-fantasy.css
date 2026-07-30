@@ -57,7 +57,9 @@ html[data-cct-theme="final-fantasy"] {
      of the two, but paragraph-length text in it is still work to read — set
      this back to var(--font-anthropic-sans) for pixel chrome with readable
      prose, which is the gentler default. */
-  --ff-body: var(--ff-pixel-ui);
+  /* Press Start 2P: the only bundled face with real lowercase (Silkscreen's
+     lowercase glyphs are identical bitmaps to its capitals). */
+  --ff-body: var(--ff-pixel);
 }
 
 /* ---------------------------------------------------------------- tokens */
@@ -126,7 +128,16 @@ html[data-cct-theme="final-fantasy"] select {
   letter-spacing: 0.01em;
 }
 
-/* Long-form text opts back out of the pixel face. */
+/* Message and composer text.
+   --ff-body is Press Start 2P, NOT Silkscreen, for one hard reason:
+   Silkscreen has no true lowercase — its lowercase codepoints render the
+   same bitmaps as the capitals, so prose came out SHOUTING regardless of
+   what was typed (verified by bitmap-comparing 'a' against 'A'). Press Start
+   2P carries real lowercase.
+   It is also a wider face, so the size steps down to keep line lengths and
+   wrapping close to what Silkscreen gave. UI chrome above stays Silkscreen:
+   it is more compact for sidebar rows, and small-caps labels read as
+   deliberate menu styling there. */
 html[data-cct-theme="final-fantasy"] .font-claude-response,
 html[data-cct-theme="final-fantasy"] .font-claude-response *,
 html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"],
@@ -134,7 +145,18 @@ html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"] *,
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] * {
   font-family: var(--ff-body) !important;
+  font-size: 0.84em !important;
+  line-height: 1.85 !important;
   letter-spacing: normal;
+  /* Colour set EXPLICITLY, not left to claude.ai's --text-* tokens.
+     Overriding those tokens works only while the app paints prose through
+     them; on another build (or in light mode) the text takes its colour from
+     somewhere we do not control and comes out near-black on the dark menu
+     window — reported by a user on a different claude.ai variant, where every
+     sprite and colour worked but message text was unreadable. Stating the
+     colour here removes that dependency. Rich-text accent rules below are
+     more specific, so bold/italic/links keep their own colours. */
+  color: #fff !important;
 }
 
 /* Code stays monospace regardless. */

@@ -40,7 +40,7 @@ const SUITES = [
   // yume-forge-modified.zip satisfies that check by construction and is precisely the
   // person without dist/, so the suite ran and died on an unhandled ENOENT.
   ["zips", "tools/zip-test.mjs", () =>
-    existsSync(join(homedir(), "Downloads", "yume-forge-modified.zip")) &&
+    existsSync(resolve(ROOT, "release", "yume-forge-modified.zip")) &&
     existsSync(resolve(ROOT, "dist/final-fantasy.yume.json"))],
 ];
 
