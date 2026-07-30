@@ -135,8 +135,9 @@ html[data-cct-theme="final-fantasy"] select {
    what was typed (verified by bitmap-comparing 'a' against 'A'). Press Start
    2P carries real lowercase.
    The two faces are metrically identical at the same px size (verified: equal
-   ink height and equal advance), so no size compensation is needed. UI chrome
-   above stays Silkscreen:
+   cap, x-height and sentence width), but Press Start carries much more ink, so
+   body text takes a small OPTICAL step down below. UI chrome above stays
+   Silkscreen:
    it is more compact for sidebar rows, and small-caps labels read as
    deliberate menu styling there. */
 html[data-cct-theme="final-fantasy"] .font-claude-response,
@@ -146,10 +147,15 @@ html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"] *,
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] * {
   font-family: var(--ff-body) !important;
-  /* NO size override. Measured: Press Start 2P at 16px and Silkscreen at 16px
-     have the same 15px ink height and the same 14.2px advance — they are
-     metrically interchangeable. An earlier 0.84em "compensation" assumed Press
-     Start was the wider face and just shrank the text for nothing. */
+  /* An OPTICAL reduction, not a metric one — the distinction matters, because
+     guessing at it produced two wrong sizes in a row.
+     Measured, Press Start 2P and Silkscreen are identical at the same px:
+     same 11px cap, 8px x-height, 13px ascender, and the same 701px width for
+     the same sentence. So 0.84em (a "it must be wider" guess) shrank prose for
+     nothing, and 1em (matching the metrics) still read too big — because Press
+     Start is the far heavier face: thicker strokes, no thin letters, more ink
+     in the same box. 0.92em trims that weight without touching legibility. */
+  font-size: 0.92em !important;
   letter-spacing: normal;
   /* Colour set EXPLICITLY, not left to claude.ai's --text-* tokens.
      Overriding those tokens works only while the app paints prose through
