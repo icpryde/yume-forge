@@ -330,8 +330,14 @@ The hand-drawn set stays in the repo either way. Those are original art in the
 classic party-archetype style, not traced from anything — use them if you ever
 want a version with no third-party assets in it.
 
-**Ripped game sprites are fine for a personal build but aren't yours to
-redistribute.** Before publishing, restore the original-art generators:
+**Careful with these two paths — they change how the theme LOOKS.** Running the
+original-art generators overwrites the ripped assets with the hand-drawn ones,
+and it is not obvious afterwards: it happened once during release prep, and the
+only symptom was "that is not the diamond I had" (the drawn crystal is 24x32,
+the ripped one 8x16). `tools/pack-test.mjs` now pins the reply crystal's width
+at 16px, so the swap trips a test instead of shipping quietly.
+
+To deliberately build a version carrying no third-party art:
 
 ```bash
 node tools/sprites.mjs
@@ -339,6 +345,15 @@ node tools/crystal.mjs
 node tools/cursor.mjs
 node tools/ambience.mjs
 ```
+
+To go back to the ripped set (needs `sources/sprites/`):
+
+```bash
+python3 tools/rip-assets.py
+```
+
+Ripped game sprites are a judgement call for a personal fan project; this repo
+ships them because that is what its author chose for their own build.
 
 The `tools/rip-*.py` scripts need the source sheets in `sources/sprites/`, and
 those are **not** in `yume-forge-modified.zip` (3.3MB, and the art is already

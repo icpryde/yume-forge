@@ -171,6 +171,11 @@ const PROBES = JSON.stringify([
   ["title type",     "h2.font-title",                                   null,      ["fontFamily", "fontSize", "color"]],
   ["reply body",     ".font-claude-response",                           null,      ["fontFamily", "color"]],
   ["reply colour",   ".font-claude-response p",                          null,      ["color"]],
+  // The crystal beside a reply. Width is derived from the asset's aspect, so
+  // it doubles as a provenance check: the ripped crystal.png is 8x16 -> 16px
+  // wide at height 32, while the hand-drawn fallback is 24x32 -> 24px. A
+  // publish step once swapped the drawn one in and the user spotted it.
+  ["reply crystal",  '[data-yume-reply]',                                "::before", ["backgroundImage", "width", "height", "animationName"]],
   ["reply window",   "[data-yume-reply]",                               null,      ["borderTopWidth", "borderTopColor", "borderRadius", "backgroundColor", "boxShadow"]],
   ["composer",       ".cursor-text",                                    null,      ["borderTopColor", "borderRadius", "animationName", "animationDuration", "boxShadow"]],
   ["composer party", ".cursor-text",                                    "::before", ["content", "backgroundImage", "width", "height", "animationName"]],
@@ -371,6 +376,7 @@ const MUST_BE_STYLED = {
   // Explicit, not inherited from claude.ai tokens — a different app build
   // left this near-black on the dark window.
   "reply colour":  ["color", /rgb\(255, 255, 255\)/],
+  "reply crystal": ["width", /^16px$/],
   "horizon":       ["backgroundSize", /1878px 409px/],
   "cowork tray":   ["backgroundImage", /linear-gradient/],
   "tray font":     ["fontFamily", /Silkscreen/],

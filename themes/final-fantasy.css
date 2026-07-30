@@ -134,8 +134,9 @@ html[data-cct-theme="final-fantasy"] select {
    same bitmaps as the capitals, so prose came out SHOUTING regardless of
    what was typed (verified by bitmap-comparing 'a' against 'A'). Press Start
    2P carries real lowercase.
-   It is also a wider face, so the size steps down to keep line lengths and
-   wrapping close to what Silkscreen gave. UI chrome above stays Silkscreen:
+   The two faces are metrically identical at the same px size (verified: equal
+   ink height and equal advance), so no size compensation is needed. UI chrome
+   above stays Silkscreen:
    it is more compact for sidebar rows, and small-caps labels read as
    deliberate menu styling there. */
 html[data-cct-theme="final-fantasy"] .font-claude-response,
@@ -145,8 +146,10 @@ html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"] *,
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] * {
   font-family: var(--ff-body) !important;
-  font-size: 0.84em !important;
-  line-height: 1.85 !important;
+  /* NO size override. Measured: Press Start 2P at 16px and Silkscreen at 16px
+     have the same 15px ink height and the same 14.2px advance — they are
+     metrically interchangeable. An earlier 0.84em "compensation" assumed Press
+     Start was the wider face and just shrank the text for nothing. */
   letter-spacing: normal;
   /* Colour set EXPLICITLY, not left to claude.ai's --text-* tokens.
      Overriding those tokens works only while the app paints prose through
