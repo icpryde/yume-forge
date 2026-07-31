@@ -1,14 +1,17 @@
 # Yume Forge Modified
 
 A fork of [Yume Themes for Claude](https://chromewebstore.google.com/detail/ipfkpkhddkhndibomlaklpfaikjfdlgb)
-(by Mohamed El-Harras) with three things added:
+(by Mohamed El-Harras) with four things added:
 
 1. **Import / export / share** — every theme has a **⤓** button that writes a
    self-contained `.yume.json` and copies a `YUME1:` code. Import a file, a
    code, or a `.zip` of either.
 2. **A Final Fantasy theme** — menu-blue windows with hard white frames, a
    crystal beside every reply, and a four-person party idling on the composer.
-3. **A theme studio** — build themes from three colours, fine-tune all 29 of
+3. **ChatGPT support** — the popup now has **Claude / OpenAI** tabs, and the
+   Final Fantasy theme has a chatgpt.com edition with the same sky, party,
+   windows, crystal, sounds and chocobo. Each site keeps its own selection.
+4. **A theme studio** — build themes from three colours, fine-tune all 29 of
    Claude's design tokens, add custom CSS, preview live on claude.ai. Present
    but not surfaced in the popup right now; it's the options page.
 

@@ -401,12 +401,22 @@ listed.length && (await run("unzip", ["-Z1", EXT_ZIP])).stdout.startsWith("yume-
   ? ok("archive contains a single top-level yume-forge-modified/ folder")
   : fail("archive is not wrapped in a single folder — Load unpacked needs one");
 
-// Sanity: the theme CSS list should still be every file in themes/.
-const themeCss = (manifest.content_scripts?.[0]?.css || []).filter((p) => p.startsWith("themes/"));
+// Sanity: every stylesheet in themes/ is wired into SOME content script —
+// claude.ai's entry carries the claude set, chatgpt.com's carries its own.
+const themeCss = new Set((manifest.content_scripts || [])
+  .flatMap((cs) => cs.css || [])
+  .filter((p) => p.startsWith("themes/")));
 const themeFiles = listed.filter((p) => /^themes\/.*\.css$/.test(p));
-themeCss.length === themeFiles.length
-  ? ok(`all ${themeFiles.length} theme stylesheets are wired into the manifest`)
-  : fail(`themes/ has ${themeFiles.length} stylesheets but the manifest lists ${themeCss.length}`);
+themeCss.size === themeFiles.length
+  ? ok(`all ${themeFiles.length} theme stylesheets are wired into a content script`)
+  : fail(`themes/ has ${themeFiles.length} stylesheets but the manifests wire ${themeCss.size}`);
+
+// Both sites must be able to load the fonts and sprites those sheets use.
+const war = (manifest.web_accessible_resources || [])[0] || {};
+["https://claude.ai/*", "https://chatgpt.com/*"].every((m) => (war.matches || []).includes(m))
+  ? ok("web_accessible_resources covers claude.ai and chatgpt.com")
+  : fail("web_accessible_resources matches: " + JSON.stringify(war.matches) +
+         " — fonts/sprites would 404 on the missing site");
 
 await rm(tmp, { recursive: true, force: true });
 

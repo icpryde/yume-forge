@@ -27,6 +27,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CHROME = findChrome();
 
 const pkg = await readFile(resolve(ROOT, "dist/final-fantasy.yume.json"), "utf8");
+// The ChatGPT package, for the cross-site import test. Optional: sites-tab
+// coverage that needs it is skipped (loudly) when it hasn't been packed.
+const gpkg = await readFile(resolve(ROOT, "dist/final-fantasy-gpt.yume.json"), "utf8")
+  .catch(() => null);
 
 // A driver page: it loads popup.html in an iframe so the popup's own scripts
 // run unmodified, then reaches in to exercise them.
@@ -34,6 +38,7 @@ const driver = `<!doctype html><html><head><meta charset="utf-8"></head><body>
 <iframe id="f" src="../popup/popup.html" style="width:420px;height:700px;border:0"></iframe>
 <script>
 const THEME_JSON = ${JSON.stringify(pkg)};
+const GPT_JSON = ${JSON.stringify(gpkg)};
 const out = { steps: [] };
 
 const done = (extra) => { Object.assign(out, extra || {}); document.title = "POPUP:" + encodeURIComponent(JSON.stringify(out)); };
@@ -124,6 +129,43 @@ document.getElementById("f").addEventListener("load", async () => {
     out.storedHasRawCss = !!(stored && stored.rawCss);
     out.storedFeatures = stored ? stored.features : null;
     out.storedSoundCount = stored && stored.sounds ? Object.keys(stored.sounds).length : 0;
+
+    // 5. Site tabs. The Claude and OpenAI lists are disjoint, each side keeps
+    // its own selection slot, and a ChatGPT import lands on the OpenAI tab.
+    const tabFor = (site) => d.querySelector('.site-tab[data-site="' + site + '"]');
+    const names = () => [...d.querySelectorAll(".theme-card .theme-name")].map((n) => n.textContent.trim());
+
+    out.claudeTabCards = names().length;
+
+    tabFor("chatgpt").click();
+    await new Promise((r) => setTimeout(r, 150));
+    out.openaiCards = names();
+    out.openaiResetLabel = (d.getElementById("reset-label") || {}).textContent || "";
+
+    // Selecting on the OpenAI tab writes the ChatGPT slot and only that slot.
+    const gptCard = [...d.querySelectorAll(".theme-card")]
+      .find((c) => /Final Fantasy/.test((c.querySelector(".theme-name") || {}).textContent || ""));
+    if (gptCard) {
+      gptCard.querySelector(".theme-pick").click();
+      await new Promise((r) => setTimeout(r, 150));
+      const sel = await new Promise((res) => w.chrome.storage.sync.get(["cctTheme", "cctThemeGpt"], res));
+      out.gptSelect = sel;
+    }
+
+    // Cross-site import: a packaged ChatGPT theme must file itself under
+    // OpenAI and select into the ChatGPT slot even when imported elsewhere.
+    if (GPT_JSON) {
+      tabFor("claude").click();
+      await new Promise((r) => setTimeout(r, 150));
+      await w.importFrom(GPT_JSON);
+      await new Promise((r) => setTimeout(r, 250));
+      out.importLandedOn = [...d.querySelectorAll(".site-tab")].find((b) => b.classList.contains("active"))?.dataset.site;
+      const sel2 = await new Promise((res) => w.chrome.storage.sync.get(["cctTheme", "cctThemeGpt"], res));
+      out.importSelected = sel2;
+      const gstored = (await w.YumeEngine.loadCustom()).find((t) => t.site === "chatgpt");
+      out.importStoredSite = gstored ? gstored.site : null;
+    }
+
     done();
   } catch (e) {
     done({ error: e.message + " | " + (e.stack || "").split("\\n")[1] });
@@ -215,5 +257,45 @@ if (!m) {
   }
 }
 
-console.log(bad ? `\n${bad} check(s) failed` : "\npopup import/export verified");
+// --- site tabs ---
+if (m) {
+  const r = JSON.parse(decodeURIComponent(m[1].replace(/&amp;/g, "&")));
+  if (!r.error) {
+    r.claudeTabCards >= 20
+      ? ok(`Claude tab lists the claude themes (${r.claudeTabCards} cards)`)
+      : fail(`Claude tab lists only ${r.claudeTabCards} cards`);
+
+    JSON.stringify(r.openaiCards) === JSON.stringify(["💎 Final Fantasy"])
+      ? ok("OpenAI tab lists exactly the bundled ChatGPT theme")
+      : fail("OpenAI tab lists " + JSON.stringify(r.openaiCards));
+
+    /ChatGPT Default/.test(r.openaiResetLabel)
+      ? ok(`OpenAI reset row reads "${r.openaiResetLabel.trim()}"`)
+      : fail(`OpenAI reset row reads "${r.openaiResetLabel.trim()}"`);
+
+    r.gptSelect && r.gptSelect.cctThemeGpt === "final-fantasy-gpt"
+      ? ok("selecting on the OpenAI tab writes cctThemeGpt")
+      : fail("after OpenAI select, sync holds " + JSON.stringify(r.gptSelect));
+
+    r.gptSelect && /^custom-/.test(r.gptSelect.cctTheme || "")
+      ? ok("…and leaves the claude slot untouched")
+      : fail("claude slot after OpenAI select: " + JSON.stringify((r.gptSelect || {}).cctTheme));
+
+    if (r.importLandedOn !== undefined) {
+      r.importLandedOn === "chatgpt"
+        ? ok("importing a ChatGPT package lands on the OpenAI tab")
+        : fail(`ChatGPT import landed on the "${r.importLandedOn}" tab`);
+      r.importSelected && /^custom-/.test(r.importSelected.cctThemeGpt || "")
+        ? ok("…selected into the ChatGPT slot")
+        : fail("after gpt import, sync holds " + JSON.stringify(r.importSelected));
+      r.importStoredSite === "chatgpt"
+        ? ok("…and the stored copy remembers its site")
+        : fail("stored gpt import has site=" + r.importStoredSite);
+    } else {
+      console.log("skip site-import checks — run: node tools/pack-theme.mjs final-fantasy-gpt");
+    }
+  }
+}
+
+console.log(bad ? `\n${bad} check(s) failed` : "\npopup import/export + site tabs verified");
 process.exit(bad ? 1 : 0);

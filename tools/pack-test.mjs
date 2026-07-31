@@ -508,7 +508,266 @@ for (const [label, [prop, want]] of Object.entries(MUST_BE_STYLED)) {
   }
 }
 
+/* ------------------------------------------------------------------ gpt */
+
+// The ChatGPT theme, same treatment: bundled vs packaged-and-reimported over
+// a chatgpt.com-shaped fixture, then MUST checks so "identical" can't mean
+// "identically unstyled". The fixture reproduces the site's tailwind cascade
+// layers INCLUDING a trailing-! utility (background-color !important inside
+// @layer utilities) — layered importants beat unlayered ones, which is the
+// exact war the writing-block override has to win via @layer theme.
+const GPT_ID = "final-fantasy-gpt";
+const gmeta = (data.themes || data).find((t) => t.id === GPT_ID);
+const gpacked = await P.packTheme(gmeta, readText, readBase64);
+const gimported = E.decodeShare(E.encodeShare(gpacked));
+const gfeats = (gimported.features || []).join(" ");
+
+const GPT_BODY = `
+<div id="stage-slideover-sidebar">
+  <div class="sticky" style="height:40px">sticky head</div>
+  <a class="__menu-item" data-testid="create-new-chat-button" href="#"><div aria-hidden="true" class="icon"><svg width="20" height="20"></svg></div><div>New chat</div></a>
+  <a class="__menu-item" data-testid="sidebar-item-library" href="#"><div aria-hidden="true" class="icon"><svg width="20" height="20"></svg></div><div>Library</div></a>
+  <nav aria-label="Chat history">
+    <a class="__menu-item" href="/c/aaa">First chat</a>
+    <a class="__menu-item" href="/c/bbb">Second chat</a>
+  </nav>
+</div>
+<main>
+  <div data-splash-headline-option="ON_YOUR_MIND"><h1>Where should we begin?</h1></div>
+  <section data-testid="conversation-turn-1" data-turn="user">
+    <div data-message-author-role="user"><div class="user-message-bubble-color" style="border-radius:22px">a question</div></div>
+  </section>
+  <section data-testid="conversation-turn-2" data-turn="assistant" data-yume-reply="1" data-yume-latest>
+    <div data-message-author-role="assistant"><div class="markdown prose">
+      <p>A finished reply with <strong>bold</strong>, <em>italics</em>, <code>inline_code</code> and <a href="#">a link</a>.</p>
+      <div><div><ul><li><p class="deep-probe">nested five levels down</p></li></ul></div></div>
+      <h3>A heading</h3>
+      <pre><code>fenced_code_keeps_its_own_colours()</code></pre>
+      <div class="group/writing-block-surface" style="border-radius:24px">
+        <div class="wb-fill dark:bg-[#2a2a2a]!" style="height:20px"></div>
+        <p>document text</p>
+      </div>
+    </div></div>
+  </section>
+  <section data-testid="conversation-turn-3" data-turn="assistant">
+    <div data-message-author-role="assistant"><div class="markdown prose result-thinking"><p></p></div></div>
+  </section>
+  <form data-type="unified-composer" style="width:640px">
+    <div class="relative">
+      <div data-composer-surface="true" style="border-radius:28px;height:52px">
+        <button class="composer-btn" data-testid="composer-plus-btn">+</button>
+        <div id="prompt-textarea" contenteditable="true"><p data-placeholder="Ask anything" class="placeholder"></p></div>
+        <button aria-label="Send prompt" data-testid="send-button-fixture" style="width:36px;height:36px"><svg></svg></button>
+        <button aria-label="Stop answering" data-testid="stop-button" style="width:36px;height:36px"><svg></svg></button>
+      </div>
+    </div>
+    <div class="yume-party">
+      <div class="yume-party-member" data-member="0" data-pose="idle"></div>
+      <div class="yume-party-member" data-member="1" data-pose="fall" style="--pose: 5"></div>
+      <div class="yume-party-member" data-member="2" data-pose="idle"
+           style="animation: ff-member-idle 1s steps(1) -0.75s infinite paused"></div>
+      <div class="yume-party-member" data-member="3" data-pose="idle"></div>
+    </div>
+  </form>
+  <div class="yume-choco-sky"><div class="yume-choco"></div></div>
+</main>
+<div data-radix-menu-content role="menu"><div role="menuitem">Add photos</div></div>
+<div popover="manual" role="tooltip" class="popover">a tooltip</div>`;
+
+const GPT_PROBES = JSON.stringify([
+  ["gpt sky",          "body",                                   null,       ["backgroundImage", "backgroundAttachment"]],
+  ["gpt moon",         "html",                                   "::before", ["content", "backgroundImage"]],
+  ["gpt motes",        "html",                                   "::after",  ["content", "backgroundImage", "animationName"]],
+  ["gpt stars",        "body",                                   "::after",  ["content", "animationName"]],
+  ["gpt greeting",     "main h1",                                null,       ["fontFamily", "textShadow"]],
+  ["gpt user bubble",  ".user-message-bubble-color",             null,       ["backgroundImage", "borderTopWidth", "borderTopColor", "borderRadius"]],
+  ["gpt reply window", 'section[data-yume-reply] div[data-message-author-role="assistant"]', null, ["backgroundImage", "borderTopWidth", "borderRadius", "animationName"]],
+  ["gpt crystal",      'section[data-yume-reply] div[data-message-author-role="assistant"]', "::before", ["content", "backgroundImage", "width", "height", "animationName"]],
+  ["gpt reply body",   ".markdown p",                            null,       ["fontFamily", "color"]],
+  ["gpt reply deep",   ".markdown .deep-probe",                  null,       ["fontSize"]],
+  ["gpt rich bold",    ".markdown strong",                       null,       ["color"]],
+  ["gpt rich italic",  ".markdown em",                           null,       ["color"]],
+  ["gpt rich heading", ".markdown h3",                           null,       ["color"]],
+  ["gpt rich code",    ".markdown code:not(pre code)",           null,       ["color"]],
+  ["gpt fenced code",  ".markdown pre code",                     null,       ["color"]],
+  ["gpt wb fill",      ".wb-fill",                               null,       ["backgroundColor"]],
+  ["gpt wb frame",     '[class*="writing-block-surface"]',       null,       ["borderTopWidth", "borderRadius"]],
+  ["gpt thinking",     ".result-thinking",                       null,       ["color", "position"]],
+  ["gpt thinking mog", ".result-thinking",                       "::after",  ["content", "backgroundImage", "animationName"]],
+  ["gpt composer",     "[data-composer-surface]",                null,       ["backgroundImage", "borderTopWidth", "borderRadius", "animationName", "zIndex"]],
+  ["gpt composer btn", ".composer-btn",                          null,       ["borderTopWidth", "borderRadius", "fontFamily"]],
+  ["gpt send hand",    'button[aria-label="Send prompt"]',       "::after",  ["content", "backgroundImage", "transform", "width"]],
+  ["gpt send glyph",   'button[aria-label="Send prompt"] > svg', null,       ["opacity"]],
+  ["gpt stop",         '[data-testid="stop-button"]',            null,       ["borderTopColor", "color"]],
+  ["gpt party row",    "form > .yume-party",                     null,       ["position", "zIndex"]],
+  ["gpt kneel pose",   '.yume-party-member[data-member="0"][data-pose="idle"]', null, ["backgroundPositionX", "animationName"]],
+  ["gpt fall pose",    '.yume-party-member[data-pose="fall"]',   null,       ["backgroundPositionX"]],
+  ["gpt mid-bob",      '.yume-party-member[data-member="2"]',    null,       ["backgroundPositionX"]],
+  ["gpt idle anim",    '.yume-party-member[data-member="3"]',    null,       ["animationName"]],
+  ["gpt sidebar",      "#stage-slideover-sidebar",               null,       ["backgroundImage", "borderRightWidth", "borderRightColor"]],
+  ["gpt new icon",     '[data-testid="create-new-chat-button"] .icon', "::after", ["content", "backgroundImage", "width"]],
+  ["gpt new svg",      '[data-testid="create-new-chat-button"] .icon svg', null, ["opacity"]],
+  ["gpt library icon", '[data-testid="sidebar-item-library"] .icon', "::after", ["backgroundImage"]],
+  ["gpt history 0",    'a[href="/c/aaa"]',                       "::before", ["content", "backgroundImage", "width"]],
+  ["gpt history 1",    'a[href="/c/bbb"]',                       "::before", ["backgroundImage"]],
+  ["gpt row hand",     ".__menu-item",                           "::before", ["content", "backgroundImage", "opacity"]],
+  ["gpt menu",         "[data-radix-menu-content]",              null,       ["backgroundImage", "borderTopWidth", "borderRadius"]],
+  ["gpt tooltip",      '[role="tooltip"]',                       null,       ["backgroundImage", "borderTopWidth", "fontFamily"]],
+  ["gpt choco sky",    ".yume-choco-sky",                        null,       ["position", "zIndex"]],
+  ["gpt choco spr",    ".yume-choco-sky .yume-choco",            null,       ["animationName", "backgroundSize"]],
+]);
+
+const GPT_REPORT = REPORT.replace("const probes = " + PROBES, "const probes = " + GPT_PROBES);
+if (GPT_REPORT === REPORT) throw new Error("GPT_REPORT substitution found nothing — the probe anchor moved");
+
+const gpage = (attrs, head) => `<!doctype html>
+<html lang="en" ${attrs}>
+<head><meta charset="utf-8">
+<style>
+  /* The site's cascade-layer order, with a trailing-! utility in the last
+     layer — the strongest thing chatgpt.com ever throws at an override. */
+  @layer theme, base, components, utilities;
+  @layer utilities {
+    .dark\\:bg-\\[\\#2a2a2a\\]\\! { background-color: #2a2a2a !important; }
+  }
+  html, body { margin: 0; min-height: 600px; }
+  #stage-slideover-sidebar { width: 240px; float: left; min-height: 600px; }
+  .__menu-item { display: block; padding: 6px 10px; }
+  .icon { display: inline-block; width: 20px; height: 20px; }
+  main { min-height: 600px; padding: 20px; margin-left: 250px; }
+  [data-composer-surface] { position: relative; }
+</style>
+${head}
+</head>
+<body>${GPT_BODY}
+<script>window.addEventListener("load", () => { ${GPT_REPORT} });</script>
+</body></html>`;
+
+const glinkHead = [
+  "fonts/fonts.css", ...P.SPRITE_SHEETS, `themes/${GPT_ID}.css`,
+].map((p) => `<link rel="stylesheet" href="../${p}">`).join("\n");
+const gcompiled = E.compileCss(gimported);
+const gimportedHead = `<style>\n${gcompiled}\n</style>`;
+
+const GA = rel("tools/.pack-ga.html");
+const GB = rel("tools/.pack-gb.html");
+const GOPT = 'data-yume-opt="rich-text menu-sounds bottom-scenery"';
+await writeFile(GA, gpage(`data-cct-theme="${GPT_ID}" data-yume-feat="party stars composer-glow replies" ${GOPT}`, glinkHead), "utf8");
+await writeFile(GB, gpage(`data-cct-theme="${gimported.id}" data-yume-feat="${gfeats}" ${GOPT}`, gimportedHead), "utf8");
+
+const [ga, gb] = await Promise.all([probe(GA), probe(GB)]);
+await Promise.all([rm(GA, { force: true }), rm(GB, { force: true })]);
+
+console.log("");
+for (let i = 0; i < ga.length; i++) {
+  const [label, av] = ga[i];
+  const bv = gb[i][1];
+  if (typeof av === "string" || typeof bv === "string") {
+    bad++;
+    console.log(`FAIL ${label.padEnd(16)} ${av} / ${bv}`);
+    continue;
+  }
+  const diffs = Object.keys(av).filter((k) => av[k] !== bv[k]);
+  checks += Object.keys(av).length;
+  if (diffs.length) {
+    bad++;
+    console.log(`FAIL ${label.padEnd(16)} ` +
+      diffs.map((k) => `${k}: bundled=${av[k]}  imported=${bv[k]}`).join("\n                      "));
+  } else {
+    console.log(`ok   ${label.padEnd(16)} ${Object.keys(av).length} propert${Object.keys(av).length === 1 ? "y" : "ies"} match`);
+  }
+}
+
+const GPT_MUST = {
+  // Hashed: the value is the horizon data URI plus the gradient, far over the
+  // reporter's 90-char cap. img# IS the layered background; "none" is bare.
+  "gpt sky":          ["backgroundImage", /^img#/],
+  "gpt moon":         ["backgroundImage", /img#|url\(/],
+  "gpt greeting":     ["fontFamily", /Press Start/],
+  "gpt user bubble":  ["backgroundImage", /linear-gradient/],
+  // 7px against an inline 22px superellipse — the JRPG corner must win.
+  "gpt user radius":  null,
+  "gpt reply window": ["borderTopWidth", /^2px$/],
+  "gpt crystal":      ["width", /^16px$/],
+  "gpt reply body":   ["fontFamily", /Press Start/],
+  "gpt reply colour": null,
+  "gpt reply deep":   ["fontSize", /^12px$/],
+  // The layer war: #2a2a2a !important inside @layer utilities must lose to
+  // the theme's @layer theme override. rgb(16,26,84) = #101a54.
+  "gpt wb fill":      ["backgroundColor", /rgb\(16, 26, 84\)/],
+  "gpt thinking mog": ["animationName", /ff-moogle-frames/],
+  "gpt composer":     ["animationName", /ff-breathe/],
+  // 9px against an inline border-radius:28px.
+  "gpt composer rad": null,
+  "gpt send hand":    ["backgroundImage", /img#|url\(/],
+  "gpt send glyph":   ["opacity", /^0$/],
+  "gpt stop":         ["borderTopColor", /rgb\(255, 215, 94\)/],
+  "gpt kneel pose":   ["backgroundPositionX", /^80%$/],
+  "gpt fall pose":    ["backgroundPositionX", /^100%$/],
+  "gpt mid-bob":      ["backgroundPositionX", /^20%$/],
+  // The stop button is in the fixture, so idle members must be bobbing.
+  "gpt idle anim":    ["animationName", /ff-member-idle/],
+  "gpt sidebar":      ["borderRightWidth", /^2px$/],
+  "gpt new icon":     ["backgroundImage", /^img#|^url\(/],
+  "gpt new svg":      ["opacity", /^0$/],
+  "gpt history 0":    ["backgroundImage", /^img#|^url\(/],
+  "gpt menu":         ["backgroundImage", /linear-gradient/],
+  "gpt tooltip":      ["fontFamily", /Silkscreen/],
+  "gpt choco sky":    ["position", /^fixed$/],
+  "gpt choco spr":    ["animationName", /ff-choco-gait/],
+};
+
+for (const [label, spec] of Object.entries(GPT_MUST)) {
+  if (!spec) continue;   // named for the reader; asserted via the pair below
+  const [prop, want] = spec;
+  const row = ga.find(([l]) => l === label);
+  const got = row && typeof row[1] === "object" ? row[1][prop] : undefined;
+  if (want.test(String(got))) {
+    console.log(`ok   ${label.padEnd(16)} is genuinely themed (${prop}: ${got})`);
+  } else {
+    bad++;
+    console.log(`FAIL ${label.padEnd(16)} ${prop} is "${got}" — the gpt theme rule is not applying`);
+  }
+}
+
+// Inline-style wars, asserted directly: the composer ships border-radius:28px
+// and the bubble 22px inline; the windows must land on 9px/7px.
+{
+  const comp = ga.find(([l]) => l === "gpt composer");
+  const r = comp && typeof comp[1] === "object" ? comp[1].borderRadius : "?";
+  if (r === "9px") console.log(`ok   ${"gpt composer rad".padEnd(16)} 9px beats the inline 28px superellipse`);
+  else { bad++; console.log(`FAIL ${"gpt composer rad".padEnd(16)} composer radius is "${r}" — the inline 28px is winning`); }
+  const bub = ga.find(([l]) => l === "gpt user bubble");
+  const br = bub && typeof bub[1] === "object" ? bub[1].borderRadius : "?";
+  if (br === "7px") console.log(`ok   ${"gpt user radius".padEnd(16)} 7px beats the inline 22px`);
+  else { bad++; console.log(`FAIL ${"gpt user radius".padEnd(16)} bubble radius is "${br}"`); }
+  const body = ga.find(([l]) => l === "gpt reply body");
+  const col = body && typeof body[1] === "object" ? body[1].color : "?";
+  if (col === "rgb(255, 255, 255)") console.log(`ok   ${"gpt reply colour".padEnd(16)} stated explicitly (white), not inherited`);
+  else { bad++; console.log(`FAIL ${"gpt reply colour".padEnd(16)} reply text computes to ${col}`); }
+}
+
+// The thinking turn's Mog and the settled reply's crystal are mutually
+// exclusive by construction: thinking has no [data-yume-reply], settled has
+// no .result-thinking. Assert the fixture agrees (guards the content.js
+// contract the CSS relies on).
+{
+  const think = ga.find(([l]) => l === "gpt thinking mog");
+  const c = think && typeof think[1] === "object" ? think[1].content : "?";
+  if (c !== "none") console.log(`ok   ${"gpt mog slot".padEnd(16)} thinking turn draws the moogle`);
+  else { bad++; console.log(`FAIL ${"gpt mog slot".padEnd(16)} no moogle on the thinking turn`); }
+}
+
+const gdrew = ga.filter(([, v]) => typeof v === "object" &&
+  Object.values(v).some((x) => /img#|url\(/.test(String(x)))).length;
+if (gdrew < 6) {
+  bad++;
+  console.log(`FAIL gpt sanity      only ${gdrew} probes drew an image on the gpt side`);
+} else {
+  console.log(`ok   gpt sanity      ${gdrew} gpt probes draw sprite images`);
+}
+
 console.log(bad
   ? `\n${bad} probe(s) differ — that much of the theme does not survive export`
-  : `\nround-trip clean — ${checks} properties identical across ${a.length} probes`);
+  : `\nround-trip clean — ${checks} properties identical across ${a.length + ga.length} probes`);
 process.exit(bad ? 1 : 0);

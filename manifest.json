@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Yume Forge Modified — Claude Themes",
-  "version": "1.0.0",
-  "description": "Themes for claude.ai — pick one, or import and share your own.",
+  "name": "Yume Forge Modified — Claude & ChatGPT Themes",
+  "version": "1.1.0",
+  "description": "Themes for claude.ai and chatgpt.com — pick one, or import and share your own.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -75,6 +75,32 @@
         "themes/golden-hour.css",
         "themes/final-fantasy.css"
       ]
+    },
+    {
+      "matches": [
+        "https://chatgpt.com/*"
+      ],
+      "run_at": "document_start",
+      "js": [
+        "lib/theme-engine.js",
+        "content.js"
+      ],
+      "css": [
+        "fonts/fonts.css",
+        "sprites/party.css",
+        "sprites/party-strips.css",
+        "sprites/chocobo.css",
+        "sprites/crystal.css",
+        "sprites/menu-crystal.css",
+        "sprites/cursor.css",
+        "sprites/moogle.css",
+        "sprites/items.css",
+        "sprites/nav-icons.css",
+        "sprites/shop-icons.css",
+        "sprites/silhouette.css",
+        "sprites/ambience.css",
+        "themes/final-fantasy-gpt.css"
+      ]
     }
   ],
   "web_accessible_resources": [
@@ -86,7 +112,8 @@
         "sounds/*"
       ],
       "matches": [
-        "https://claude.ai/*"
+        "https://claude.ai/*",
+        "https://chatgpt.com/*"
       ]
     }
   ]

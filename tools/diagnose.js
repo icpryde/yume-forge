@@ -1,8 +1,9 @@
 // Yume Forge — theme diagnostic.
 //
-// Paste into the DevTools console ON a claude.ai tab (the normal "top"
-// context — this deliberately uses NO chrome.* APIs, so it needs no context
-// switching), then send back the printed report.
+// Paste into the DevTools console ON a claude.ai OR chatgpt.com tab (the
+// normal "top" context — this deliberately uses NO chrome.* APIs, so it needs
+// no context switching), then send back the printed report. It detects which
+// site it's on and fingerprints that site's markup.
 //
 // It answers, in one paste, the questions that otherwise take a dozen rounds:
 //   * is the extension's CSS actually loaded, and how much of it
@@ -55,7 +56,9 @@
 
   // What the reply text actually computes to — the "black text" complaint.
   const reply = document.querySelector(".font-claude-response") ||
-                document.querySelector('[data-testid="chat-input"]');
+                document.querySelector('[data-testid="chat-input"]') ||
+                document.querySelector('section[data-turn="assistant"] .markdown') ||
+                document.querySelector("#prompt-textarea");
   if (reply) {
     const rs = getComputedStyle(reply);
     R.replyText = { color: rs.color, font: rs.fontFamily.split(",")[0], size: rs.fontSize };
@@ -64,21 +67,48 @@
   }
 
   // Build fingerprint: these are the hooks the theme's icon rules depend on.
-  // A different claude.ai variant changes them, and icons vanish while
-  // colours and sprites keep working.
+  // A different site build changes them, and icons vanish while colours and
+  // sprites keep working. Per-site marker sets.
   const probe = (sel) => document.querySelectorAll(sel).length;
-  R.buildMarkers = {
-    "sidebar (.dframe-sidebar-body)": probe(".dframe-sidebar-body"),
-    "nav rows (.contents > [data-row-main-button])": probe(".dframe-sidebar-body .contents > button[data-row-main-button]"),
-    "recents anchor (.df-recents-anchor)": probe(".df-recents-anchor"),
-    "recents rows ([data-row-key])": probe(".df-recents-anchor [data-row-key]"),
-    "leading slots (.df-leading-slot)": probe(".df-leading-slot"),
-    "products block (.df-products-block)": probe(".df-products-block"),
-    "epitaxy (code shell)": probe(".epitaxy-root"),
-    "frame mode": (document.querySelector(".dframe-root") || {}).dataset?.frameMode || "(none)",
-  };
-  R.navLabels = [...document.querySelectorAll(".dframe-sidebar-body [data-row-main-button]")]
-    .slice(0, 8).map((b) => b.textContent.trim().slice(0, 18));
+  R.site = /chatgpt\.com$/.test(location.hostname) ? "chatgpt" : "claude";
+  if (R.site === "chatgpt") {
+    R.buildMarkers = {
+      "sidebar (#stage-slideover-sidebar)": probe("#stage-slideover-sidebar"),
+      "menu rows (.__menu-item)": probe(".__menu-item"),
+      "composer form (unified-composer)": probe('form[data-type="unified-composer"]'),
+      "composer surface": probe("[data-composer-surface]"),
+      "turns (section[data-turn])": probe("section[data-turn]"),
+      "assistant markdown (.markdown)": probe("section[data-turn='assistant'] .markdown"),
+      "splash headline": probe("[data-splash-headline-option]"),
+      "history rows (a[href^='/c/'])": probe("#stage-slideover-sidebar a[href^='/c/']"),
+      "writing blocks": probe("[class*='writing-block-surface']"),
+      "stop button": probe("[data-testid='stop-button']"),
+    };
+    // The sidebar rows the icon remap keys on: testid + label pairs tell us
+    // exactly what a different build renamed.
+    R.navLabels = [...document.querySelectorAll("#stage-slideover-sidebar .__menu-item")]
+      .slice(0, 14)
+      .map((b) => (b.getAttribute("data-testid") || b.getAttribute("href") || "?") +
+                  " = " + b.textContent.trim().slice(0, 22));
+    // The Work tab (Pro): whatever surface it renders, name its top hooks.
+    R.workTab = {
+      "header pills": [...document.querySelectorAll("#page-header [role='tab'], #page-header [role='radio'], #page-header button")]
+        .slice(0, 8).map((b) => b.textContent.trim().slice(0, 14)).filter(Boolean),
+    };
+  } else {
+    R.buildMarkers = {
+      "sidebar (.dframe-sidebar-body)": probe(".dframe-sidebar-body"),
+      "nav rows (.contents > [data-row-main-button])": probe(".dframe-sidebar-body .contents > button[data-row-main-button]"),
+      "recents anchor (.df-recents-anchor)": probe(".df-recents-anchor"),
+      "recents rows ([data-row-key])": probe(".df-recents-anchor [data-row-key]"),
+      "leading slots (.df-leading-slot)": probe(".df-leading-slot"),
+      "products block (.df-products-block)": probe(".df-products-block"),
+      "epitaxy (code shell)": probe(".epitaxy-root"),
+      "frame mode": (document.querySelector(".dframe-root") || {}).dataset?.frameMode || "(none)",
+    };
+    R.navLabels = [...document.querySelectorAll(".dframe-sidebar-body [data-row-main-button]")]
+      .slice(0, 8).map((b) => b.textContent.trim().slice(0, 18));
+  }
 
   R.chrome = (navigator.userAgent.match(/Chrome\/[\d.]+/) || ["?"])[0];
   R.url = location.pathname;

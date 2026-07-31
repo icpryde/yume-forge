@@ -16,10 +16,26 @@
   const FEAT_ATTR = "data-yume-feat";
   const OPT_ATTR = "data-yume-opt";
 
+  // Which site this copy of the script woke up on. Everything DOM-shaped
+  // (composer, reply detection, banner hunt) branches on this once, up front;
+  // the sound pipeline, party mechanics and scheduling are site-agnostic.
+  // The harness override exists because a file:// fixture cannot fake its
+  // hostname — smoke sets it before loading this script to drive the
+  // chatgpt-shaped fixture down the chatgpt paths.
+  const SITE = globalThis.__YUME_TEST_SITE ||
+    (/(^|\.)chatgpt\.com$/.test(location.hostname) ? "chatgpt" : "claude");
+
+  // Each site has its own selected-theme slot; see theme-engine.
+  const SEL_KEY = E.selectedKeyFor(SITE);
+
   // Kept in step with lib/packer.js FEATURES — that is what an exported copy
   // carries, this is what the bundled original uses.
+  // No "banner" for the ChatGPT theme: the banner hunt is a claude.ai-Home
+  // notion (usage notices dropped into the composer strip); chatgpt.com has
+  // no equivalent band to police.
   const BUNDLED_FEATURES = {
     "final-fantasy": ["party", "stars", "banner", "composer-glow", "replies"],
+    "final-fantasy-gpt": ["party", "stars", "composer-glow", "replies"],
   };
   const PREVIEW_KEY = "yumePreview";
 
@@ -138,8 +154,8 @@
 
   /* -------------------------------------------------------------- startup */
 
-  chrome.storage.sync.get([E.SELECTED_KEY, E.OPTIONS_KEY], (d) => {
-    selectedId = d[E.SELECTED_KEY] || null;
+  chrome.storage.sync.get([SEL_KEY, E.OPTIONS_KEY], (d) => {
+    selectedId = d[SEL_KEY] || null;
     const v = d[E.OPTIONS_KEY];
     optionValues = v && typeof v === "object" ? v : {};
     apply();
@@ -166,8 +182,8 @@
   chrome.storage.onChanged.addListener((changes, area) => {
     let dirty = false;
 
-    if (area === "sync" && changes[E.SELECTED_KEY]) {
-      selectedId = changes[E.SELECTED_KEY].newValue || null;
+    if (area === "sync" && changes[SEL_KEY]) {
+      selectedId = changes[SEL_KEY].newValue || null;
       dirty = true;
     }
     if (area === "local" && changes[E.STORE_KEY]) {
@@ -182,10 +198,15 @@
       dirty = true;
     }
     if (area === "local" && changes.yumeChocoNow && changes.yumeChocoNow.newValue) {
-      // Test/preview hook: {v: "a"|"b"|"c", dur?: ms} or a bare variant string.
+      // Test/preview hook: {v: "a"|"b"|"c", dur?: ms, site?} or a bare variant
+      // string. The popup stamps the site it was aimed at, so releasing a
+      // chocobo onto the OpenAI tab doesn't also send one sprinting across
+      // every open claude.ai tab.
       const v = changes.yumeChocoNow.newValue;
-      runChoco(typeof v === "object" ? v.v : String(v),
-               typeof v === "object" ? v.dur : undefined);
+      if (typeof v !== "object" || !v.site || v.site === SITE) {
+        runChoco(typeof v === "object" ? v.v : String(v),
+                 typeof v === "object" ? v.dur : undefined);
+      }
     }
     if (area === "local" && changes[PREVIEW_KEY]) {
       previewTheme = changes[PREVIEW_KEY].newValue || null;
@@ -406,7 +427,14 @@
       const el = document.createElement("div");
       el.className = "yume-choco " + (variant === "c" ? "yume-choco-c" : "yume-choco-b");
       clip.append(el);
-      host.append(clip);
+      // The reveal trick needs the element whose background the bird hides
+      // behind. On claude that IS the composer host; on chatgpt the paint
+      // lives on the [data-composer-surface] child of the form, so the clip
+      // mounts there (the theme grants it a stacking context for the z:-1).
+      const clipHost = SITE === "chatgpt"
+        ? host.querySelector("[data-composer-surface]") || host
+        : host;
+      clipHost.append(clip);
       // Measured after append — clientWidth is 0 before layout knows it.
       el.style.setProperty("--choco-dist", clip.clientWidth + "px");
       el.style.setProperty("--choco-dur", dur + "ms");
@@ -439,7 +467,9 @@
   };
 
   function markIconGlyphs(root) {
-    if (!isFinalFantasy()) return;
+    // Anthropicons live on claude.ai only; chatgpt draws its icons as SVG
+    // sprite refs, which CSS reaches directly — no marking needed there.
+    if (SITE !== "claude" || !isFinalFantasy()) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     for (let t = walker.nextNode(); t; t = walker.nextNode()) {
       const v = t.nodeValue.trim();
@@ -702,11 +732,21 @@
   // active theme want the party/scenery extras", so an imported copy gets them.
   const isFinalFantasy = () => alive() && hasFeature("party");
 
-  const composer = () =>
+  const composer = () => {
+    if (SITE === "chatgpt") {
+      // The unified composer <form> wraps the visual box ([data-composer-
+      // surface]) and nothing else of consequence, and it survives the
+      // Chat/Work tabs alike. The fallback walks up from the surface for any
+      // future variant that renames the form's data-type.
+      return document.querySelector('form[data-type="unified-composer"]') ||
+        document.querySelector("[data-composer-surface]")?.closest("form") ||
+        null;
+    }
     // Home tab first, then the code tab's epitaxy prompt — the party, the
     // chocobo routes and the banner logic all stage off whichever exists.
-    document.querySelector('div[class*="cursor-text"]:has([data-testid="chat-input"])') ||
-    document.querySelector('.epitaxy-prompt:not([class*="prompt-compact-bg"])');
+    return document.querySelector('div[class*="cursor-text"]:has([data-testid="chat-input"])') ||
+      document.querySelector('.epitaxy-prompt:not([class*="prompt-compact-bg"])');
+  };
 
   function buildParty(host) {
     const row = document.createElement("div");
@@ -766,7 +806,10 @@
     // sticky strip around that composer. On the code tab the element its
     // geometry likes best is the repo/branch chip row above the prompt —
     // which promptly got dressed as a menu window. No epitaxy surface needs
-    // this treatment; clear and stand down.
+    // this treatment; clear and stand down. chatgpt.com has no banner band
+    // at all (and its "banner" feature is never granted), so it stands down
+    // the same way rather than dressing whatever sits above the composer.
+    if (SITE === "chatgpt") { clearBannerPadding(); return; }
     if (host.classList.contains("epitaxy-prompt")) { clearBannerPadding(); return; }
     // Every bail-out path clears first. Returning early used to leave the cap
     // and frame frozen on whatever was styled — so shrinking the window below
@@ -945,6 +988,24 @@
   }
 
   function markReplyWindows() {
+    if (SITE === "chatgpt") {
+      // chatgpt's turns are far more declarative than claude's: every turn is
+      // a section[data-turn], and the assistant body is .markdown. While the
+      // model is still "thinking" the same .markdown carries .result-thinking
+      // with an empty <p> inside — text-walking that would stamp the frame on
+      // an empty window, so thinking is excluded outright and the stamp lands
+      // exactly when the first real token does.
+      for (const el of document.querySelectorAll('section[data-turn="assistant"]')) {
+        const body = el.querySelector(".markdown");
+        const filled = !!body && !body.classList.contains("result-thinking") && hasReplyText(body);
+        if (filled) {
+          if (!el.dataset[REPLY_ATTR]) el.dataset[REPLY_ATTR] = "1";
+        } else if (el.dataset[REPLY_ATTR]) {
+          delete el.dataset[REPLY_ATTR];
+        }
+      }
+      return;
+    }
     for (const el of document.querySelectorAll("div[data-is-streaming]")) {
       const body = el.querySelector(".font-claude-response");
       const filled = !!body && hasReplyText(body);
@@ -968,7 +1029,9 @@
     // wrappers put the tag on the empty next-turn placeholder, which is mounted
     // most of the time — so the breathe glow was landing on an element with no
     // frame and the real newest reply never glowed.
-    const replies = document.querySelectorAll("div[data-is-streaming][data-yume-reply]");
+    const replies = document.querySelectorAll(SITE === "chatgpt"
+      ? 'section[data-turn="assistant"][data-yume-reply]'
+      : "div[data-is-streaming][data-yume-reply]");
     const last = replies[replies.length - 1] || null;
     for (const el of document.querySelectorAll("[" + LATEST_ATTR + "]")) {
       if (el !== last) el.removeAttribute(LATEST_ATTR);
@@ -1057,7 +1120,8 @@
   const MOOGLE_NAME = "Mog";
 
   function renameInTooltip(node) {
-    if (!isFinalFantasy() || !node || node.nodeType !== 1) return;
+    // "I'm Claude" appears nowhere on chatgpt.com; skip the walk entirely.
+    if (SITE !== "claude" || !isFinalFantasy() || !node || node.nodeType !== 1) return;
     const tips = node.matches?.('[role="tooltip"]') ? [node] : node.querySelectorAll?.('[role="tooltip"]');
     for (const tip of tips || []) {
       const walker = document.createTreeWalker(tip, NodeFilter.SHOW_TEXT);

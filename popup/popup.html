@@ -11,11 +11,16 @@
       <h1>Yume Forge Modified</h1>
       <span id="current-badge" class="current-badge"></span>
     </div>
+    <!-- Which site's themes are on show. Each site keeps its own selection. -->
+    <nav id="sites" class="sites" aria-label="Site">
+      <button class="site-tab active" data-site="claude">Claude</button>
+      <button class="site-tab" data-site="chatgpt">OpenAI</button>
+    </nav>
     <nav id="chips" class="chips"></nav>
   </header>
 
   <button id="reset" class="reset-row">
-    <span>🤎 Claude Default</span>
+    <span id="reset-label">🤎 Claude Default</span>
     <span class="reset-hint">reset</span>
   </button>
 

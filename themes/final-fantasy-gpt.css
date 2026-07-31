@@ -1,0 +1,1060 @@
+/* ============================================================================
+   Yume Forge — "final-fantasy-gpt"
+
+   The Final Fantasy theme, ported to chatgpt.com. Same love letter — royal
+   blue menu windows, hard white frames, gold cursor, the crystal beside every
+   reply, the party idling on the composer — reseated on ChatGPT's DOM.
+
+   Written against the DOM captured live in .gpt-snapshots/ (2026-07-31 build
+   prod-fc98dd36): tokens are plain colours (not HSL triplets like claude's),
+   surfaces hang off *-token-* utility classes, turns are
+   section[data-turn="user"|"assistant"], the assistant body is .markdown, the
+   composer is form[data-type="unified-composer"] around
+   [data-composer-surface], and "busy" is [data-testid="stop-button"] plus
+   .result-thinking on the streaming reply. Icons are hashed SVG sprite refs
+   (per-deploy hashes), so every icon rule keys on data-testids or hrefs, never
+   on the sprite fragment.
+
+   This file is SELF-CONTAINED on purpose: _base.css is claude-only, so the
+   ambience scaffolding (html::before/::after, the starfield pseudos, the fall
+   keyframes) is declared here. Shares the generated sprite sheets and fonts
+   with the claude theme via the same manifest css list.
+   ========================================================================== */
+
+html[data-cct-theme="final-fantasy-gpt"] {
+  /* --- window frame ------------------------------------------------------ */
+  --ff-win-top: #2f47a8;
+  --ff-win-mid: #16225e;
+  --ff-win-bot: #0b1240;
+  --ff-frame: #ffffff;
+  --ff-bevel: rgba(148, 176, 244, 0.55);
+  --ff-drop: rgba(3, 6, 22, 0.72);
+
+  --ff-gold: #ffd75e;
+  --ff-crystal-cyan: #8beaff;
+
+  --ff-window: linear-gradient(180deg, var(--ff-win-top) 0%, var(--ff-win-mid) 58%, var(--ff-win-bot) 100%);
+  --ff-window-user: linear-gradient(180deg, #3a55c4 0%, #1e2e78 58%, #12194f 100%);
+  --ff-window-reply: linear-gradient(180deg, #1a2568 0%, #0e1442 60%, #070b2a 100%);
+  --ff-frame-shadow:
+    inset 0 0 0 1px var(--ff-bevel),
+    0 3px 0 var(--ff-drop),
+    0 8px 22px rgba(0, 0, 0, 0.45);
+
+  /* --- type -------------------------------------------------------------- */
+  --ff-pixel: "Yume Press Start", ui-monospace, monospace;
+  --ff-pixel-ui: "Yume Silkscreen", "Yume Press Start", ui-monospace, monospace;
+  --ff-body: var(--ff-pixel);
+  --ff-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ---------------------------------------------------------------- tokens */
+
+/* ChatGPT paints nearly everything through CSS-variable design tokens, and
+   unlike claude's they hold finished colours. The page surfaces go
+   TRANSPARENT so the body's sky gradient (below) shows through everywhere;
+   anything that genuinely needs its own panel (menus, dialogs, bubbles,
+   composer) is explicitly dressed as a menu window further down. */
+html[data-cct-theme="final-fantasy-gpt"],
+html[data-cct-theme="final-fantasy-gpt"] * {
+  --main-surface-primary: transparent !important;
+  --sidebar-surface-primary: transparent !important;
+  --composer-surface-primary: transparent !important;
+
+  --main-surface-secondary: #182262 !important;
+  --main-surface-tertiary: #1d2a75 !important;
+  --bg-primary: #131c58 !important;
+  --bg-secondary: #182262 !important;
+  --bg-tertiary: #1d2a75 !important;
+  --bg-elevated-primary: #141e5e !important;
+  --bg-elevated-secondary: #10184c !important;
+  --bg-tooltip: #10184c !important;
+  --bg-scrim: rgba(4, 8, 30, 0.6) !important;
+
+  --text-primary: #ffffff !important;
+  --text-secondary: #dbe4ff !important;
+  --text-tertiary: #a9b7e8 !important;
+  --text-quaternary: #8fa0d8 !important;
+  --text-inverted: #0b1240 !important;
+
+  --border-default: rgba(255, 255, 255, 0.55) !important;
+  --border-medium: rgba(255, 255, 255, 0.45) !important;
+  --border-light: rgba(255, 255, 255, 0.26) !important;
+  --border-extra-light: rgba(255, 255, 255, 0.34) !important;
+  --border-heavy: rgba(255, 255, 255, 0.65) !important;
+
+  /* Gold is "selected" in a JRPG menu. */
+  --surface-hover: rgba(255, 215, 94, 0.14) !important;
+  --link: #9db4ff !important;
+  --link-hover: #c4d2ff !important;
+}
+
+/* -------------------------------------------------------------- ambience */
+
+/* The sky. body carries the page gradient plus (optionally) the horizon
+   silhouette; the page's own wrappers were made transparent above, so this is
+   what shows behind every surface. Fixed attachment: the thread scroller is
+   thousands of px tall and a scrolling gradient would stretch to nothing. */
+html[data-cct-theme="final-fantasy-gpt"] {
+  --ff-horizon: none;
+}
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="bottom-scenery"] {
+  --ff-horizon: var(--yume-ff-silhouette);
+}
+
+html[data-cct-theme="final-fantasy-gpt"] body {
+  background-image: var(--ff-horizon), linear-gradient(180deg,
+    hsl(226 62% 26%) 0%,
+    hsl(230 64% 18%) 26%,
+    hsl(233 66% 12%) 58%,
+    hsl(234 66% 9%) 100%) !important;
+  background-attachment: fixed, fixed !important;
+  background-repeat: no-repeat, no-repeat !important;
+  /* Art composed with its subjects at the right, so they never leave the
+     screen; a wider window reveals more of the scene's left. Natural size. */
+  background-position: right bottom, center !important;
+  background-size:
+    calc(var(--yume-ff-silhouette-w) * 1px) calc(var(--yume-ff-silhouette-h) * 1px),
+    100% 100% !important;
+}
+
+/* Moon + corner washes, floating above the page (same layer budget as the
+   claude theme: html::before is scenery, html::after is the falling motes,
+   body::before/::after are the two starfields). All are pointer-events-none
+   fixed layers, self-declared since _base.css does not load here. */
+html[data-cct-theme="final-fantasy-gpt"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483645;
+  background-image:
+    var(--yume-ff-moon),
+    radial-gradient(1100px 700px at 50% -14%, rgba(72, 116, 255, 0.16), transparent 72%),
+    radial-gradient(900px 620px at -8% 108%, rgba(30, 58, 176, 0.12), transparent 74%);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position:
+    right clamp(10px, 3.4vw, 78px) top clamp(8px, 2.2vh, 34px),
+    center, center;
+  background-size: clamp(118px, 14vw, 208px), auto, auto;
+}
+
+@media (max-width: 560px) {
+  html[data-cct-theme="final-fantasy-gpt"]::before { background-image: none, none, none; }
+}
+
+@keyframes cct-fall { from { transform: translateY(0); } to { transform: translateY(460px); } }
+
+/* Crystal motes drifting down. */
+html[data-cct-theme="final-fantasy-gpt"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  will-change: transform;
+  opacity: 0.75;
+  background-repeat: repeat;
+  background-image: var(--yume-ff-motes);
+  animation: cct-fall 34s linear infinite;
+}
+
+@keyframes ff-twinkle {
+  0%, 100% { opacity: 0.18; }
+  38%      { opacity: 1; }
+  64%      { opacity: 0.32; }
+}
+
+html[data-cct-theme="final-fantasy-gpt"] body::before,
+html[data-cct-theme="final-fantasy-gpt"] body::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; top: -460px; bottom: 0;
+  pointer-events: none;
+  z-index: 2147483644;
+  will-change: transform;
+  background-repeat: repeat;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] body::before {
+  background-image: var(--yume-ff-stars-far);
+  opacity: 0.62;
+  animation: cct-fall 72s linear infinite;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] body::after {
+  background-image: var(--yume-ff-stars-near);
+  animation:
+    cct-fall 46s linear infinite,
+    ff-twinkle 4.6s ease-in-out infinite;
+}
+
+/* Shooting stars — spawned by content.js, geometry per-star. */
+html[data-cct-theme="final-fantasy-gpt"] .yume-shooting-star {
+  position: fixed;
+  z-index: 2147483643;
+  width: var(--len, 140px);
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: 0 50%;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(180, 214, 255, 0) 0%,
+    rgba(190, 224, 255, 0.55) 55%,
+    rgba(236, 248, 255, 0.95) 88%,
+    #ffffff 100%);
+  filter: drop-shadow(0 0 6px rgba(150, 210, 255, 0.85));
+  animation: yume-shoot var(--dur, 1.4s) cubic-bezier(0.25, 0.5, 0.5, 1) forwards;
+}
+
+@keyframes yume-shoot {
+  0%   { transform: rotate(var(--ang, 30deg)) translateX(0); opacity: 0; }
+  12%  { opacity: 1; }
+  72%  { opacity: 1; }
+  100% { transform: rotate(var(--ang, 30deg)) translateX(var(--travel, 100vw)); opacity: 0; }
+}
+
+/* ------------------------------------------------------------------ type */
+
+/* ChatGPT sets its families high up and sizes per element, so one body-level
+   override carries the UI face everywhere; prose and code re-declare below. */
+html[data-cct-theme="final-fantasy-gpt"] body,
+html[data-cct-theme="final-fantasy-gpt"] button,
+html[data-cct-theme="final-fantasy-gpt"] input,
+html[data-cct-theme="final-fantasy-gpt"] select,
+html[data-cct-theme="final-fantasy-gpt"] textarea,
+html[data-cct-theme="final-fantasy-gpt"] kbd {
+  font-family: var(--ff-pixel-ui) !important;
+  letter-spacing: 0.01em;
+}
+
+/* Message and composer text — Press Start 2P (real lowercase; Silkscreen's
+   lowercase is bitmap-identical to caps and reads as SHOUTING).
+
+   0.75rem = 12px, and both the unit and the number are load-bearing: REM
+   because the list includes `*` and an em would compound per nesting level;
+   12px because Press Start 2P sits on an 8px grid and is only crisp at whole
+   device pixels per glyph pixel (on 2x: 12px = exactly 3). Adjust only in
+   whole 4px steps. Colour stated EXPLICITLY — never inherited from the site's
+   tokens (the friend-build lesson from claude.ai). */
+html[data-cct-theme="final-fantasy-gpt"] .markdown,
+html[data-cct-theme="final-fantasy-gpt"] .markdown *,
+html[data-cct-theme="final-fantasy-gpt"] .user-message-bubble-color,
+html[data-cct-theme="final-fantasy-gpt"] .user-message-bubble-color *,
+html[data-cct-theme="final-fantasy-gpt"] #prompt-textarea,
+html[data-cct-theme="final-fantasy-gpt"] #prompt-textarea * {
+  font-family: var(--ff-body) !important;
+  font-size: 0.75rem !important;
+  line-height: 1.9 !important;
+  letter-spacing: normal;
+  color: #fff !important;
+}
+
+/* Code keeps a real monospace, inside prose and composer alike. */
+html[data-cct-theme="final-fantasy-gpt"] code,
+html[data-cct-theme="final-fantasy-gpt"] pre,
+html[data-cct-theme="final-fantasy-gpt"] pre *,
+html[data-cct-theme="final-fantasy-gpt"] .user-message-inline-code {
+  font-family: var(--ff-mono) !important;
+}
+
+/* Markdown headings inside replies: pixel with the classic hard shadow. */
+html[data-cct-theme="final-fantasy-gpt"] .markdown h1,
+html[data-cct-theme="final-fantasy-gpt"] .markdown h2,
+html[data-cct-theme="final-fantasy-gpt"] .markdown h3,
+html[data-cct-theme="final-fantasy-gpt"] .markdown h4 {
+  font-family: var(--ff-pixel) !important;
+  font-size: 0.875rem !important;   /* 14px — one step above body, still on grid at 2x */
+  line-height: 1.8 !important;
+  text-shadow: 2px 2px 0 rgba(3, 6, 22, 0.85);
+  letter-spacing: 0.02em;
+}
+
+/* The greeting on a fresh chat ("Where should we begin?" / "How can I help,
+   <name>?"). Scoped out of .markdown so a reply's own h1 keeps the rule
+   above. clamp: Press Start is fixed-width and the line length varies with
+   the wording and the user's name. */
+html[data-cct-theme="final-fantasy-gpt"] main h1:not(.markdown *),
+html[data-cct-theme="final-fantasy-gpt"] main h1:not(.markdown *) * {
+  font-family: var(--ff-pixel) !important;
+  font-size: clamp(0.95rem, 2.4vw, 1.4rem) !important;
+  line-height: 1.7 !important;
+  text-shadow: 2px 2px 0 rgba(3, 6, 22, 0.85);
+  letter-spacing: 0.02em;
+  color: #fff !important;
+}
+
+/* The composer placeholder ("Ask anything" / "Work on anything"). */
+html[data-cct-theme="final-fantasy-gpt"] #prompt-textarea [data-placeholder]::before,
+html[data-cct-theme="final-fantasy-gpt"] #prompt-textarea [data-placeholder]::after,
+html[data-cct-theme="final-fantasy-gpt"] #prompt-textarea .placeholder {
+  color: #a9b7e8 !important;
+  opacity: 1;
+}
+
+/* The tiny print under the composer. */
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="thread-disclaimer"],
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="thread-disclaimer"] * {
+  font-family: var(--ff-pixel-ui) !important;
+  color: #8fa0d8 !important;
+}
+
+/* ---------------------------------------------------------- menu windows */
+
+/* Your messages: the brighter blue window. corner-shape retired along with
+   the 22px superellipse — JRPG windows have honest corners. */
+html[data-cct-theme="final-fantasy-gpt"] .user-message-bubble-color {
+  background: var(--ff-window-user) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  corner-shape: round !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+  color: #fff !important;
+}
+
+/* Menus, dialogs, tooltips and every other Radix portal panel. */
+html[data-cct-theme="final-fantasy-gpt"] [role="menu"],
+html[data-cct-theme="final-fantasy-gpt"] [role="dialog"],
+html[data-cct-theme="final-fantasy-gpt"] [role="listbox"],
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content],
+html[data-cct-theme="final-fantasy-gpt"] div.popover {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] [role="menuitem"]:hover,
+html[data-cct-theme="final-fantasy-gpt"] [role="option"]:hover,
+html[data-cct-theme="final-fantasy-gpt"] [role="menuitem"][data-highlighted],
+html[data-cct-theme="final-fantasy-gpt"] [role="option"][data-highlighted] {
+  background: rgba(255, 215, 94, 0.16) !important;
+  color: var(--ff-gold) !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] [role="tooltip"] {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 5px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+  font-family: var(--ff-pixel-ui) !important;
+  color: #fff !important;
+}
+
+/* ------------------------------------------------------- reply windows */
+
+/* content.js stamps data-yume-reply on section[data-turn="assistant"] once
+   the reply holds real text (thinking excluded), and data-yume-latest on the
+   newest — same contract as the claude theme. The frame wraps the message
+   block, not the whole section, so the hover action row below stays outside
+   the window. */
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-reply] div[data-message-author-role="assistant"] {
+  background: var(--ff-window-reply) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ff-frame-shadow);
+  padding: 10px 14px 10px 40px !important;
+  position: relative;
+}
+
+/* Crystal in the window's left gutter — the speaker mark. Width derives from
+   the ripped asset's own aspect so a re-rip never squashes it. */
+@keyframes ff-crystal-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(120, 220, 255, 0.55)) brightness(1);
+    transform: translateY(0);
+  }
+  50% {
+    filter: drop-shadow(0 0 11px rgba(150, 235, 255, 0.95)) brightness(1.15);
+    transform: translateY(-2px);
+  }
+}
+
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-reply] div[data-message-author-role="assistant"]::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 12px;
+  height: 32px;
+  width: calc(32px * var(--yume-ff-crystal-w) / var(--yume-ff-crystal-h));
+  background: var(--yume-ff-crystal) center / contain no-repeat;
+  image-rendering: pixelated;
+  animation: ff-crystal-pulse 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  html[data-cct-theme="final-fantasy-gpt"] section[data-yume-reply] div[data-message-author-role="assistant"] { padding-left: 14px !important; }
+  html[data-cct-theme="final-fantasy-gpt"] section[data-yume-reply] div[data-message-author-role="assistant"]::before { display: none; }
+}
+
+/* The newest reply breathes. */
+@keyframes ff-reply-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px var(--ff-bevel),
+      0 0 12px 1px rgba(92, 152, 255, 0.28),
+      0 3px 0 var(--ff-drop);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgba(196, 220, 255, 0.7),
+      0 0 26px 5px rgba(134, 202, 255, 0.5),
+      0 3px 0 var(--ff-drop);
+  }
+}
+
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-latest][data-yume-reply] div[data-message-author-role="assistant"] {
+  animation: ff-reply-breathe 4.2s ease-in-out infinite;
+}
+
+/* Code blocks lift off the window fill instead of blurring into it. */
+html[data-cct-theme="final-fantasy-gpt"] .markdown pre {
+  background: rgba(4, 8, 30, 0.55) !important;
+  border: 1px solid rgba(150, 180, 255, 0.22) !important;
+  border-radius: 5px !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] .markdown pre > div {
+  background: transparent !important;
+}
+
+/* Markdown tables as menu grids. */
+html[data-cct-theme="final-fantasy-gpt"] .markdown table,
+html[data-cct-theme="final-fantasy-gpt"] .markdown th,
+html[data-cct-theme="final-fantasy-gpt"] .markdown td {
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] .markdown th {
+  background: rgba(47, 71, 168, 0.45) !important;
+}
+
+/* ------------------------------------------------------ composer + glow */
+
+@keyframes ff-breathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px var(--ff-bevel),
+      0 0 13px 1px rgba(92, 152, 255, 0.34),
+      0 3px 0 var(--ff-drop);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgba(196, 220, 255, 0.8),
+      0 0 30px 6px rgba(134, 202, 255, 0.6),
+      0 3px 0 var(--ff-drop);
+  }
+}
+
+/* The composer surface is the menu window. The 28px radius arrives as an
+   inline style, hence !important. z-index: 0 grants a stacking context so the
+   chocobo's clipped runs can sit at z:-1 — above this window's own paint,
+   below the text being typed (the same trick the code tab needed on claude). */
+html[data-cct-theme="final-fantasy-gpt"] [data-composer-surface] {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 9px !important;
+  position: relative;
+  z-index: 0;
+  animation: ff-breathe 4.2s ease-in-out infinite;
+}
+
+/* The party (and the parkour's box bird) stage off the form, which wraps the
+   surface tightly; it needs to be a positioning root and must never clip. */
+html[data-cct-theme="final-fantasy-gpt"] form[data-type="unified-composer"] {
+  position: relative;
+  overflow: visible !important;
+}
+
+/* Composer control chips: the plus button, dictation, voice. Cosmetic only. */
+html[data-cct-theme="final-fantasy-gpt"] .composer-btn,
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="composer-speech-button"] {
+  border: 1px solid rgba(255, 255, 255, 0.42) !important;
+  border-radius: 3px !important;
+  background: linear-gradient(180deg, rgba(84, 114, 214, 0.45), rgba(18, 30, 92, 0.45)) !important;
+  color: #fff !important;
+  font-family: var(--ff-pixel-ui) !important;
+  box-shadow: 0 2px 0 rgba(3, 6, 22, 0.5);
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .composer-btn:hover,
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="composer-speech-button"]:hover {
+  border-color: var(--ff-gold) !important;
+  color: var(--ff-gold) !important;
+}
+
+/* ---------------------------------------------------------- send button */
+
+/* The select hand, mirrored to point left into the text. aria-label match:
+   the button ("Send prompt") only mounts once the composer has content.
+   "Stop answering" deliberately keeps its own look below. */
+html[data-cct-theme="final-fantasy-gpt"] button[aria-label*="Send" i] {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  position: relative;
+  overflow: visible !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] button[aria-label*="Send" i] > * {
+  opacity: 0 !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] button[aria-label*="Send" i]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  height: calc(var(--yume-ff-cursor-h) * 2px);
+  width: calc(var(--yume-ff-cursor-w) * 2px);
+  background: var(--yume-ff-cursor) center / contain no-repeat;
+  image-rendering: pixelated;
+  transform: scaleX(-1);
+  filter: drop-shadow(0 0 5px rgba(150, 200, 255, 0.55));
+}
+
+html[data-cct-theme="final-fantasy-gpt"] button[aria-label*="Send" i]:hover::after {
+  filter: drop-shadow(0 0 9px rgba(255, 215, 94, 0.9));
+}
+
+/* "Send feedback" anywhere would match the hand rule; it gets the menu
+   crystal instead, half-scale. Same guard as the claude theme. */
+html[data-cct-theme="final-fantasy-gpt"] button[aria-label*="feedback" i]::after {
+  background-image: var(--yume-ff-menu-crystal);
+  width: calc(var(--yume-ff-menu-crystal-w) * 0.5px);
+  height: calc(var(--yume-ff-menu-crystal-h) * 0.5px);
+  transform: none;
+  filter: drop-shadow(0 0 5px rgba(139, 234, 255, 0.5));
+}
+
+/* Stop stays a real control — gold frame so it reads as the active verb. */
+html[data-cct-theme="final-fantasy-gpt"] button[aria-label="Stop answering"],
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="stop-button"] {
+  background: linear-gradient(180deg, rgba(84, 114, 214, 0.55), rgba(18, 30, 92, 0.55)) !important;
+  border: 1px solid var(--ff-gold) !important;
+  border-radius: 3px !important;
+  color: var(--ff-gold) !important;
+  box-shadow: 0 2px 0 rgba(3, 6, 22, 0.5) !important;
+}
+
+/* ------------------------------------------------------------ the party */
+
+/* content.js injects .yume-party (four clickable members) onto the composer
+   form; all sizing/pose maths derives from the generated strip metrics. */
+html[data-cct-theme="final-fantasy-gpt"] .yume-party {
+  position: absolute;
+  right: 16px;
+  top: calc(var(--yume-party-cell-h) * -2px);
+  display: flex;
+  gap: 6px;
+  z-index: 40;
+  pointer-events: none;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member {
+  width: calc(var(--yume-party-cell-w) * 2px);
+  height: calc(var(--yume-party-cell-h) * 2px);
+  background-repeat: no-repeat;
+  background-size: calc(var(--yume-party-poses) * 100%) 100%;
+  image-rendering: pixelated;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5));
+  background-position-x: calc(var(--pose, 0) / (var(--yume-party-poses) - 1) * 100%);
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="0"] { background-image: var(--yume-party-0); }
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="1"] { background-image: var(--yume-party-1); }
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="2"] { background-image: var(--yume-party-2); }
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="3"] { background-image: var(--yume-party-3); }
+
+@keyframes ff-member-idle {
+  0%, 49.99% { background-position-x: 0%; }
+  50%, 100%  { background-position-x: calc(1 / (var(--yume-party-poses) - 1) * 100%); }
+}
+
+/* The party idles while ChatGPT is working. The stop button exists for
+   exactly the generation window — the cleanest "busy" signal in this DOM. */
+html[data-cct-theme="final-fantasy-gpt"]:has([data-testid="stop-button"]) .yume-party-member[data-pose="idle"] {
+  animation-name: ff-member-idle;
+  animation-duration: 0.92s;
+  animation-timing-function: steps(1);
+  animation-iteration-count: infinite;
+  animation-delay: var(--party-phase, 0s);
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="1"] { --party-phase: 0.23s; }
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="2"] { --party-phase: 0.46s; }
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="3"] { --party-phase: 0.69s; }
+
+html[data-cct-theme="final-fantasy-gpt"] .yume-party-member:hover {
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5)) brightness(1.18);
+}
+
+/* On the fresh-chat view the splash greeting sits directly above the
+   composer and can run two lines through the leftmost members — those two
+   kneel (strip pose 4) until a conversation starts. [data-splash-headline-
+   option] exists only on the empty view; clicks and chocobo falls still
+   override via data-pose. */
+html[data-cct-theme="final-fantasy-gpt"]:has([data-splash-headline-option]) .yume-party-member[data-member="0"][data-pose="idle"],
+html[data-cct-theme="final-fantasy-gpt"]:has([data-splash-headline-option]) .yume-party-member[data-member="1"][data-pose="idle"] {
+  animation: none !important;
+  background-position-x: calc(4 / (var(--yume-party-poses) - 1) * 100%);
+}
+
+@media (max-width: 720px) {
+  html[data-cct-theme="final-fantasy-gpt"] .yume-party { display: none; }
+}
+
+/* --------------------------------------------------- working Mog (thinking) */
+
+/* While the model hasn't produced a token yet, the reply body is .markdown
+   with .result-thinking and an empty <p> — ChatGPT draws its pulsing dot in
+   there. The dot's box becomes Mog's stage: contents hidden, moogle drawn on
+   the container, hop cadence instead of the pulse. */
+@keyframes ff-moogle-frames {
+  0%, 49.99% { background-position-x: 0%; }
+  50%, 100%  { background-position-x: 100%; }
+}
+
+@keyframes ff-moogle-hop {
+  0%, 100% { transform: translateY(0); }
+  42%      { transform: translateY(-3px); }
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .result-thinking {
+  position: relative;
+  color: transparent !important;
+  min-height: calc(var(--yume-ff-moogle-h) * 1.5px + 6px);
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .result-thinking > * {
+  opacity: 0 !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .result-thinking::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0;
+  width: calc(var(--yume-ff-moogle-w) * 1.5px);
+  height: calc(var(--yume-ff-moogle-h) * 1.5px);
+  background-image: var(--yume-ff-moogle);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+  animation:
+    ff-moogle-frames 0.62s steps(1) infinite,
+    ff-moogle-hop 0.62s ease-in-out infinite;
+}
+
+/* Streaming text keeps ChatGPT's own trailing-caret animation; nothing to do. */
+
+/* ------------------------------------------------------- writing blocks */
+
+/* The inline canvas ("writing block") some replies render into is its own
+   surface family (--oai-wb-*), plus two hard-coded dark:bg-[#2a2a2a] layers
+   that no token override can reach. It becomes a parchment-of-the-realm:
+   deep navy document panel inside the reply window, white keyline. */
+html[data-cct-theme="final-fantasy-gpt"] [class*="writing-block-surface"] {
+  --oai-wb-surface-primary: #101a54;
+  --oai-wb-surface-secondary: #182262;
+  --oai-wb-text-primary: #ffffff;
+  --oai-wb-text-secondary: #dbe4ff;
+  --oai-wb-divider: rgba(255, 255, 255, 0.3);
+  --oai-wb-radius: 7px;
+  --oai-wb-shadow: 0 0 0 1px rgba(148, 176, 244, 0.4), 0 3px 0 rgba(3, 6, 22, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 7px !important;
+}
+
+/* The hard-coded fills (panel background, Edit pill, toolbar chips).
+
+   These utilities carry tailwind's trailing-! (background !important) INSIDE
+   a cascade layer, and for !important declarations the layer order inverts:
+   layered importants beat unlayered ones, so a plain !important here loses no
+   matter its specificity. Joining the site's own FIRST layer ("theme" —
+   tailwind v4's canonical opener) turns the inversion to our advantage:
+   earliest-layer importants win. The unlayered copy stays as a fallback for
+   any build that drops layers entirely. */
+@layer theme {
+  html[data-cct-theme="final-fantasy-gpt"] [class*="writing-block-surface"] [class*="bg-[#2a2a2a]"],
+  html[data-cct-theme="final-fantasy-gpt"] [class*="writing-block-surface"] [class*="bg-token-bg-primary"] {
+    background: #101a54 !important;
+  }
+}
+html[data-cct-theme="final-fantasy-gpt"] [class*="writing-block-surface"] [class*="bg-[#2a2a2a]"],
+html[data-cct-theme="final-fantasy-gpt"] [class*="writing-block-surface"] [class*="bg-token-bg-primary"] {
+  background: #101a54 !important;
+}
+
+/* ----------------------------------------------------------- the sidebar */
+
+/* The whole column is one tall menu panel: gradient sky-glass, white keyline
+   on the content edge, hard drop. Inner surfaces were made transparent by the
+   token block; the sticky headers re-paint with the SAME fixed-attachment
+   gradient so rows scrolling under them are properly occluded, seamlessly. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar {
+  background-image: linear-gradient(180deg,
+    hsl(228 60% 17%) 0%,
+    hsl(233 64% 11%) 100%) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+  border-right: 2px solid var(--ff-frame) !important;
+  box-shadow:
+    2px 0 0 var(--ff-bevel),
+    4px 0 0 var(--ff-drop),
+    6px 0 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar .sticky {
+  background-image: linear-gradient(180deg,
+    hsl(228 60% 17%) 0%,
+    hsl(233 64% 11%) 100%) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+
+/* Sidebar rows: menu entries. Gold on hover, with the blinking select hand. */
+@keyframes ff-cursor-blink {
+  0%, 60%   { opacity: 1; }
+  61%, 100% { opacity: 0.35; }
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .__menu-item {
+  position: relative;
+  overflow: visible !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .__menu-item::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  margin-top: calc(var(--yume-ff-cursor-h) * -0.5px);
+  height: calc(var(--yume-ff-cursor-h) * 1px);
+  width: calc(var(--yume-ff-cursor-w) * 1px);
+  background: var(--yume-ff-cursor) center / contain no-repeat;
+  image-rendering: pixelated;
+  opacity: 0;
+  transition: opacity 90ms linear;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .__menu-item:hover::before {
+  opacity: 1;
+  animation: ff-cursor-blink 0.9s steps(1) infinite;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .__menu-item:hover {
+  color: var(--ff-gold) !important;
+}
+
+/* --------------------------------------------------- sidebar icon remaps */
+
+/* ChatGPT's sidebar icons are hashed SVG sprite refs that change per deploy,
+   so rows are keyed by data-testid / href — the stable part of the markup.
+   The stock glyph is hidden (opacity, not display: the slot's size is load-
+   bearing) and the item sprite draws over it. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon {
+  position: relative;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon svg {
+  opacity: 0 !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+/* New chat — the palette coin, as on claude. Library — the tome. Plugins —
+   the bolt. Settings — the suitcase. Scheduled — the clock. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon::after { background-image: var(--yume-nav-0); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon::after { background-image: var(--yume-nav-2); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon::after { background-image: var(--yume-shop-icon-bolt); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon::after { background-image: var(--yume-nav-5); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after { background-image: var(--yume-nav-4); }
+
+/* Chat history rows read as an inventory: a small equipment icon leads each
+   title, cycling down the list. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 7px;
+  vertical-align: -3px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  flex: none;
+  background-image: var(--yume-shop-0);
+}
+
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+2)::before { background-image: var(--yume-shop-1); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+3)::before { background-image: var(--yume-shop-2); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+4)::before { background-image: var(--yume-shop-3); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+5)::before { background-image: var(--yume-shop-4); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+6)::before { background-image: var(--yume-shop-5); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+7)::before { background-image: var(--yume-shop-6); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+8)::before { background-image: var(--yume-shop-7); }
+
+/* Section labels (Pinned / Projects / Chats) as small gold menu headers. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar h2,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar h3 {
+  font-family: var(--ff-pixel-ui) !important;
+  color: var(--ff-gold) !important;
+  letter-spacing: 0.04em;
+}
+
+/* The profile row becomes its own little window, like claude's footer row. */
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"] {
+  background: var(--ff-window) !important;
+  border: 2px solid var(--ff-frame) !important;
+  border-radius: 6px !important;
+  box-shadow: var(--ff-frame-shadow) !important;
+}
+
+/* ---------------------------------------------------------------- header */
+
+/* The model pill / wordmark. translucent-surface is its glass chip. */
+html[data-cct-theme="final-fantasy-gpt"] #page-header .translucent-surface {
+  background: rgba(8, 14, 52, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 4px !important;
+  box-shadow: inset 0 0 0 1px rgba(3, 6, 22, 0.6);
+  backdrop-filter: none !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .header-wordmark {
+  font-family: var(--ff-pixel-ui) !important;
+  color: #fff !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] #page-header button:hover {
+  color: var(--ff-gold) !important;
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+html[data-cct-theme="final-fantasy-gpt"] .btn-primary {
+  background: linear-gradient(180deg, #ffe58f 0%, #ffd75e 55%, #e2b83a 100%) !important;
+  color: #241c04 !important;
+  border: 2px solid #fff !important;
+  border-radius: 5px !important;
+  box-shadow: 0 2px 0 var(--ff-drop) !important;
+  font-family: var(--ff-pixel-ui) !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .btn-secondary {
+  background: linear-gradient(180deg, rgba(84, 114, 214, 0.55), rgba(18, 30, 92, 0.55)) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 2px 0 var(--ff-drop) !important;
+  font-family: var(--ff-pixel-ui) !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .btn-primary:hover,
+html[data-cct-theme="final-fantasy-gpt"] .btn-secondary:hover {
+  filter: brightness(1.12);
+}
+
+/* Focus ring in gold, matching the claude theme's controls. */
+html[data-cct-theme="final-fantasy-gpt"] button:focus-visible,
+html[data-cct-theme="final-fantasy-gpt"] a:focus-visible {
+  outline: 2px solid var(--ff-gold) !important;
+  outline-offset: 2px !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] #prompt-textarea:focus,
+html[data-cct-theme="final-fantasy-gpt"] #prompt-textarea:focus-visible {
+  outline: none !important;
+}
+
+/* Scrollbar as a menu slider: white rail, gold thumb. */
+html[data-cct-theme="final-fantasy-gpt"] ::-webkit-scrollbar { width: 9px; height: 9px; }
+html[data-cct-theme="final-fantasy-gpt"] ::-webkit-scrollbar-thumb {
+  background: var(--ff-gold) !important;
+  border-radius: 2px !important;
+  box-shadow: inset 0 0 0 1px rgba(3, 6, 22, 0.5);
+}
+html[data-cct-theme="final-fantasy-gpt"] ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ------------------------------------------- optional: colourful text */
+
+/* Gated on the per-theme toggle (popup ⚙ → data-yume-opt). Gold emphasis,
+   cyan italics, magenta headings, green inline code, gold list markers. */
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown strong,
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown b {
+  color: var(--ff-gold) !important;
+  text-shadow: 1px 1px 0 rgba(3, 6, 22, 0.8);
+}
+
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown em,
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown i {
+  color: var(--ff-crystal-cyan) !important;
+  font-style: italic !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown h1,
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown h2,
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown h3,
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown h4 {
+  color: #ff8ad8 !important;
+  text-shadow: 1px 1px 0 rgba(3, 6, 22, 0.85);
+}
+
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown code:not(pre code) {
+  color: #7ce8a4 !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown a {
+  color: #9db4ff !important;
+  text-decoration-color: rgba(157, 180, 255, 0.5) !important;
+}
+
+html[data-cct-theme="final-fantasy-gpt"][data-yume-opt~="rich-text"] .markdown li::marker {
+  color: var(--ff-gold) !important;
+}
+
+/* -------------------------------------------------------------- chocobo */
+
+@keyframes ff-choco-gait {
+  0%, 49.99% { background-position-x: 0%; }
+  50%, 100%  { background-position-x: 100%; }
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco {
+  position: absolute;
+  width: calc(var(--yume-ff-choco-w) * 2px);
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  background-image: var(--yume-ff-choco);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+/* Variant A — the parkour. Trajectory measured and driven by content.js via
+   WAAPI; these wrappers only set the stage. Box bird crosses at z 39, one
+   layer behind the party (40). */
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco-a {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--yume-ff-choco-w) * 2px);
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  z-index: 39;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5));
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco-a .yume-choco,
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco-sky .yume-choco {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(-1);
+  animation: ff-choco-gait 0.22s steps(1) infinite;
+}
+
+/* Ground + leap segments: fixed on <body>, immune to ancestor clipping,
+   one notch under the starfields. */
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco-sky {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: calc(var(--yume-ff-choco-w) * 2px);
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  z-index: 2147483643;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 2px 0 rgba(3, 6, 22, 0.5));
+}
+
+/* Variants B/C — behind the composer's text, revealed edge-first. content.js
+   mounts the clip on [data-composer-surface], whose z-index:0 (granted above)
+   makes the z:-1 wrapper paint above the window fill, under the text. */
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco-clip {
+  position: absolute;
+  top: 3px;
+  left: 8px;
+  right: 8px;
+  height: calc(var(--yume-ff-choco-h) * 2px);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes ff-choco-run-b {
+  from { transform: translateX(var(--choco-dist, 800px)); }
+  to   { transform: translateX(calc(var(--yume-ff-choco-w) * -2px)); }
+}
+@keyframes ff-choco-run-c {
+  from { transform: translateX(calc(var(--yume-ff-choco-w) * -2px)) scaleX(-1); }
+  to   { transform: translateX(var(--choco-dist, 800px)) scaleX(-1); }
+}
+
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco-b {
+  animation:
+    ff-choco-gait 0.22s steps(1) infinite,
+    ff-choco-run-b var(--choco-dur, 4.2s) linear forwards;
+}
+html[data-cct-theme="final-fantasy-gpt"] .yume-choco-c {
+  animation:
+    ff-choco-gait 0.22s steps(1) infinite,
+    ff-choco-run-c var(--choco-dur, 4.2s) linear forwards;
+}
+
+/* --------------------------------------------------------------- motion */
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-cct-theme="final-fantasy-gpt"]::before,
+  html[data-cct-theme="final-fantasy-gpt"]::after,
+  html[data-cct-theme="final-fantasy-gpt"] body::before,
+  html[data-cct-theme="final-fantasy-gpt"] body::after,
+  html[data-cct-theme="final-fantasy-gpt"] [data-composer-surface],
+  html[data-cct-theme="final-fantasy-gpt"] section[data-yume-latest][data-yume-reply] div[data-message-author-role="assistant"],
+  html[data-cct-theme="final-fantasy-gpt"] section[data-yume-reply] div[data-message-author-role="assistant"]::before,
+  html[data-cct-theme="final-fantasy-gpt"] .yume-party-member,
+  html[data-cct-theme="final-fantasy-gpt"] .yume-shooting-star,
+  html[data-cct-theme="final-fantasy-gpt"] .result-thinking::after,
+  html[data-cct-theme="final-fantasy-gpt"] .__menu-item:hover::before {
+    animation: none !important;
+  }
+  html[data-cct-theme="final-fantasy-gpt"] .yume-choco,
+  html[data-cct-theme="final-fantasy-gpt"] .yume-choco-clip,
+  html[data-cct-theme="final-fantasy-gpt"] .yume-choco-sky {
+    display: none;
+  }
+}

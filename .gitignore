@@ -11,3 +11,6 @@ tools/.*.html
 # generated runtime files remain in sprites/ and sounds/.
 sources/sprites/PC _ Computer - Final Fantasy (Pixel Remaster) - Playable Characters - Battle Sprites.png
 sources/sprites/PC _ Computer - Final Fantasy VI (Pixel Remaster) - Playable Characters - Mog.png
+
+# Live-DOM reference snapshots captured from chatgpt.com (anonymous session).
+.gpt-snapshots/

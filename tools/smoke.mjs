@@ -319,29 +319,212 @@ const PAGE = `<!doctype html>
 </body>
 </html>`;
 
-await writeFile(resolve(ROOT, "tools/.smoke.html"), PAGE, "utf8");
+// The same machinery against chatgpt.com's shape. The hostname can't be faked
+// under file://, so the site override global routes content.js down the
+// chatgpt branches; everything else — engine shim, storage, observers — is
+// identical to the real page.
+const GPT_PAGE = `<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>smoke-gpt</title>
+<script>
+  localStorage.clear();
+  localStorage.setItem("sync:cctThemeGpt", JSON.stringify("final-fantasy-gpt"));
+  window.__YUME_TEST_SITE = "chatgpt";
+  window.__audioCtxCount = 0;
+  const RealAC = window.AudioContext;
+  window.AudioContext = function (...a) { window.__audioCtxCount++; return new RealAC(...a); };
+</script>
+</head>
+<body>
+<div id="stage-slideover-sidebar"><nav aria-label="Chat history">
+  <a class="__menu-item" data-testid="create-new-chat-button" href="#"><div class="icon"><svg></svg></div>New chat</a>
+</nav></div>
 
-const { stdout } = await run(CHROME, [
-  "--headless", "--disable-gpu", "--allow-file-access-from-files",
-  "--virtual-time-budget=22000", "--dump-dom",
-  "file://" + resolve(ROOT, "tools/.smoke.html"),
-], { maxBuffer: 40 * 1024 * 1024 });
+<main>
+  <section data-testid="conversation-turn-1" data-turn="user" id="uturn">
+    <div data-message-author-role="user"><div class="user-message-bubble-color">hello there</div></div>
+  </section>
+  <section data-testid="conversation-turn-2" data-turn="assistant" id="aturn">
+    <div data-message-author-role="assistant"><div class="markdown prose"><p>A filled reply.</p></div></div>
+  </section>
 
-await rm(resolve(ROOT, "tools/.smoke.html"), { force: true });
+  <div id="footer">
+    <!-- shaped like a usage banner; the hunter must NEVER touch it on gpt -->
+    <div id="gpt-decoy" style="width:600px;height:24px">You have 3 messages left today</div>
+    <form data-type="unified-composer" style="position:relative;width:640px">
+      <div class="relative">
+        <div data-composer-surface="true" style="position:relative;height:52px">
+          <div id="prompt-textarea" contenteditable="true" role="textbox"></div>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
 
-const m = /<title>SMOKE:([\s\S]*?)<\/title>/.exec(stdout);
-if (!m) {
-  console.log("FAILED — the driver never completed (a throw at load time stops everything)");
-  const early = /Uncaught[^<\n]*/.exec(stdout);
-  if (early) console.log("  " + early[0]);
-  process.exit(1);
+<script>
+  window.__errors = [];
+  addEventListener("error", (e) => window.__errors.push("error: " + (e.message || e)));
+  addEventListener("unhandledrejection", (e) => window.__errors.push("rejection: " + e.reason));
+  const realError = console.error;
+  console.error = (...a) => { window.__errors.push("console.error: " + a.join(" ")); realError(...a); };
+</script>
+<script src="../lib/theme-engine.js"></script>
+<script src="../content.js"></script>
+<script>
+  window.__drive = async () => {
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const root = document.documentElement;
+    await wait(500);
+
+    if (root.getAttribute("data-cct-theme") !== "final-fantasy-gpt") {
+      window.__errors.push("gpt: cctThemeGpt selection did not reach the html attribute");
+    }
+    if (!document.querySelector("form[data-type='unified-composer'] > .yume-party")) {
+      window.__errors.push("gpt: party did not mount on the composer form");
+    }
+    if (!document.getElementById("aturn").hasAttribute("data-yume-reply")) {
+      window.__errors.push("gpt: filled assistant turn was not stamped data-yume-reply");
+    }
+    if (document.getElementById("uturn").hasAttribute("data-yume-reply")) {
+      window.__errors.push("gpt: USER turn was stamped data-yume-reply");
+    }
+    if (!document.getElementById("aturn").hasAttribute("data-yume-latest")) {
+      window.__errors.push("gpt: newest reply was not stamped data-yume-latest");
+    }
+
+    // Thinking lifecycle: while .result-thinking is on the body the turn must
+    // stay unstamped (the frame would wrap an empty window); the stamp lands
+    // when the class drops and real text exists.
+    const think = document.createElement("section");
+    think.setAttribute("data-turn", "assistant");
+    think.setAttribute("data-testid", "conversation-turn-3");
+    think.innerHTML = "<div data-message-author-role='assistant'>" +
+      "<div class='markdown prose result-thinking'><p></p></div></div>";
+    document.getElementById("aturn").after(think);
+    await wait(600);
+    if (think.hasAttribute("data-yume-reply")) {
+      window.__errors.push("gpt: thinking turn was stamped data-yume-reply mid-thinking");
+    }
+    const md = think.querySelector(".markdown");
+    md.classList.remove("result-thinking");
+    md.querySelector("p").textContent = "The answer arrives.";
+    await wait(600);
+    if (!think.hasAttribute("data-yume-reply")) {
+      window.__errors.push("gpt: settled turn was never stamped data-yume-reply");
+    }
+    if (!think.hasAttribute("data-yume-latest")) {
+      window.__errors.push("gpt: latest tag did not move to the newest reply");
+    }
+
+    // Chocobo parkour: sky bird on <body>, box bird on the form, party trips.
+    chrome.storage.local.set({ yumeChocoNow: { v: "a", dur: 900 } });
+    await wait(750);
+    if (!document.querySelector("form[data-type='unified-composer'] .yume-choco-a")) {
+      window.__errors.push("gpt choco A: box bird not mounted on the composer form");
+    }
+    if (!document.querySelector("body > .yume-choco-sky")) {
+      window.__errors.push("gpt choco A: sky bird not mounted on body");
+    }
+    if (![...document.querySelectorAll(".yume-party-member")].some((m) => m.dataset.pose === "fall")) {
+      window.__errors.push("gpt choco A: no party member fell");
+    }
+    await wait(2100);
+    if (document.querySelector(".yume-choco, .yume-choco-sky")) {
+      window.__errors.push("gpt choco A: sprite left behind after the run");
+    }
+
+    // Variant B must clip inside the composer SURFACE (where the paint lives),
+    // not the form — a form-level clip would hide behind the surface fill.
+    chrome.storage.local.set({ yumeChocoNow: { v: "b", dur: 600 } });
+    await wait(300);
+    const clip = document.querySelector(".yume-choco-clip");
+    if (!clip || !clip.parentElement.hasAttribute("data-composer-surface")) {
+      window.__errors.push("gpt choco B: clip wrapper not mounted on [data-composer-surface]");
+    }
+    await wait(800);
+
+    // The banner hunter stands down on chatgpt: the decoy keeps its exact
+    // inline style through every pass.
+    const decoy = document.getElementById("gpt-decoy");
+    if (decoy.getAttribute("style") !== "width:600px;height:24px") {
+      window.__errors.push("gpt: banner hunter styled the decoy -> " + decoy.getAttribute("style"));
+    }
+
+    // Anthropicons adoption is claude-only; the glyph must NOT be marked here.
+    const fakeMenu = document.createElement("div");
+    fakeMenu.setAttribute("role", "menu");
+    fakeMenu.innerHTML = "<button role=menuitem><span></span><span>Routines</span></button>";
+    document.body.append(fakeMenu);
+    await wait(250);
+    if (fakeMenu.querySelector("span").dataset.yumeIcon) {
+      window.__errors.push("gpt: PUA glyph was marked on chatgpt (claude-only mechanism)");
+    }
+    fakeMenu.remove();
+
+    // Theme off and back on through the gpt slot.
+    chrome.storage.sync.set({ cctThemeGpt: "" });
+    await wait(400);
+    if (root.getAttribute("data-cct-theme")) {
+      window.__errors.push("gpt: clearing cctThemeGpt did not clear the attribute");
+    }
+    if (document.querySelector(".yume-party")) {
+      window.__errors.push("gpt: party left behind after the theme was cleared");
+    }
+    chrome.storage.sync.set({ cctThemeGpt: "final-fantasy-gpt" });
+    await wait(500);
+    if (root.getAttribute("data-cct-theme") !== "final-fantasy-gpt") {
+      window.__errors.push("gpt: switching back did not restore the attribute");
+    }
+    // The CLAUDE slot must mean nothing here.
+    chrome.storage.sync.set({ cctTheme: "dracula" });
+    await wait(300);
+    if (root.getAttribute("data-cct-theme") !== "final-fantasy-gpt") {
+      window.__errors.push("gpt: a claude-slot write changed the chatgpt tab's theme");
+    }
+
+    if (window.__audioCtxCount !== 0) {
+      window.__errors.push("gpt: AudioContext constructed without user activation (" +
+        window.__audioCtxCount + "x)");
+    }
+    return window.__errors;
+  };
+  window.__drive().then((errs) => {
+    document.title = "SMOKE:" + (errs.length ? errs.join(" | ") : "clean");
+  });
+</script>
+</body>
+</html>`;
+
+let failed = 0;
+
+async function drivePage(label, html, budget) {
+  const file = resolve(ROOT, "tools/.smoke.html");
+  await writeFile(file, html, "utf8");
+  const { stdout } = await run(CHROME, [
+    "--headless", "--disable-gpu", "--allow-file-access-from-files",
+    "--virtual-time-budget=" + budget, "--dump-dom",
+    "file://" + file,
+  ], { maxBuffer: 40 * 1024 * 1024 });
+  await rm(file, { force: true });
+
+  const m = /<title>SMOKE:([\s\S]*?)<\/title>/.exec(stdout);
+  if (!m) {
+    failed++;
+    console.log(`${label}: FAILED — the driver never completed (a throw at load time stops everything)`);
+    const early = /Uncaught[^<\n]*/.exec(stdout);
+    if (early) console.log("  " + early[0]);
+    return;
+  }
+  const result = m[1].trim();
+  if (result === "clean") {
+    console.log(`${label}: clean — content.js ran through every state with no errors`);
+    return;
+  }
+  failed++;
+  console.log(`${label} FAILED:`);
+  for (const e of result.split(" | ")) console.log("  " + e);
 }
 
-const result = m[1].trim();
-if (result === "clean") {
-  console.log("smoke: clean — content.js ran through every state with no errors");
-  process.exit(0);
-}
-console.log("smoke FAILED:");
-for (const e of result.split(" | ")) console.log("  " + e);
-process.exit(1);
+await drivePage("smoke (claude)", PAGE, 22000);
+await drivePage("smoke (chatgpt)", GPT_PAGE, 16000);
+process.exit(failed ? 1 : 0);

@@ -8,24 +8,33 @@
 // rest. Custom cards additionally carry edit/delete affordances.
 
 const E = globalThis.YumeEngine;
-const KEY = E.SELECTED_KEY;
 
 const chipsEl = document.getElementById("chips");
 const listEl = document.getElementById("theme-list");
 const resetEl = document.getElementById("reset");
+const resetLabelEl = document.getElementById("reset-label");
 const badgeEl = document.getElementById("current-badge");
+const sitesEl = document.getElementById("sites");
 
 let DATA = { categories: [], themes: [] };
 let custom = [];
 let optionValues = {};        // { themeId: { optionId: bool } }
 let openSettingsFor = null;   // which card has its panel expanded
-let activeTheme = "default";
+// One selection PER SITE — picking a ChatGPT theme never touches claude.ai.
+let selected = { claude: "default", chatgpt: "default" };
+let activeSite = "claude";    // which tab of themes is on show
 let activeFilter = "all";
+
+const SITE_LABELS = {
+  claude: { tab: "Claude", reset: "🤎 Claude Default", page: "claude.ai" },
+  chatgpt: { tab: "OpenAI", reset: "🌀 ChatGPT Default", page: "chatgpt.com" },
+};
 
 /** Present a stored custom theme with the same shape as a bundled one. */
 const toCard = (t) => ({
   id: t.id,
   category: "custom",
+  site: E.siteOfTheme(t),
   name: t.name,
   emoji: t.emoji || "🎨",
   mode: t.subtitle || "Custom",
@@ -33,22 +42,47 @@ const toCard = (t) => ({
   text: t.text,
   accent: t.accent,
   options: t.options || [],
+  features: t.features || [],
   custom: true,
 });
 
 const allThemes = () => [...DATA.themes, ...custom.map(toCard)];
 const themeById = (id) => allThemes().find((t) => t.id === id);
+const siteThemes = () => allThemes().filter((t) => E.siteOfTheme(t) === activeSite);
 
 function updateBadge() {
-  const t = themeById(activeTheme);
+  const t = themeById(selected[activeSite]);
   badgeEl.textContent = t ? `${t.emoji} ${t.name}` : "Default";
   resetEl.classList.toggle("active", !t);
+  resetLabelEl.textContent = SITE_LABELS[activeSite].reset;
 }
+
+function renderSites() {
+  for (const btn of sitesEl.querySelectorAll(".site-tab")) {
+    btn.classList.toggle("active", btn.dataset.site === activeSite);
+  }
+}
+
+sitesEl.addEventListener("click", (e) => {
+  const btn = e.target.closest(".site-tab");
+  if (!btn || btn.dataset.site === activeSite) return;
+  activeSite = btn.dataset.site;
+  activeFilter = "all";
+  openSettingsFor = null;
+  // Remembered so the popup reopens where you were working.
+  chrome.storage.local.set({ yumeActiveSite: activeSite });
+  renderSites();
+  updateBadge();
+  renderChips();
+  renderList();
+});
 
 function renderChips() {
   chipsEl.innerHTML = "";
-  // Hide the "Mine" chip until there's something in it.
-  const cats = DATA.categories.filter((c) => c.id !== "custom" || custom.length);
+  // Only categories that have themes for the site on show (which also hides
+  // the "Mine" chip until there's something in it).
+  const pool = siteThemes();
+  const cats = DATA.categories.filter((c) => pool.some((t) => t.category === c.id));
   for (const c of [{ id: "all", label: "All" }, ...cats]) {
     const chip = document.createElement("button");
     chip.className = "chip" + (c.id === activeFilter ? " active" : "");
@@ -64,7 +98,7 @@ function renderChips() {
 
 function card(t) {
   const el = document.createElement("div");
-  el.className = "theme-card" + (t.id === activeTheme ? " active" : "");
+  el.className = "theme-card" + (t.id === selected[activeSite] ? " active" : "");
 
   const pick = document.createElement("button");
   pick.className = "theme-pick";
@@ -138,7 +172,7 @@ function card(t) {
       e.stopPropagation();
       if (!confirm(`Delete “${t.name}”?`)) return;
       custom = await E.deleteTheme(t.id);
-      if (activeTheme === t.id) select("default");
+      if (selected[activeSite] === t.id) select("default");
       else { renderChips(); renderList(); }
     });
 
@@ -198,9 +232,10 @@ function settingsPanel(t) {
 
   // Chocobo preview row — Final Fantasy only (bundled or an imported copy,
   // which carries the party feature). Firing the storage trigger from here
-  // reaches content.js on the claude.ai tab the same way theme selection
-  // does; no DevTools context-hopping required.
-  if (t.id === "final-fantasy" || (t.features || []).includes("party")) {
+  // reaches content.js on the open tab the same way theme selection does; no
+  // DevTools context-hopping required. The site rides along so only the tab
+  // this card belongs to reacts.
+  if (t.id === "final-fantasy" || t.id === "final-fantasy-gpt" || (t.features || []).includes("party")) {
     const row = document.createElement("div");
     row.className = "opt-row opt-preview";
 
@@ -211,7 +246,7 @@ function settingsPanel(t) {
     name.textContent = "\u{1F424} Chocobo drive-by";
     const hint = document.createElement("span");
     hint.className = "opt-hint";
-    hint.textContent = "Send one now, on the open claude.ai tab";
+    hint.textContent = "Send one now, on the open " + SITE_LABELS[E.siteOfTheme(t)].page + " tab";
     text.append(name, hint);
 
     const btns = document.createElement("span");
@@ -226,7 +261,7 @@ function settingsPanel(t) {
       b.textContent = label;
       b.title = title;
       b.addEventListener("click", () => {
-        chrome.storage.local.set({ yumeChocoNow: { v, at: Date.now() } });
+        chrome.storage.local.set({ yumeChocoNow: { v, at: Date.now(), site: E.siteOfTheme(t) } });
         toast("Chocobo released \u2014 watch the page");
       });
       btns.append(b);
@@ -244,7 +279,7 @@ function renderList() {
     ? DATA.categories
     : DATA.categories.filter((c) => c.id === activeFilter);
 
-  const pool = allThemes();
+  const pool = siteThemes();
 
   for (const c of cats) {
     const themes = pool.filter((t) => t.category === c.id);
@@ -270,8 +305,11 @@ function renderList() {
 }
 
 function select(id) {
-  activeTheme = id;
-  chrome.storage.sync.set({ [KEY]: id });
+  // The selection lands in the slot of the SITE whose tab is on show — that
+  // is also always the site the picked theme belongs to, since the list only
+  // ever offers the active site's themes.
+  selected[activeSite] = id;
+  chrome.storage.sync.set({ [E.selectedKeyFor(activeSite)]: id });
   updateBadge();
   renderChips();
   renderList();
@@ -373,6 +411,11 @@ async function importFrom(text) {
     return;
   }
   custom = await E.upsertTheme(theme);
+  // Land on the tab the import belongs to — selecting a ChatGPT theme while
+  // the Claude tab is open must not write it into claude.ai's slot.
+  activeSite = E.siteOfTheme(theme);
+  chrome.storage.local.set({ yumeActiveSite: activeSite });
+  renderSites();
   select(theme.id);          // select() re-renders, so the new card is visible
   toast(`Imported ${theme.emoji} ${theme.name}`);
 }
@@ -412,11 +455,17 @@ async function init() {
   custom = await E.loadCustom();
   optionValues = await E.loadOptions();
 
-  chrome.storage.sync.get(KEY, (data) => {
-    activeTheme = data[KEY] || "default";
-    updateBadge();
-    renderChips();
-    renderList();
+  const keys = [E.selectedKeyFor("claude"), E.selectedKeyFor("chatgpt")];
+  chrome.storage.sync.get(keys, (data) => {
+    selected.claude = data[keys[0]] || "default";
+    selected.chatgpt = data[keys[1]] || "default";
+    chrome.storage.local.get("yumeActiveSite", (d) => {
+      if (E.SITES.includes(d.yumeActiveSite)) activeSite = d.yumeActiveSite;
+      renderSites();
+      updateBadge();
+      renderChips();
+      renderList();
+    });
   });
 }
 
