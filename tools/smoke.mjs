@@ -416,6 +416,25 @@ const GPT_PAGE = `<!doctype html>
       window.__errors.push("gpt: latest tag did not move to the newest reply");
     }
 
+    // The working stamp: while the stop button exists, the NEWEST assistant
+    // turn wears data-yume-working (Mog's perch); it clears when the button
+    // goes. Both edges matter — a stuck stamp leaves Mog hopping forever.
+    const stop = document.createElement("button");
+    stop.setAttribute("data-testid", "stop-button");
+    document.querySelector("[data-composer-surface]").append(stop);
+    await wait(600);
+    if (!think.hasAttribute("data-yume-working")) {
+      window.__errors.push("gpt: newest assistant turn was not stamped data-yume-working while generating");
+    }
+    if (document.getElementById("aturn").hasAttribute("data-yume-working")) {
+      window.__errors.push("gpt: an older turn was stamped data-yume-working");
+    }
+    stop.remove();
+    await wait(600);
+    if (document.querySelector("[data-yume-working]")) {
+      window.__errors.push("gpt: data-yume-working survived the stop button's removal");
+    }
+
     // Chocobo parkour: sky bird on <body>, box bird on the form, party trips.
     chrome.storage.local.set({ yumeChocoNow: { v: "a", dur: 900 } });
     await wait(750);

@@ -995,7 +995,8 @@
       // with an empty <p> inside — text-walking that would stamp the frame on
       // an empty window, so thinking is excluded outright and the stamp lands
       // exactly when the first real token does.
-      for (const el of document.querySelectorAll('section[data-turn="assistant"]')) {
+      const turns = document.querySelectorAll('section[data-turn="assistant"]');
+      for (const el of turns) {
         const body = el.querySelector(".markdown");
         const filled = !!body && !body.classList.contains("result-thinking") && hasReplyText(body);
         if (filled) {
@@ -1003,6 +1004,20 @@
         } else if (el.dataset[REPLY_ATTR]) {
           delete el.dataset[REPLY_ATTR];
         }
+      }
+      // chatgpt has no persistent status row under the reply the way claude
+      // does, but Mog still needs a perch while the model works. The turn
+      // sections aren't siblings (each sits in its own container), so
+      // :last-of-type can't find the live one from CSS — stamp it here: the
+      // newest assistant turn wears data-yume-working for exactly as long as
+      // the stop button exists, and the theme hangs the hopping moogle off it.
+      const working = document.querySelector('[data-testid="stop-button"]')
+        ? turns[turns.length - 1] : null;
+      for (const el of document.querySelectorAll("[data-yume-working]")) {
+        if (el !== working) el.removeAttribute("data-yume-working");
+      }
+      if (working && !working.hasAttribute("data-yume-working")) {
+        working.setAttribute("data-yume-working", "");
       }
       return;
     }

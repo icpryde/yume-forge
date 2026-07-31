@@ -605,37 +605,46 @@ html[data-cct-theme="final-fantasy-gpt"]:has([data-splash-headline-option]) .yum
   html[data-cct-theme="final-fantasy-gpt"] .yume-party { display: none; }
 }
 
-/* --------------------------------------------------- working Mog (thinking) */
+/* ---------------------------------------------------------- working Mog */
 
-/* While the model hasn't produced a token yet, the reply body is .markdown
-   with .result-thinking and an empty <p> — ChatGPT draws its pulsing dot in
-   there. The dot's box becomes Mog's stage: contents hidden, moogle drawn on
-   the container, hop cadence instead of the pulse. */
+/* chatgpt has no loading glyph under the reply the way claude does, so Mog
+   gets pinned there directly: content.js stamps data-yume-working on the
+   newest assistant turn for exactly as long as the stop button exists, and
+   the moogle hops just under the reply block — through the whole run, from
+   silent reasoning to the last streamed token, then vanishes with the stamp. */
 @keyframes ff-moogle-frames {
   0%, 49.99% { background-position-x: 0%; }
   50%, 100%  { background-position-x: 100%; }
 }
 
+/* The hop keeps its translateY in the keyframes: an animated transform
+   replaces a static one outright rather than composing with it. */
 @keyframes ff-moogle-hop {
   0%, 100% { transform: translateY(0); }
   42%      { transform: translateY(-3px); }
 }
 
+/* ChatGPT's own pulsing dot lives in the empty .result-thinking body; hide
+   it (and hold a little height so the pre-token phase doesn't collapse to
+   nothing), but the moogle itself hangs off the turn below. */
 html[data-cct-theme="final-fantasy-gpt"] .result-thinking {
-  position: relative;
   color: transparent !important;
-  min-height: calc(var(--yume-ff-moogle-h) * 1.5px + 6px);
+  min-height: 24px;
 }
 
 html[data-cct-theme="final-fantasy-gpt"] .result-thinking > * {
   opacity: 0 !important;
 }
 
-html[data-cct-theme="final-fantasy-gpt"] .result-thinking::after {
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] div[data-message-author-role="assistant"] {
+  position: relative;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] div[data-message-author-role="assistant"]::after {
   content: "";
   position: absolute;
-  left: 2px;
-  top: 0;
+  left: 4px;
+  top: calc(100% + 5px);
   width: calc(var(--yume-ff-moogle-w) * 1.5px);
   height: calc(var(--yume-ff-moogle-h) * 1.5px);
   background-image: var(--yume-ff-moogle);
@@ -647,8 +656,6 @@ html[data-cct-theme="final-fantasy-gpt"] .result-thinking::after {
     ff-moogle-frames 0.62s steps(1) infinite,
     ff-moogle-hop 0.62s ease-in-out infinite;
 }
-
-/* Streaming text keeps ChatGPT's own trailing-caret animation; nothing to do. */
 
 /* ------------------------------------------------------- writing blocks */
 
@@ -757,29 +764,40 @@ html[data-cct-theme="final-fantasy-gpt"] .__menu-item:hover {
 
 /* ChatGPT's sidebar icons are hashed SVG sprite refs that change per deploy,
    so rows are keyed by data-testid / href — the stable part of the markup.
+   Both keys are listed where the logged-in build and the logged-out one
+   disagree (Library is a testid anonymously, an /library href signed in).
    The stock glyph is hidden (opacity, not display: the slot's size is load-
    bearing) and the item sprite draws over it. */
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/library"] .icon,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg) {
   position: relative;
 }
 
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/library"] .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon svg,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon svg {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon > svg {
   opacity: 0 !important;
 }
 
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/library"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon::after,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -794,16 +812,100 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/sche
 }
 
 /* New chat — the palette coin, as on claude. Library — the tome. Plugins —
-   the bolt. Settings — the suitcase. Scheduled — the clock. */
+   the bolt. Settings — the suitcase. Scheduled — the clock. Projects — the
+   hourglass, but only rows still wearing the stock folder svg: a project
+   with a custom icon keeps it (the :has(> svg) gate skips img/emoji ones). */
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon::after { background-image: var(--yume-nav-0); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon::after { background-image: var(--yume-nav-2); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon::after { background-image: var(--yume-shop-icon-bolt); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/library"] .icon::after { background-image: var(--yume-nav-2); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon::after { background-image: var(--yume-shop-icon-bolt); }
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon::after { background-image: var(--yume-nav-5); }
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after { background-image: var(--yume-nav-4); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after { background-image: var(--yume-shop-icon-hourglass); }
 
-/* Chat history rows read as an inventory: a small equipment icon leads each
-   title, cycling down the list. */
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]::before {
+/* The "More" row: a button that opens the Images/GPTs/Sites menu — the only
+   sidebar BUTTON row with a menu besides the profile chip, which opts out by
+   testid. It gets the frog, obviously. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar button.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]) .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]):not([data-testid="settings-menu-item"]):not([data-testid="settings-menu-item"] ~ *) .icon {
+  position: relative;
+}
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar button.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]) .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]):not([data-testid="settings-menu-item"]):not([data-testid="settings-menu-item"] ~ *) .icon svg {
+  opacity: 0 !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar button.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]) .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]):not([data-testid="settings-menu-item"]):not([data-testid="settings-menu-item"] ~ *) .icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  background: var(--yume-shop-nav-more) center / contain no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+/* The More submenu (a portaled Radix menu): Images sparkles, GPTs wear the
+   blue hood, Sites get the molecule. Keyed on their destinations. */
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/images"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/library"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/gpts"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sites"] .icon {
+  position: relative;
+}
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/images"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/library"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/gpts"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sites"] .icon svg {
+  opacity: 0 !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/images"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/library"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/gpts"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sites"] .icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/images"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/library"] .icon::after { background-image: var(--yume-shop-icon-star); }
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/gpts"] .icon::after { background-image: var(--yume-shop-nav-artifacts); }
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sites"] .icon::after { background-image: var(--yume-nav-3); }
+
+/* Chat rows. Two families share the /c/ href: PINNED rows carry a leading
+   icon slot (chatgpt's speech bubble) — that slot gets OUR chat bubble from
+   the nav set. Ordinary history rows have no slot at all and read as an
+   inventory instead: a small equipment icon leads each title, cycling. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"] .icon:has(> svg) {
+  position: relative;
+}
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"] .icon > svg {
+  opacity: 0 !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"] .icon:has(> svg)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  background: var(--yume-nav-1) center / contain no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:not(:has(.icon))::before {
   content: "";
   display: inline-block;
   width: 16px;
@@ -818,13 +920,13 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]
   background-image: var(--yume-shop-0);
 }
 
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+2)::before { background-image: var(--yume-shop-1); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+3)::before { background-image: var(--yume-shop-2); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+4)::before { background-image: var(--yume-shop-3); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+5)::before { background-image: var(--yume-shop-4); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+6)::before { background-image: var(--yume-shop-5); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+7)::before { background-image: var(--yume-shop-6); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+8)::before { background-image: var(--yume-shop-7); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+2):not(:has(.icon))::before { background-image: var(--yume-shop-1); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+3):not(:has(.icon))::before { background-image: var(--yume-shop-2); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+4):not(:has(.icon))::before { background-image: var(--yume-shop-3); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+5):not(:has(.icon))::before { background-image: var(--yume-shop-4); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+6):not(:has(.icon))::before { background-image: var(--yume-shop-5); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+7):not(:has(.icon))::before { background-image: var(--yume-shop-6); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+8):not(:has(.icon))::before { background-image: var(--yume-shop-7); }
 
 /* Section labels (Pinned / Projects / Chats) as small gold menu headers. */
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar h2,
@@ -840,6 +942,26 @@ html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"]
   border: 2px solid var(--ff-frame) !important;
   border-radius: 6px !important;
   box-shadow: var(--ff-frame-shadow) !important;
+}
+
+/* Its trailing glyph (the little grid next to your name) becomes the gil
+   pouch. Only the svg is hidden — any text in the trailing slot survives. */
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"] .trailing {
+  position: relative;
+}
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"] .trailing svg {
+  opacity: 0 !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"] .trailing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 21px;
+  background: var(--yume-shop-icon-bag) center / contain no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
 }
 
 /* ---------------------------------------------------------------- header */
@@ -1048,7 +1170,7 @@ html[data-cct-theme="final-fantasy-gpt"] .yume-choco-c {
   html[data-cct-theme="final-fantasy-gpt"] section[data-yume-reply] div[data-message-author-role="assistant"]::before,
   html[data-cct-theme="final-fantasy-gpt"] .yume-party-member,
   html[data-cct-theme="final-fantasy-gpt"] .yume-shooting-star,
-  html[data-cct-theme="final-fantasy-gpt"] .result-thinking::after,
+  html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] div[data-message-author-role="assistant"]::after,
   html[data-cct-theme="final-fantasy-gpt"] .__menu-item:hover::before {
     animation: none !important;
   }

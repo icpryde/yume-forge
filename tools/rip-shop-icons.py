@@ -42,6 +42,7 @@ NAV_PICKS = [
     (11, "icon-bolt"),      # Routines (replaces Anthropicons U+E098)
     (2, "icon-hourglass"),  # Dispatch (U+E05E)
     (47, "icon-star"),      # Customize sidebar (U+E0D6)
+    (45, "icon-bag"),       # money pouch — chatgpt profile row trailing glyph
 ]
 
 PICKS = [
