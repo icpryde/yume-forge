@@ -147,16 +147,21 @@ html[data-cct-theme="final-fantasy"] [data-user-message-bubble="true"] *,
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"],
 html[data-cct-theme="final-fantasy"] [data-testid="chat-input"] * {
   font-family: var(--ff-body) !important;
-  /* 0.92rem, and it must be REM: this selector list includes `*`, so an em
-     here multiplies at EVERY nesting level — claude.ai nests reply markup
-     ~5 deep, so 0.92em compounded to ~11px ("way too small") while the
-     shallow user bubble stayed near full size. rem is anchored to the root
-     and lands the same 14.7px at any depth.
-     Why 0.92 at all: the two pixel faces are metrically identical (same cap,
-     x-height, and sentence width at equal px), but Press Start 2P is far
-     heavier — thicker strokes, no thin letters — so unscaled it reads
-     oversized. This is a small optical trim of that weight, nothing more. */
-  font-size: 0.92rem !important;
+  /* 0.75rem = 12px, and both the unit and the number are load-bearing.
+
+     REM, never em: this selector list includes `*`, so an em multiplies at
+     every nesting level — reply markup nests ~5 deep and 0.92em compounded
+     to ~10px while the shallow user bubble stayed full size.
+
+     12px, not an arbitrary trim: Press Start 2P is drawn on an 8px grid, so
+     it is only crisp when a glyph pixel maps to a whole number of device
+     pixels. On a 2x display 16px = 4 device px per glyph pixel (crisp but
+     reads oversized — the face is very heavy), while in-between sizes like
+     14.72px land at 3.68 and render soft AND slightly bloated. 12px = exactly
+     3 device px per glyph pixel: the next crisp step down, visibly smaller,
+     sharper than any fractional size. If this ever needs adjusting, move in
+     whole steps of 4px (8/12/16/20), not by feel. */
+  font-size: 0.75rem !important;
   letter-spacing: normal;
   /* Colour set EXPLICITLY, not left to claude.ai's --text-* tokens.
      Overriding those tokens works only while the app paints prose through

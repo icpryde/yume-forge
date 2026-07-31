@@ -382,7 +382,10 @@ const MUST_BE_STYLED = {
   // Explicit, not inherited from claude.ai tokens — a different app build
   // left this near-black on the dark window.
   "reply colour":  ["color", /rgb\(255, 255, 255\)/],
-  "reply deep":    ["fontSize", /^14\.72px$/],
+  // 12px exactly, at any depth: 0.75rem is grid-aligned for the 8px pixel
+  // face (3 device px per glyph pixel on 2x displays) and immune to em
+  // compounding. Any other value here means the unit or the number drifted.
+  "reply deep":    ["fontSize", /^12px$/],
   "reply crystal": ["width", /^16px$/],
   "horizon":       ["backgroundSize", /1878px 409px/],
   "cowork tray":   ["backgroundImage", /linear-gradient/],
