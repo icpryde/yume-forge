@@ -405,6 +405,12 @@ const GPT_PAGE = `<!doctype html>
     if (think.hasAttribute("data-yume-reply")) {
       window.__errors.push("gpt: thinking turn was stamped data-yume-reply mid-thinking");
     }
+    // Pro reasoning swaps the stop button out mid-run, so the thinking body
+    // ALONE must keep the working stamp alive — losing it here is the "Mog
+    // blinks out seconds into a long think" bug.
+    if (!think.hasAttribute("data-yume-working")) {
+      window.__errors.push("gpt: thinking turn (no stop button present) was not stamped data-yume-working");
+    }
     const md = think.querySelector(".markdown");
     md.classList.remove("result-thinking");
     md.querySelector("p").textContent = "The answer arrives.";
@@ -414,6 +420,9 @@ const GPT_PAGE = `<!doctype html>
     }
     if (!think.hasAttribute("data-yume-latest")) {
       window.__errors.push("gpt: latest tag did not move to the newest reply");
+    }
+    if (think.hasAttribute("data-yume-working")) {
+      window.__errors.push("gpt: working stamp survived settling — Mog would hop forever");
     }
 
     // The working stamp: while the stop button exists, the NEWEST assistant

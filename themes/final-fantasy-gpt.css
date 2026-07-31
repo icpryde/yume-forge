@@ -881,7 +881,7 @@ html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sit
 html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/images"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/library"] .icon::after { background-image: var(--yume-shop-icon-star); }
 html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/gpts"] .icon::after { background-image: var(--yume-shop-nav-artifacts); }
-html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sites"] .icon::after { background-image: var(--yume-nav-3); }
+html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sites"] .icon::after { background-image: var(--yume-shop-icon-halo); }
 
 /* Chat rows. Two families share the /c/ href: PINNED rows carry a leading
    icon slot (chatgpt's speech bubble) — that slot gets OUR chat bubble from
@@ -944,8 +944,10 @@ html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"]
   box-shadow: var(--ff-frame-shadow) !important;
 }
 
-/* Its trailing glyph (the little grid next to your name) becomes the gil
-   pouch. Only the svg is hidden — any text in the trailing slot survives. */
+/* Its trailing glyph (the little grid next to your name) becomes the menu
+   crystal, same one the claude feedback button wears. Width derives from the
+   asset's own aspect so a re-rip never squashes it; only the svg is hidden —
+   any text in the trailing slot survives. */
 html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"] .trailing {
   position: relative;
 }
@@ -957,11 +959,12 @@ html[data-cct-theme="final-fantasy-gpt"] [data-testid="accounts-profile-button"]
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 20px;
-  height: 21px;
-  background: var(--yume-shop-icon-bag) center / contain no-repeat;
+  height: 24px;
+  width: calc(24px * var(--yume-ff-menu-crystal-w) / var(--yume-ff-menu-crystal-h));
+  background: var(--yume-ff-menu-crystal) center / contain no-repeat;
   image-rendering: pixelated;
   pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(139, 234, 255, 0.45));
 }
 
 /* ---------------------------------------------------------------- header */

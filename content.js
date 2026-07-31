@@ -1009,10 +1009,17 @@
       // does, but Mog still needs a perch while the model works. The turn
       // sections aren't siblings (each sits in its own container), so
       // :last-of-type can't find the live one from CSS — stamp it here: the
-      // newest assistant turn wears data-yume-working for exactly as long as
-      // the stop button exists, and the theme hangs the hopping moogle off it.
-      const working = document.querySelector('[data-testid="stop-button"]')
-        ? turns[turns.length - 1] : null;
+      // newest assistant turn wears data-yume-working for the whole run.
+      //
+      // "Working" is deliberately three signals, not one: the stop button
+      // covers plain generation, but Pro reasoning SWAPS it out (the "Answer
+      // now" state) — keying on it alone made Mog blink out seconds into a
+      // long think. The thinking body (.result-thinking) and the streaming
+      // text (.streaming-animation) carry the phases the button doesn't.
+      const busy = document.querySelector('[data-testid="stop-button"]') ||
+        document.querySelector(".result-thinking") ||
+        document.querySelector(".streaming-animation");
+      const working = busy && turns.length ? turns[turns.length - 1] : null;
       for (const el of document.querySelectorAll("[data-yume-working]")) {
         if (el !== working) el.removeAttribute("data-yume-working");
       }
