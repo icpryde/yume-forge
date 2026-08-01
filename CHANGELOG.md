@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.0 — 2026-08-01
+
+The ChatGPT theme, finished against the real logged-in site.
+
+- Sidebar: the nav group (New chat…More), **Pinned** and **Projects** each sit
+  in their own white-bordered menu window, sized by their content. Projects
+  rows cycle the eight equipment icons (sword, axe, shield, staff, armor,
+  hammer, helm, gauntlet); pinned chats get the chat-bubble; More wears the
+  frog and its Images/Sites/GPTs menu gets star/halo/hood; Library the tome,
+  Scheduled the clock, the profile row the menu crystal.
+- **Mog is a permanent resident**: parked under the newest reply (he survives
+  reloads), hopping only while ChatGPT is thinking/searching/writing, never
+  doubled. His "working" sense unified everything that means busy, with a
+  grace window so phase hand-offs can't blink him out.
+- README rewritten as a simple front door: what it is, how to install.
+
 ## 1.1.0 — 2026-07-31
 
 Final Fantasy comes to chatgpt.com.

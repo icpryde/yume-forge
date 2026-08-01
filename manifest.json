@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Yume Forge Modified — Claude & ChatGPT Themes",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Themes for claude.ai and chatgpt.com — pick one, or import and share your own.",
   "icons": {
     "16": "icons/icon16.png",
