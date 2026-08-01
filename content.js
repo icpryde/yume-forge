@@ -1020,10 +1020,15 @@
       // made the absence test never fire — so the union adds the phase
       // classes and the stop button back on top. A turn is settled only
       // when the row exists AND no in-flight signal remains.
+      // The in-flight classes, measured on a live web-search run: the
+      // activity label ("Searching the web…") sits INSIDE the turn with a
+      // loading-shimmer-* class and unmounts completely at settle — that
+      // family is what carries the search/reasoning stretch, where the
+      // thinking body is long gone and (on Pro) the stop button is too.
       const last = turns[turns.length - 1] || null;
       const busy = last && (
         !last.querySelector('[data-testid="copy-turn-action-button"]') ||
-        last.querySelector(".result-thinking, .streaming-animation") ||
+        last.querySelector('.result-thinking, .streaming-animation, [class*="loading-shimmer"]') ||
         document.querySelector('[data-testid="stop-button"]'));
       const working = busy ? last : null;
       for (const el of document.querySelectorAll("[data-yume-working]")) {
