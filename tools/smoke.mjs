@@ -438,6 +438,24 @@ const GPT_PAGE = `<!doctype html>
       window.__errors.push("gpt: working stamp survived the action row mounting — Mog would hop forever");
     }
 
+    // The Pro build PRE-mounts the action row with the turn shell, so its
+    // presence alone must not read as settled: with the row mounted, an
+    // in-flight class (streaming here) must still stamp the turn.
+    // Class flips ride along with text churn in a real stream (the observer
+    // is childList-driven), so the fixture streams a token with each flip.
+    think.querySelector(".markdown").classList.add("streaming-animation");
+    think.querySelector(".markdown p").append(" more tokens");
+    await wait(600);
+    if (!think.hasAttribute("data-yume-working")) {
+      window.__errors.push("gpt: streaming turn with a pre-mounted action row was not stamped — Mog gone on the Pro build");
+    }
+    think.querySelector(".markdown").classList.remove("streaming-animation");
+    think.querySelector(".markdown p").append(" done.");
+    await wait(600);
+    if (document.querySelector("[data-yume-working]")) {
+      window.__errors.push("gpt: working stamp stuck after streaming class removal");
+    }
+
     // Chocobo parkour: sky bird on <body>, box bird on the form, party trips.
     chrome.storage.local.set({ yumeChocoNow: { v: "a", dur: 900 } });
     await wait(750);

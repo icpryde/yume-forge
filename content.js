@@ -1011,18 +1011,21 @@
       // :last-of-type can't find the live one from CSS — stamp it here: the
       // newest assistant turn wears data-yume-working for the whole run.
       //
-      // "Working" is judged by what a run's END looks like, not its middle.
-      // Every attempt to enumerate the in-flight phases lost a slice: the
-      // stop button swaps to "Answer now" in Pro reasoning, .result-thinking
-      // unmounts once a reasoning/search widget takes over, and web-search
-      // runs speak a third vocabulary again ("Searching 3 websites…"). The
-      // one thing every mode shares: the response-action row (copy/share)
-      // mounts on the turn exactly when the run is over. So the newest
-      // assistant turn is working from the moment its shell exists until
-      // that row lands on it — Mog perches for the whole ride.
+      // "Working" = the newest assistant turn, judged by run-END first with
+      // in-flight signals as backstops — because neither side alone covers
+      // every build. Measured on the logged-out build, the response-action
+      // row (copy/share) mounts exactly at completion, so its absence spans
+      // thinking/searching/reasoning/streaming in one test. But the Pro
+      // build PRE-mounts that row with the turn shell (mask-hidden), which
+      // made the absence test never fire — so the union adds the phase
+      // classes and the stop button back on top. A turn is settled only
+      // when the row exists AND no in-flight signal remains.
       const last = turns[turns.length - 1] || null;
-      const working = last && !last.querySelector('[data-testid="copy-turn-action-button"]')
-        ? last : null;
+      const busy = last && (
+        !last.querySelector('[data-testid="copy-turn-action-button"]') ||
+        last.querySelector(".result-thinking, .streaming-animation") ||
+        document.querySelector('[data-testid="stop-button"]'));
+      const working = busy ? last : null;
       for (const el of document.querySelectorAll("[data-yume-working]")) {
         if (el !== working) el.removeAttribute("data-yume-working");
       }
