@@ -736,7 +736,7 @@ html[data-cct-theme="final-fantasy-gpt"] .__menu-item {
   overflow: visible !important;
 }
 
-html[data-cct-theme="final-fantasy-gpt"] .__menu-item::before {
+html[data-cct-theme="final-fantasy-gpt"] .__menu-item:not([class*="trailing"])::before {
   content: "";
   position: absolute;
   left: -4px;
@@ -752,7 +752,7 @@ html[data-cct-theme="final-fantasy-gpt"] .__menu-item::before {
   z-index: 2;
 }
 
-html[data-cct-theme="final-fantasy-gpt"] .__menu-item:hover::before {
+html[data-cct-theme="final-fantasy-gpt"] .__menu-item:not([class*="trailing"]):hover::before {
   opacity: 1;
   animation: ff-cursor-blink 0.9s steps(1) infinite;
 }
@@ -776,7 +776,10 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg) {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-recall"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg),
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use)) {
   position: relative;
 }
 
@@ -787,7 +790,10 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon svg,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon > svg {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-recall"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon > svg,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use)) svg {
   opacity: 0 !important;
 }
 
@@ -798,7 +804,10 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-recall"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use))::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -818,25 +827,27 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"]
    with a custom icon keeps it (the :has(> svg) gate skips img/emoji ones). */
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="create-new-chat-button"] .icon::after { background-image: var(--yume-nav-0); }
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-library"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-recall"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/library"] .icon::after { background-image: var(--yume-nav-2); }
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="plugins-button"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plugins"] .icon::after { background-image: var(--yume-shop-icon-bolt); }
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon::after { background-image: var(--yume-nav-5); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after { background-image: var(--yume-nav-4); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after { background-image: var(--yume-shop-icon-hourglass); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon::after { background-image: var(--yume-nav-4); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after,
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use))::after { background-image: var(--yume-shop-icon-hourglass); }
 
-/* The "More" row: a button that opens the Images/GPTs/Sites menu — the only
-   sidebar BUTTON row with a menu besides the profile chip, which opts out by
-   testid. It gets the frog, obviously. */
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar button.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]) .icon,
+/* The "More" row: verified on the logged-in build, it is a DIV menu-item
+   with aria-haspopup in the expanded list. Deliberately div-only: the
+   COLLAPSED rail renders "Pinned" and "Recents" as BUTTON menu-items with
+   popups, and a button-variant rule put frogs on both of them. The profile
+   chip (also a div with a popup) opts out by testid. */
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]):not([data-testid="settings-menu-item"]):not([data-testid="settings-menu-item"] ~ *) .icon {
   position: relative;
 }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar button.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]) .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]):not([data-testid="settings-menu-item"]):not([data-testid="settings-menu-item"] ~ *) .icon svg {
   opacity: 0 !important;
 }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar button.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]) .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div.__menu-item[aria-haspopup="menu"]:not([data-testid="accounts-profile-button"]):not([data-testid="settings-menu-item"]):not([data-testid="settings-menu-item"] ~ *) .icon::after {
   content: "";
   position: absolute;
@@ -906,6 +917,58 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]
   background: var(--yume-nav-1) center / contain no-repeat;
   image-rendering: pixelated;
   pointer-events: none;
+}
+
+/* ------------------------------------------------- sidebar section boxes */
+
+/* Three menu windows, sized by their content so they grow and shrink with
+   it: the top nav group (New chat…More), PINNED, and PROJECTS. Chats stays
+   open. The top group has NO wrapper element in the DOM — its rows are
+   siblings — so its box is SEGMENTED: the New chat block is the top cap,
+   Library/Scheduled/Plugins carry the side walls, and the More wrapper
+   closes the bottom. One flat fill keeps the seams invisible. The New chat
+   block's tall-viewport stickiness is disabled: a sticky top cap tears the
+   box apart the moment the list scrolls. Verified live on the logged-in
+   sidebar (2026-08-01). */
+html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > div[class*="section-first-margin-top"] {
+  position: static !important;
+  background: rgba(13, 20, 70, 0.42) !important;
+  border: 2px solid var(--ff-frame);
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
+  margin: 2px 8px 0 !important;
+  padding-top: 3px !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > a[data-testid="sidebar-item-recall"],
+html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > a[data-testid="sidebar-item-tasks"],
+html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > a[href^="/library"],
+html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > a[href^="/scheduled"],
+html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > a[data-testid="plugins-button"] {
+  background: rgba(13, 20, 70, 0.42) !important;
+  border-left: 2px solid var(--ff-frame);
+  border-right: 2px solid var(--ff-frame);
+  margin: 0 8px !important;
+}
+html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > div:has(div.__menu-item[aria-haspopup]) {
+  background: rgba(13, 20, 70, 0.42) !important;
+  border: 2px solid var(--ff-frame);
+  border-top: 0;
+  border-radius: 0 0 7px 7px;
+  margin: 0 8px 12px !important;
+  padding-bottom: 4px !important;
+}
+
+/* PINNED (its chat rows carry a leading icon slot — what tells it apart
+   from Chats, whose rows are bare titles) and PROJECTS (accordion rows).
+   The -header divs and the chevron svgs share the class fragment; the div
+   tag and :not keep them out. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div[class*="group/sidebar-expando-section"]:not([class*="-header"]):has(ul a[href^="/c/"] > div:first-child [class~="icon"]),
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar div[class*="group/sidebar-expando-section"]:not([class*="-header"]):has(ul .__menu-item[aria-expanded]) {
+  background: rgba(13, 20, 70, 0.42) !important;
+  border: 2px solid var(--ff-frame);
+  border-radius: 7px;
+  margin: 0 8px 12px !important;
+  padding: 2px 4px 6px !important;
 }
 
 /* Section labels (Pinned / Projects / Chats) as small gold menu headers. */
@@ -1154,7 +1217,7 @@ html[data-cct-theme="final-fantasy-gpt"] .yume-choco-c {
   html[data-cct-theme="final-fantasy-gpt"] .yume-party-member,
   html[data-cct-theme="final-fantasy-gpt"] .yume-shooting-star,
   html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] div[data-message-author-role="assistant"]::after,
-  html[data-cct-theme="final-fantasy-gpt"] .__menu-item:hover::before {
+  html[data-cct-theme="final-fantasy-gpt"] .__menu-item:not([class*="trailing"]):hover::before {
     animation: none !important;
   }
   html[data-cct-theme="final-fantasy-gpt"] .yume-choco,
