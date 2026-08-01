@@ -1011,15 +1011,22 @@
       // :last-of-type can't find the live one from CSS — stamp it here: the
       // newest assistant turn wears data-yume-working for the whole run.
       //
-      // "Working" is deliberately three signals, not one: the stop button
-      // covers plain generation, but Pro reasoning SWAPS it out (the "Answer
-      // now" state) — keying on it alone made Mog blink out seconds into a
-      // long think. The thinking body (.result-thinking) and the streaming
-      // text (.streaming-animation) carry the phases the button doesn't.
-      const busy = document.querySelector('[data-testid="stop-button"]') ||
+      // "Working" is a UNION of signals, because no single one spans a run:
+      // the stop button covers plain generation but Pro reasoning swaps it
+      // for "Answer now"; the thinking body (.result-thinking) covers the
+      // opening seconds but unmounts once the reasoning widget takes over;
+      // .streaming-animation covers token output only. The reasoning stretch
+      // itself is carried by its own UI — the shimmering header and the
+      // Answer-now control — matched INSIDE the newest turn, so a loading
+      // shimmer elsewhere (sidebar skeletons on a cold load) can't fake it.
+      const last = turns[turns.length - 1] || null;
+      const busy = !!(document.querySelector('[data-testid="stop-button"]') ||
         document.querySelector(".result-thinking") ||
-        document.querySelector(".streaming-animation");
-      const working = busy && turns.length ? turns[turns.length - 1] : null;
+        document.querySelector(".streaming-animation") ||
+        (last && (last.querySelector('[class*="loading-shimmer"]') ||
+          [...last.querySelectorAll("button, a")]
+            .some((b) => /\banswer now\b/i.test(b.textContent || "")))));
+      const working = busy ? last : null;
       for (const el of document.querySelectorAll("[data-yume-working]")) {
         if (el !== working) el.removeAttribute("data-yume-working");
       }

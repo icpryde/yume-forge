@@ -572,9 +572,10 @@ html[data-cct-theme="final-fantasy-gpt"] .yume-party-member[data-member="3"] { b
   50%, 100%  { background-position-x: calc(1 / (var(--yume-party-poses) - 1) * 100%); }
 }
 
-/* The party idles while ChatGPT is working. The stop button exists for
-   exactly the generation window — the cleanest "busy" signal in this DOM. */
-html[data-cct-theme="final-fantasy-gpt"]:has([data-testid="stop-button"]) .yume-party-member[data-pose="idle"] {
+/* The party idles while ChatGPT is working. Driven by the same JS-stamped
+   data-yume-working the moogle rides — one "busy" definition for everything
+   (the stop button alone goes missing during Pro reasoning). */
+html[data-cct-theme="final-fantasy-gpt"]:has([data-yume-working]) .yume-party-member[data-pose="idle"] {
   animation-name: ff-member-idle;
   animation-duration: 0.92s;
   animation-timing-function: steps(1);
@@ -883,10 +884,12 @@ html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/lib
 html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/gpts"] .icon::after { background-image: var(--yume-shop-nav-artifacts); }
 html[data-cct-theme="final-fantasy-gpt"] [data-radix-menu-content] a[href^="/sites"] .icon::after { background-image: var(--yume-shop-icon-halo); }
 
-/* Chat rows. Two families share the /c/ href: PINNED rows carry a leading
-   icon slot (chatgpt's speech bubble) — that slot gets OUR chat bubble from
-   the nav set. Ordinary history rows have no slot at all and read as an
-   inventory instead: a small equipment icon leads each title, cycling. */
+/* Chat rows. PINNED rows carry a leading icon slot (chatgpt's speech
+   bubble) — that slot gets OUR chat bubble from the nav set. Ordinary
+   history rows are bare titles, and STAY bare on purpose: they share
+   ::before with the hover hand, and an always-on equipment sprite there
+   hijacked the hand's reveal — a sword blinking where the finger should
+   point. gpt's recents read fine without icons; the hand owns the slot. */
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"] .icon:has(> svg) {
   position: relative;
 }
@@ -904,29 +907,6 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]
   image-rendering: pixelated;
   pointer-events: none;
 }
-
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:not(:has(.icon))::before {
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 7px;
-  vertical-align: -3px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  image-rendering: pixelated;
-  flex: none;
-  background-image: var(--yume-shop-0);
-}
-
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+2):not(:has(.icon))::before { background-image: var(--yume-shop-1); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+3):not(:has(.icon))::before { background-image: var(--yume-shop-2); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+4):not(:has(.icon))::before { background-image: var(--yume-shop-3); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+5):not(:has(.icon))::before { background-image: var(--yume-shop-4); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+6):not(:has(.icon))::before { background-image: var(--yume-shop-5); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+7):not(:has(.icon))::before { background-image: var(--yume-shop-6); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/c/"]:nth-of-type(8n+8):not(:has(.icon))::before { background-image: var(--yume-shop-7); }
 
 /* Section labels (Pinned / Projects / Chats) as small gold menu headers. */
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar h2,
