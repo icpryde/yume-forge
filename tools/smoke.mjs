@@ -346,6 +346,7 @@ const GPT_PAGE = `<!doctype html>
   </section>
   <section data-testid="conversation-turn-2" data-turn="assistant" id="aturn">
     <div data-message-author-role="assistant"><div class="markdown prose"><p>A filled reply.</p></div></div>
+    <button data-testid="copy-turn-action-button"></button>
   </section>
 
   <div id="footer">
@@ -405,11 +406,13 @@ const GPT_PAGE = `<!doctype html>
     if (think.hasAttribute("data-yume-reply")) {
       window.__errors.push("gpt: thinking turn was stamped data-yume-reply mid-thinking");
     }
-    // Pro reasoning swaps the stop button out mid-run, so the thinking body
-    // ALONE must keep the working stamp alive — losing it here is the "Mog
-    // blinks out seconds into a long think" bug.
+    // No stop button, no streaming class — the turn shell alone must carry
+    // the working stamp. Losing it mid-think is the "Mog blinks out" bug.
     if (!think.hasAttribute("data-yume-working")) {
       window.__errors.push("gpt: thinking turn (no stop button present) was not stamped data-yume-working");
+    }
+    if (document.getElementById("aturn").hasAttribute("data-yume-working")) {
+      window.__errors.push("gpt: a settled turn (action row mounted) was stamped data-yume-working");
     }
     const md = think.querySelector(".markdown");
     md.classList.remove("result-thinking");
@@ -421,27 +424,18 @@ const GPT_PAGE = `<!doctype html>
     if (!think.hasAttribute("data-yume-latest")) {
       window.__errors.push("gpt: latest tag did not move to the newest reply");
     }
-    if (think.hasAttribute("data-yume-working")) {
-      window.__errors.push("gpt: working stamp survived settling — Mog would hop forever");
-    }
-
-    // The working stamp: while the stop button exists, the NEWEST assistant
-    // turn wears data-yume-working (Mog's perch); it clears when the button
-    // goes. Both edges matter — a stuck stamp leaves Mog hopping forever.
-    const stop = document.createElement("button");
-    stop.setAttribute("data-testid", "stop-button");
-    document.querySelector("[data-composer-surface]").append(stop);
-    await wait(600);
+    // Text has landed but the action row hasn't — every mode has a stretch
+    // shaped exactly like this (reasoning headers, search progress, plain
+    // streaming), and Mog must stay through all of it.
     if (!think.hasAttribute("data-yume-working")) {
-      window.__errors.push("gpt: newest assistant turn was not stamped data-yume-working while generating");
+      window.__errors.push("gpt: working stamp dropped between thinking and the action row — Mog would vanish mid-run");
     }
-    if (document.getElementById("aturn").hasAttribute("data-yume-working")) {
-      window.__errors.push("gpt: an older turn was stamped data-yume-working");
-    }
-    stop.remove();
+    const actions = document.createElement("button");
+    actions.setAttribute("data-testid", "copy-turn-action-button");
+    think.append(actions);
     await wait(600);
     if (document.querySelector("[data-yume-working]")) {
-      window.__errors.push("gpt: data-yume-working survived the stop button's removal");
+      window.__errors.push("gpt: working stamp survived the action row mounting — Mog would hop forever");
     }
 
     // Chocobo parkour: sky bird on <body>, box bird on the form, party trips.

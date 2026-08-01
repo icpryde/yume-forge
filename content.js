@@ -1011,22 +1011,18 @@
       // :last-of-type can't find the live one from CSS — stamp it here: the
       // newest assistant turn wears data-yume-working for the whole run.
       //
-      // "Working" is a UNION of signals, because no single one spans a run:
-      // the stop button covers plain generation but Pro reasoning swaps it
-      // for "Answer now"; the thinking body (.result-thinking) covers the
-      // opening seconds but unmounts once the reasoning widget takes over;
-      // .streaming-animation covers token output only. The reasoning stretch
-      // itself is carried by its own UI — the shimmering header and the
-      // Answer-now control — matched INSIDE the newest turn, so a loading
-      // shimmer elsewhere (sidebar skeletons on a cold load) can't fake it.
+      // "Working" is judged by what a run's END looks like, not its middle.
+      // Every attempt to enumerate the in-flight phases lost a slice: the
+      // stop button swaps to "Answer now" in Pro reasoning, .result-thinking
+      // unmounts once a reasoning/search widget takes over, and web-search
+      // runs speak a third vocabulary again ("Searching 3 websites…"). The
+      // one thing every mode shares: the response-action row (copy/share)
+      // mounts on the turn exactly when the run is over. So the newest
+      // assistant turn is working from the moment its shell exists until
+      // that row lands on it — Mog perches for the whole ride.
       const last = turns[turns.length - 1] || null;
-      const busy = !!(document.querySelector('[data-testid="stop-button"]') ||
-        document.querySelector(".result-thinking") ||
-        document.querySelector(".streaming-animation") ||
-        (last && (last.querySelector('[class*="loading-shimmer"]') ||
-          [...last.querySelectorAll("button, a")]
-            .some((b) => /\banswer now\b/i.test(b.textContent || "")))));
-      const working = busy ? last : null;
+      const working = last && !last.querySelector('[data-testid="copy-turn-action-button"]')
+        ? last : null;
       for (const el of document.querySelectorAll("[data-yume-working]")) {
         if (el !== working) el.removeAttribute("data-yume-working");
       }
