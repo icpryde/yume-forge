@@ -637,15 +637,20 @@ html[data-cct-theme="final-fantasy-gpt"] .result-thinking > * {
   opacity: 0 !important;
 }
 
-html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] div[data-message-author-role="assistant"] {
+/* Anchored to the turn's CONTENT COLUMN, not the message block, for two
+   verified reasons: during the thinking phase the message block does not
+   exist yet (only the turn shell and its column do — Mog had a stamp but no
+   perch), and the column's bottom edge sits BELOW the response-action icons
+   (thumbs/share), which the message block's bottom overlapped. */
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] > div:first-of-type > div:first-child {
   position: relative;
 }
 
-html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] div[data-message-author-role="assistant"]::after {
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] > div:first-of-type > div:first-child::after {
   content: "";
   position: absolute;
-  left: 4px;
-  top: calc(100% + 5px);
+  left: 2px;
+  top: calc(100% + 6px);
   width: calc(var(--yume-ff-moogle-w) * 1.5px);
   height: calc(var(--yume-ff-moogle-h) * 1.5px);
   background-image: var(--yume-ff-moogle);
@@ -1216,7 +1221,7 @@ html[data-cct-theme="final-fantasy-gpt"] .yume-choco-c {
   html[data-cct-theme="final-fantasy-gpt"] section[data-yume-reply] div[data-message-author-role="assistant"]::before,
   html[data-cct-theme="final-fantasy-gpt"] .yume-party-member,
   html[data-cct-theme="final-fantasy-gpt"] .yume-shooting-star,
-  html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] div[data-message-author-role="assistant"]::after,
+  html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] > div:first-of-type > div:first-child::after,
   html[data-cct-theme="final-fantasy-gpt"] .__menu-item:not([class*="trailing"]):hover::before {
     animation: none !important;
   }

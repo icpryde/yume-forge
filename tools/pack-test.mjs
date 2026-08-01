@@ -550,7 +550,7 @@ const GPT_BODY = `
     </div></div>
   </section>
   <section data-testid="conversation-turn-3" data-turn="assistant" data-yume-working>
-    <div data-message-author-role="assistant"><div class="markdown prose result-thinking"><p></p></div></div>
+    <div><div><div data-message-author-role="assistant"><div class="markdown prose result-thinking"><p></p></div></div></div></div>
   </section>
   <form data-type="unified-composer" style="width:640px">
     <div class="relative">
@@ -593,7 +593,7 @@ const GPT_PROBES = JSON.stringify([
   ["gpt wb fill",      ".wb-fill",                               null,       ["backgroundColor"]],
   ["gpt wb frame",     '[class*="writing-block-surface"]',       null,       ["borderTopWidth", "borderRadius"]],
   ["gpt thinking",     ".result-thinking",                       null,       ["color", "position"]],
-  ["gpt thinking mog", 'section[data-yume-working] div[data-message-author-role="assistant"]', "::after", ["content", "backgroundImage", "animationName"]],
+  ["gpt thinking mog", 'section[data-yume-working] > div:first-of-type > div:first-child', "::after", ["content", "backgroundImage", "animationName"]],
   ["gpt composer",     "[data-composer-surface]",                null,       ["backgroundImage", "borderTopWidth", "borderRadius", "animationName", "zIndex"]],
   ["gpt composer btn", ".composer-btn",                          null,       ["borderTopWidth", "borderRadius", "fontFamily"]],
   ["gpt send hand",    'button[aria-label="Send prompt"]',       "::after",  ["content", "backgroundImage", "transform", "width"]],
