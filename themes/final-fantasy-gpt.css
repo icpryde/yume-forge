@@ -798,7 +798,7 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/sche
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-recall"] .icon,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg),
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use)) {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"] {
   position: relative;
 }
 
@@ -812,7 +812,7 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/sche
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-recall"] .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon svg,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon > svg,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use)) svg {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"] > * {
   opacity: 0 !important;
 }
 
@@ -826,7 +826,7 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/sche
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-recall"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use))::after {
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -853,8 +853,19 @@ html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/plug
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="settings-menu-item"] .icon::after { background-image: var(--yume-nav-5); }
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/scheduled"] .icon::after,
 html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar [data-testid="sidebar-item-tasks"] .icon::after { background-image: var(--yume-nav-4); }
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after,
-html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul .__menu-item[aria-expanded] [class~="icon"]:has(svg):not(:has(use))::after { background-image: var(--yume-shop-icon-hourglass); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar a[href^="/g/"] .icon:has(> svg)::after { background-image: var(--yume-shop-icon-hourglass); }
+
+/* Projects read as the party's equipment: the same eight icons claude's
+   Recents cycle through, one per row — ALL project rows, custom icons
+   included, per taste. The "Show more" li has no icon slot and sits out. */
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+1) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-0); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+2) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-1); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+3) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-2); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+4) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-3); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+5) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-4); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+6) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-5); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+7) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-6); }
+html[data-cct-theme="final-fantasy-gpt"] #stage-slideover-sidebar ul > li:nth-child(8n+8) .__menu-item[aria-expanded] [class~="icon"]::after { background-image: var(--yume-shop-7); }
 
 /* The "More" row: verified on the logged-in build, it is a DIV menu-item
    with aria-haspopup in the expanded list. Deliberately div-only: the
