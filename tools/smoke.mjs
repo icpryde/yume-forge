@@ -433,9 +433,11 @@ const GPT_PAGE = `<!doctype html>
     const actions = document.createElement("button");
     actions.setAttribute("data-testid", "copy-turn-action-button");
     think.append(actions);
-    await wait(600);
+    // The hysteresis hold (1.5s) is expected to keep the stamp briefly; the
+    // failure mode is it surviving PAST the hold.
+    await wait(2100);
     if (document.querySelector("[data-yume-working]")) {
-      window.__errors.push("gpt: working stamp survived the action row mounting — Mog would hop forever");
+      window.__errors.push("gpt: working stamp survived the action row mounting past the hold — Mog would hop forever");
     }
 
     // The Pro build PRE-mounts the action row with the turn shell, so its
@@ -451,9 +453,15 @@ const GPT_PAGE = `<!doctype html>
     }
     think.querySelector(".markdown").classList.remove("streaming-animation");
     think.querySelector(".markdown p").append(" done.");
-    await wait(600);
+    // Inside the hold window the stamp MUST still be there — that is the
+    // whole point of the hysteresis (phase hand-offs with no signal).
+    await wait(500);
+    if (!think.hasAttribute("data-yume-working")) {
+      window.__errors.push("gpt: stamp dropped instantly in a signal gap — the hysteresis is not holding");
+    }
+    await wait(1800);
     if (document.querySelector("[data-yume-working]")) {
-      window.__errors.push("gpt: working stamp stuck after streaming class removal");
+      window.__errors.push("gpt: working stamp stuck after streaming class removal past the hold");
     }
 
     // Chocobo parkour: sky bird on <body>, box bird on the form, party trips.
@@ -566,5 +574,5 @@ async function drivePage(label, html, budget) {
 }
 
 await drivePage("smoke (claude)", PAGE, 22000);
-await drivePage("smoke (chatgpt)", GPT_PAGE, 16000);
+await drivePage("smoke (chatgpt)", GPT_PAGE, 24000);
 process.exit(failed ? 1 : 0);

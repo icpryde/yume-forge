@@ -961,6 +961,12 @@
    */
   const REPLY_ATTR = "yumeReply";
 
+  // gpt working-stamp hysteresis (see markReplyWindows): the moment the busy
+  // signals last held, plus the pending re-evaluation timer for the quiet
+  // period after the final signal unmounts.
+  let gptWorkHold = 0;
+  let gptWorkTimer = null;
+
   /**
    * Does this reply body hold any RESPONSE text?
    *
@@ -1026,11 +1032,33 @@
       // family is what carries the search/reasoning stretch, where the
       // thinking body is long gone and (on Pro) the stop button is too.
       const last = turns[turns.length - 1] || null;
-      const busy = last && (
+      const busy = !!(last && (
         !last.querySelector('[data-testid="copy-turn-action-button"]') ||
         last.querySelector('.result-thinking, .streaming-animation, [class*="loading-shimmer"]') ||
-        document.querySelector('[data-testid="stop-button"]'));
-      const working = busy ? last : null;
+        document.querySelector('[data-testid="stop-button"]')));
+
+      // HYSTERESIS. The Pro build hands off between phase widgets with brief
+      // moments where NO signal is mounted, and tracking the union instantly
+      // made Mog pop in and out at each hand-off. Once busy, the stamp holds
+      // for a grace window that every busy pass refreshes; it only clears
+      // after the signals have been gone for the whole window. Run-end costs
+      // Mog ~1.5s of overstay; mid-run gaps cost nothing. The timer exists
+      // because passes are mutation-driven — a silent DOM after the last
+      // signal would otherwise never re-evaluate and never clear.
+      const now = performance.now();
+      if (busy) {
+        gptWorkHold = now + 1500;
+        if (gptWorkTimer) { clearTimeout(gptWorkTimer); gptWorkTimer = null; }
+      }
+      const active = busy || now < gptWorkHold;
+      const working = active ? last : null;
+      if (!busy && active && !gptWorkTimer) {
+        gptWorkTimer = setTimeout(() => {
+          gptWorkTimer = null;
+          markReplyWindows();
+          markLatestReply();
+        }, gptWorkHold - now + 80);
+      }
       for (const el of document.querySelectorAll("[data-yume-working]")) {
         if (el !== working) el.removeAttribute("data-yume-working");
       }
@@ -1053,6 +1081,10 @@
   function clearReplyWindows() {
     document.querySelectorAll("[data-yume-reply]")
       .forEach((el) => delete el.dataset[REPLY_ATTR]);
+    document.querySelectorAll("[data-yume-working]")
+      .forEach((el) => el.removeAttribute("data-yume-working"));
+    if (gptWorkTimer) { clearTimeout(gptWorkTimer); gptWorkTimer = null; }
+    gptWorkHold = 0;
   }
 
   const LATEST_ATTR = "data-yume-latest";
