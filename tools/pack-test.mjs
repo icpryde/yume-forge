@@ -594,6 +594,7 @@ const GPT_PROBES = JSON.stringify([
   ["gpt wb frame",     '[class*="writing-block-surface"]',       null,       ["borderTopWidth", "borderRadius"]],
   ["gpt thinking",     ".result-thinking",                       null,       ["color", "position"]],
   ["gpt thinking mog", 'section[data-yume-working] > div:first-of-type > div:first-child', "::after", ["content", "backgroundImage", "animationName"]],
+  ["gpt parked mog",   'section[data-yume-latest] > div:first-of-type > div:first-child', "::after", ["content"]],
   ["gpt composer",     "[data-composer-surface]",                null,       ["backgroundImage", "borderTopWidth", "borderRadius", "animationName", "zIndex"]],
   ["gpt composer btn", ".composer-btn",                          null,       ["borderTopWidth", "borderRadius", "fontFamily"]],
   ["gpt send hand",    'button[aria-label="Send prompt"]',       "::after",  ["content", "backgroundImage", "transform", "width"]],
@@ -695,6 +696,9 @@ const GPT_MUST = {
   // the theme's @layer theme override. rgb(16,26,84) = #101a54.
   "gpt wb fill":      ["backgroundColor", /rgb\(16, 26, 84\)/],
   "gpt thinking mog": ["animationName", /ff-moogle-frames/],
+  // Both a latest and a working turn are mounted in this fixture; the parked
+  // Mog must stand down so he never doubles mid-run.
+  "gpt parked mog":   ["content", /^none$/],
   "gpt composer":     ["animationName", /ff-breathe/],
   // 9px against an inline border-radius:28px.
   "gpt composer rad": null,

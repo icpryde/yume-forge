@@ -641,11 +641,18 @@ html[data-cct-theme="final-fantasy-gpt"] .result-thinking > * {
    verified reasons: during the thinking phase the message block does not
    exist yet (only the turn shell and its column do — Mog had a stamp but no
    perch), and the column's bottom edge sits BELOW the response-action icons
-   (thumbs/share), which the message block's bottom overlapped. */
+   (thumbs/share), which the message block's bottom overlapped.
+
+   Mog is PERMANENT on the newest reply: parked in his standing frame once
+   the run ends (data-yume-latest survives), hopping only while the turn is
+   actually working. While a new turn is mid-run it owns the only Mog — the
+   previous reply's parked one stands down so he never doubles. */
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-latest] > div:first-of-type > div:first-child,
 html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] > div:first-of-type > div:first-child {
   position: relative;
 }
 
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-latest] > div:first-of-type > div:first-child::after,
 html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] > div:first-of-type > div:first-child::after {
   content: "";
   position: absolute;
@@ -658,9 +665,16 @@ html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] > div:first-
   background-repeat: no-repeat;
   image-rendering: pixelated;
   pointer-events: none;
+}
+
+html[data-cct-theme="final-fantasy-gpt"] section[data-yume-working] > div:first-of-type > div:first-child::after {
   animation:
     ff-moogle-frames 0.62s steps(1) infinite,
     ff-moogle-hop 0.62s ease-in-out infinite;
+}
+
+html[data-cct-theme="final-fantasy-gpt"]:has(section[data-yume-working]) section[data-yume-latest]:not([data-yume-working]) > div:first-of-type > div:first-child::after {
+  content: none;
 }
 
 /* ------------------------------------------------------- writing blocks */
@@ -953,6 +967,10 @@ html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > a[data
   border-left: 2px solid var(--ff-frame);
   border-right: 2px solid var(--ff-frame);
   margin: 0 8px !important;
+  /* The rows ship a 10px pill radius of their own, which notched the box's
+     side walls into per-row capsules. Square them; the caps carry the
+     window's outer rounding. */
+  border-radius: 0 !important;
 }
 html[data-cct-theme="final-fantasy-gpt"] nav[class*="group/scrollport"] > div:has(div.__menu-item[aria-haspopup]) {
   background: rgba(13, 20, 70, 0.42) !important;
